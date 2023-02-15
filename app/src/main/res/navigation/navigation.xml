@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/optionsWriteFragment">
+
+    <fragment
+        android:id="@+id/optionsWriteFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.selection.OptionsWriteFragment"
+        android:label="fragment_options_write"
+        tools:layout="@layout/fragment_options_write" >
+        <action
+            android:id="@+id/action_optionsWriteFragment_to_inventoryListFragment"
+            app:destination="@id/inventoryListFragment" />
+        <action
+            android:id="@+id/action_optionsWriteFragment_to_writeTagFragment"
+            app:destination="@id/writeTagFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inventoryListFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.inventory.list.InventoryListFragment"
+        android:label="fragment_inventory_list"
+        tools:layout="@layout/fragment_inventory_list" >
+        <action
+            android:id="@+id/action_inventoryListFragment_to_newInventoryFragment"
+            app:destination="@id/newInventoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newInventoryFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.inventory.add.NewInventoryFragment"
+        android:label="fragment_new_inventory"
+        tools:layout="@layout/fragment_new_inventory" />
+    <fragment
+        android:id="@+id/writeTagFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.write.WriteTagFragment"
+        android:label="fragment_write_tag"
+        tools:layout="@layout/fragment_write_tag" >
+        <action
+            android:id="@+id/action_writeTagFragment_to_confirmWriteTagFragment"
+            app:destination="@id/confirmWriteTagFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/confirmWriteTagFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.write.ConfirmWriteTagFragment"
+        android:label="fragment_confirm_write_tag"
+        tools:layout="@layout/fragment_confirm_write_tag" />
+    <fragment
+        android:id="@+id/providerListFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.provider.list.ProviderListFragment"
+        android:label="fragment_provider_list"
+        tools:layout="@layout/fragment_provider_list" >
+        <action
+            android:id="@+id/action_providerListFragment_to_newProviderFragment"
+            app:destination="@id/newProviderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newProviderFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.provider.add.NewProviderFragment"
+        android:label="fragment_new_provider"
+        tools:layout="@layout/fragment_new_provider" />
+</navigation>
