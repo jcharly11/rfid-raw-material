@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.checkpoint.rfid_raw_material.R
 
 class OptionsWriteFragment : Fragment() {
@@ -29,4 +30,8 @@ class OptionsWriteFragment : Fragment() {
         // TODO: Use the ViewModel
     }
 
+    override fun onStart() {
+        super.onStart()
+        (activity as AppCompatActivity).supportActionBar!!.show()
+    }
 }
