@@ -8,12 +8,14 @@ import android.util.Log;
 import com.zebra.rfid.api3.ACCESS_OPERATION_CODE;
 import com.zebra.rfid.api3.ACCESS_OPERATION_STATUS;
 import com.zebra.rfid.api3.Antennas;
+import com.zebra.rfid.api3.DYNAMIC_POWER_OPTIMIZATION;
 import com.zebra.rfid.api3.ENUM_TRANSPORT;
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE;
 import com.zebra.rfid.api3.Events;
 import com.zebra.rfid.api3.HANDHELD_TRIGGER_EVENT_TYPE;
 import com.zebra.rfid.api3.INVENTORY_STATE;
 import com.zebra.rfid.api3.InvalidUsageException;
+import com.zebra.rfid.api3.MEMORY_BANK;
 import com.zebra.rfid.api3.OperationFailureException;
 import com.zebra.rfid.api3.RFIDReader;
 import com.zebra.rfid.api3.ReaderDevice;
@@ -26,6 +28,7 @@ import com.zebra.rfid.api3.SL_FLAG;
 import com.zebra.rfid.api3.START_TRIGGER_TYPE;
 import com.zebra.rfid.api3.STATUS_EVENT_TYPE;
 import com.zebra.rfid.api3.STOP_TRIGGER_TYPE;
+import com.zebra.rfid.api3.TagAccess;
 import com.zebra.rfid.api3.TagData;
 import com.zebra.rfid.api3.TriggerInfo;
 import java.util.ArrayList;
@@ -59,9 +62,11 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         Log.e("SELECTED SESSION",session);
         InitSDK();
     }
+
     public void setListener(ResponseHandlerInterface responseHandlerInterface) {
         this.responseHandlerInterface = responseHandlerInterface;
     }
+
     public void setBatterListener(BatteryHandlerInterface batteryHandlerInterface){
         this.batteryHandlerInterface = batteryHandlerInterface;
     }
@@ -75,7 +80,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         }
     }
 
-
     String onResume() {
         return connect();
     }
@@ -83,6 +87,7 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     int[] powerSoupportedList() {
         return reader.ReaderCapabilities.getTransmitPowerLevelValues();
     }
+
     int currentPower(){
         return MAX_POWER;
     }
@@ -210,7 +215,7 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
                 if (!reader.isConnected()) {
                     // Establish connection to the RFID Reader
                     reader.connect();
-                    ConfigureReader();
+                    ConfigureReaderToRead();
                     return "Connected";
                 }
             } catch (InvalidUsageException e) {
@@ -225,8 +230,8 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         return "";
     }
 
-    private void ConfigureReader() {
-        Log.d(TAG, "ConfigureReader " + reader.getHostName());
+    private void ConfigureReaderToRead() {
+        Log.d(TAG, "ConfigureReader Read " + reader.getHostName());
         if (reader.isConnected()) {
             TriggerInfo triggerInfo = new TriggerInfo();
             triggerInfo.StartTrigger.setTriggerType(START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE);
@@ -283,6 +288,49 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         }
     }
 
+    private void ConfigureReaderToWrite(){
+        Log.d(TAG, "ConfigureReader Write" + reader.getHostName());
+         try {
+
+            ConfigureReaderToRead();
+            reader.Config.setDPOState(true ? DYNAMIC_POWER_OPTIMIZATION.ENABLE : DYNAMIC_POWER_OPTIMIZATION.DISABLE);
+            reader.Config.setAccessOperationWaitTimeout(1000);
+
+        } catch (InvalidUsageException e) {
+            e.printStackTrace();
+        } catch (OperationFailureException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    private void writeTag(String sourceEPC, String Password, MEMORY_BANK memory_bank, String targetData, int offset) {
+        Log.d(TAG, "WriteTag " + targetData);
+        try {
+            TagData tagData = null;
+            String tagId = sourceEPC;
+            TagAccess tagAccess = new TagAccess();
+            TagAccess.WriteAccessParams writeAccessParams = tagAccess.new WriteAccessParams();
+            String writeData = targetData;
+            writeAccessParams.setAccessPassword(Long.parseLong(Password,16));
+            writeAccessParams.setMemoryBank(memory_bank);
+            writeAccessParams.setOffset(offset);
+            writeAccessParams.setWriteData(writeData);
+            // set retries in case of partial write happens
+            writeAccessParams.setWriteRetries(3);
+            // data length in words
+            writeAccessParams.setWriteDataLength(writeData.length() / 4);
+            // 5th parameter bPrefilter flag is true which means API will apply pre filter internally
+            // 6th parameter should be true in case of changing EPC ID it self i.e. source and target both is EPC
+            boolean useTIDfilter = memory_bank == MEMORY_BANK.MEMORY_BANK_EPC;
+            reader.Actions.TagAccess.writeWait(tagId, writeAccessParams, null, tagData, true, useTIDfilter);
+
+        } catch (InvalidUsageException e) {
+            e.printStackTrace();
+        } catch (OperationFailureException e) {
+            e.printStackTrace();
+        }
+    }
     private synchronized void disconnect() {
         Log.d(TAG, "disconnect " + reader);
         try {
@@ -337,7 +385,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             e.printStackTrace();
         }
     }
-
     // Read/Status Notify handler
     // Implement the RfidEventsLister class to receive event notifications
     public class EventHandler implements RfidEventsListener {
@@ -396,8 +443,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             }
         }
     }
-
-
 
     private class AsyncDataUpdate extends AsyncTask<TagData[], Void, Void> {
         @Override
