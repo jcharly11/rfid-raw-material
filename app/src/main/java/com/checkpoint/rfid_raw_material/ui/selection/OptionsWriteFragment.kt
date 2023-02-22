@@ -6,23 +6,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
+import com.checkpoint.rfid_raw_material.source.model.Item
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 
 class OptionsWriteFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = OptionsWriteFragment()
-    }
-
     private lateinit var viewModel: OptionsWriteViewModel
+    private var _binding: FragmentOptionsWriteBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_options_write, container, false)
+
+        viewModel = ViewModelProvider(this)[OptionsWriteViewModel::class.java]
+        _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
+
+        binding.btnInventory.setOnClickListener {
+            findNavController().navigate(R.id.testFragment)
+        }
+        return binding.root
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
