@@ -12,6 +12,7 @@ import org.junit.Test
 class ConversionTest {
     @Test
     fun conversion_isCorrect() {
+
         val conversor =  Conversor()
         var hexValueEpc = ""
         var version = conversor.toBinaryString("18",5,'0')
