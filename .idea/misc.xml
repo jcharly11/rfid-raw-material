@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/rfid_raw_material/app/src/main/res/layout/fragment_inventory_list.xml" value="0.19947916666666668" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_scan.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_stop.xml" value="0.1" />
       </map>
     </option>
   </component>

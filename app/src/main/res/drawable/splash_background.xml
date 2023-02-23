@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/navy"/>
+    <item
+        android:width="60dp"
+        android:height="80dp"
+        android:gravity="center">
+        <bitmap
+            android:src="@drawable/logockp"/>
+    </item>
+</layer-list>
