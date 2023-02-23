@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rfid_raw_material.iml" filepath="$PROJECT_DIR$/.idea/modules/rfid_raw_material.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/rfid_raw_material.app.unitTest.iml" />
+    </modules>
+  </component>
+</project>
