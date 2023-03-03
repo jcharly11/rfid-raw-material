@@ -18,11 +18,11 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Provider List"
-            android:textColor="@color/navy"
+            android:text="@string/provider_list"
             android:textAlignment="center"
+            android:textColor="@color/navy"
             android:textSize="30sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">rfid_raw_material</string>
+    <string name="tab_tittle_inventory">Inventory</string>
+    <string name="tab_tittle_read">Items Read</string>
+    <string name="tittle_app_menu">RFID Raw Materials</string>
+    <string name="checkpoint_tittle">Checkpoint Systems</string>
+    <string name="item_menu_inventory">Inventario</string>
+    <string name="item_menu_write">Escribir Tag</string>
+    <string name="item_menu_provider">Proveedores</string>
+    <string name="inventory_list">Inventario</string>
+    <string name="provider_detail">Detalle Proveedor</string>
+    <string name="id">ID</string>
+    <string name="id_as400">ID AS400</string>
+    <string name="provider">Proveedor</string>
+    <string name="contact">Contacto</string>
+    <string name="country">Pais</string>
+    <string name="save">Guardar</string>
+    <string name="choose_option">Selecciona una opción</string>
+    <string name="provider_list">Proveedores</string>
+    <string name="read_inventory">Lectura de Inventario</string>
+    <string name="items_scanned">Items Escaneados</string>
+    <string name="items_write">Items Escritos</string>
+    <string name="identifier_item">Identificacion Item</string>
+    <string name="version">Version</string>
+    <string name="type">Tipo</string>
+    <string name="subversion">Subversion</string>
+    <string name="write">Escribir</string>
+    <string name="loading_text_bluetooth">Buscando dispositivo bluetooth</string>
+    <string name="bt_message_device_discovery">Buscando dispositivos cercanos</string>
+    <string name="loading_text">Enviando...</string>
+    <string name="power_config_settings">max_power</string>
+    <string name="set_power">Configuracíon de potencia</string>
+    <string name="label_max_power_config">Potencia RFID</string>
+    <string name="select_region">Selecciona región</string>
+    <string name="title_dialog_bluetooth">Tu bluetooth esta apagado!</string>
+    <string name="subtitle_dialog_rfid">No se logró establecer conexión con su lector RFID. ¿Necesitas ayuda para conectarlo?...</string>
+    <string name="radio_option_yes">1.- Enciende tu conexión bluetooth</string>
+    <string name="radio_option_no">2.- Empareja tu dispositivo Handheld</string>
+    <string name="finish_inventory">Finalizar</string>
+    <string name="new_provider">Nuevo Proveedor</string>
+    <string name="check_fields">Valida todos los campos</string>
+</resources>

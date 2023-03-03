@@ -22,11 +22,12 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"
-        android:background="@color/navy"
-        app:itemIconTint="@color/blue_tint"
-        app:itemTextColor="@color/white"
+        android:backgroundTint="@color/white"
+        app:itemIconTint="@color/red_ckp"
+        app:itemTextColor="@color/black"
         app:itemIconSize="30dp"
         app:itemRippleColor="@color/blue_tint"
         app:itemShapeFillColor="@color/white"
-        app:itemBackground="@drawable/bg_menu_content"/>
+        app:itemBackground="@drawable/bg_menu_content"
+        app:itemVerticalPadding="15dp"/>
 </androidx.drawerlayout.widget.DrawerLayout>

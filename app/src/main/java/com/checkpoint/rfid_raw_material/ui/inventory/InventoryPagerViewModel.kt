@@ -1,0 +1,135 @@
+package com.checkpoint.rfid_raw_material.ui.inventory
+
+import android.annotation.SuppressLint
+import android.app.Application
+import android.content.Context
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
+import com.checkpoint.rfid_raw_material.handheld.BatteryHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.ZebraRFIDHandlerImpl
+import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
+import com.checkpoint.rfid_raw_material.source.DataRepository
+import com.zebra.rfid.api3.TagData
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+
+@SuppressLint("MissingPermission")
+class InventoryPagerViewModel(application: Application) : AndroidViewModel(application),
+    ResponseHandlerInterface,
+    BatteryHandlerInterface {
+    //private var repository: DataRepository
+    private var localSharedPreferences: LocalPreferences = LocalPreferences(application)
+
+    private val _dialogVisible: MutableLiveData<Boolean> = MutableLiveData(false)
+    val dialogVisible: LiveData<Boolean> = _dialogVisible
+
+    private val _percentCharge: MutableLiveData<Int> = MutableLiveData(0)
+    val percentCharge: LiveData<Int> = _percentCharge
+
+
+    private var bluetoothHandler: BluetoothHandler? = null
+
+    private var deviceName: String? = null
+
+    private var idInventory = 0
+
+    private var context: Context = application.baseContext
+    private var zebraRFIDHandlerImpl: ZebraRFIDHandlerImpl? = null
+    private var maxLevel = 0
+
+
+    init {
+
+        //repository = DataRepository.getInstance(InventoryDataBase.getDatabase(application.baseContext))
+        maxLevel = localSharedPreferences.getMaxFromPreferences()
+        Log.e("maxLevel--->", "$maxLevel")
+        bluetoothHandler = BluetoothHandler(context)
+        val devices = bluetoothHandler!!.list()
+
+        if (devices != null) {
+            for (device in devices) {
+                if (device.name.contains("RFD8")) {
+                    deviceName = device.name
+                }
+            }
+        }
+
+        if (deviceName != null) {
+            zebraRFIDHandlerImpl = ZebraRFIDHandlerImpl()
+            zebraRFIDHandlerImpl?.listener(this, this)
+            zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName!!, "SESSION_1")
+        }
+    }
+
+    fun restartHandeldSetNewPower(newPower: Int, session: String) {
+        zebraRFIDHandlerImpl?.onDestroy()
+        zebraRFIDHandlerImpl?.start(getApplication(), newPower, deviceName!!, session)
+    }
+
+    fun setIdInventory(id: Int) {
+        idInventory = id
+    }
+
+    fun resume() {
+        zebraRFIDHandlerImpl?.onPostResume()
+    }
+
+    fun destroy() {
+        zebraRFIDHandlerImpl?.onDestroy()
+    }
+
+    fun callBatteryLevel() {
+        zebraRFIDHandlerImpl?.battery()
+    }
+
+    fun getCapabilities(): IntArray? {
+        return zebraRFIDHandlerImpl?.powerSoupportedList()
+    }
+
+    fun currentPower(): Int? {
+        return zebraRFIDHandlerImpl?.currentPower()
+    }
+
+    override  fun handleTagdata(tagData: Array<TagData?>?) {
+        val code = tagData?.get(0)?.tagID.toString()
+        val rssi = tagData?.get(0)?.peakRSSI.toString()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                //inserta rfid
+            } catch (ex: Exception) {
+
+            }
+        }
+    }
+
+    override fun handleTriggerPress(pressed: Boolean) {
+        Log.e("hanheldtriggerpress", "${localSharedPreferences.getPauseStatus()}")
+
+        if (!localSharedPreferences.getPauseStatus()) {
+            if (pressed) {
+                zebraRFIDHandlerImpl?.perform()
+            } else {
+                zebraRFIDHandlerImpl?.stop()
+            }
+        }
+
+
+    }
+
+    override fun handleStartConnect(connected: Boolean) {
+        _dialogVisible.value = true
+    }
+
+    override fun batteryLevel(level: Int) {
+        Log.e("#########model", "$level")
+        _percentCharge.postValue(level)
+    }
+}

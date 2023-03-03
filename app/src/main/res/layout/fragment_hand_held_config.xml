@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.handheld.HandHeldConfigFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="50dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:textSize="26dp"
+            android:gravity="center_horizontal"
+            android:text="@string/set_power"
+            android:textColor="?android:textColorSecondary">
+        </com.google.android.material.textview.MaterialTextView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_weight="20">
+
+            <com.checkpoint.rfid_raw_material.utils.CustomBattery
+                android:id="@+id/imgBattery"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="25dp" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:textSize="25sp" />
+
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="60"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="20sp"
+                    android:text="@string/label_max_power_config"
+                    android:gravity="right" />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/label_max_power_config">
+
+                <SeekBar
+                    android:id="@+id/seekBarPower"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_height="50dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textview.MaterialTextView
+
+                    android:id="@+id/txtPower"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textColor="@color/purple_700"
+                    android:textSize="20sp"
+                    android:layout_gravity="right" />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="20sp"
+                    android:text="@string/select_region"
+                    android:gravity="right" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="25dp"
+                    app:boxBackgroundColor="@color/white"
+                    app:boxCornerRadiusBottomEnd="15dp"
+                    app:boxCornerRadiusBottomStart="15dp"
+                    app:boxCornerRadiusTopEnd="15dp"
+                    app:boxCornerRadiusTopStart="15dp"
+                    app:boxStrokeColor="@color/gray"
+                    app:boxStrokeWidth="1dp"
+                    app:endIconTint="@color/black">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/listRegions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnSetPower"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/button_icon_large"
+                android:drawableStart="@drawable/ic_save"
+                android:drawableTint="@color/white"
+                android:paddingStart="15dp"
+                android:paddingEnd="50dp"
+                android:text="@string/save"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>

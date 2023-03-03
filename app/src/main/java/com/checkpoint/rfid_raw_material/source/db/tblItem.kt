@@ -1,8 +1,7 @@
-package com.checkpoint.rfid_raw_material.db
+package com.checkpoint.rfid_raw_material.source.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "tblItem")

@@ -3,17 +3,10 @@ package com.checkpoint.rfid_raw_material.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.checkpoint.rfid_raw_material.db.tblItem
 import com.checkpoint.rfid_raw_material.source.model.Logs
-import com.checkpoint.rfid_raw_material.ui.test.TestFragment
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat

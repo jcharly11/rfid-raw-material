@@ -7,10 +7,20 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="denim">#274E78</color>
+<!--    <color name="denim">#274E78</color>-->
     <color name="navy">#2C3947</color>
+    <color name="red_ckp">#AE153C</color>
+    <color name="red_ckp_700">#C65B76</color>
     <color name="blue_tint">#C0CAD3</color>
-    <color name="gray">#F1F1F1</color>
+    <color name="gray">#C2C2C2</color>
+    <color name="gray_border">#616161</color>
     <color name="transparent">#00FFFFFF</color>
+    <color name="green">#59B113</color>
+    <color name="green_dark">#3F8308</color>
+    <color name="red">#F44336</color>
+    <color name="red_battery">#FF0000</color>
+    <color name="orange_battery">#FD8D03</color>
+    <color name="yellow_battery">#E4C915</color>
+    <color name="green_battery">#65DA07</color>
 
 </resources>

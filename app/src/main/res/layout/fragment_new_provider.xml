@@ -21,8 +21,8 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:gravity="center_horizontal"
-            android:text="Provider Detail"
-            android:textColor="@color/denim"
+            android:text="@string/provider_detail"
+            android:textColor="@color/navy"
             android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
 
         <LinearLayout
@@ -42,7 +42,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="ID"
+                    android:text="@string/id"
                     android:textColor="@color/black"
                     android:textStyle="bold">
                 </com.google.android.material.textview.MaterialTextView>
@@ -94,7 +94,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="ID AS400"
+                    android:text="@string/id_as400"
                     android:textStyle="bold"
                     android:textColor="@color/black">
                 </com.google.android.material.textview.MaterialTextView>
@@ -146,7 +146,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="Provider"
+                    android:text="@string/provider"
                     android:textStyle="bold"
                     android:textColor="@color/black">
                 </com.google.android.material.textview.MaterialTextView>
@@ -198,7 +198,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="Contact"
+                    android:text=""
                     android:textStyle="bold"
                     android:textColor="@color/black">
                 </com.google.android.material.textview.MaterialTextView>
@@ -250,7 +250,7 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="Country"
+                    android:text="@string/country"
                     android:textStyle="bold"
                     android:textColor="@color/black">
                 </com.google.android.material.textview.MaterialTextView>
@@ -299,7 +299,7 @@
                     android:drawableTint="@color/white"
                     android:paddingLeft="20dp"
                     android:paddingRight="40dp"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:textColor="@color/white"></android.widget.Button>
             </LinearLayout>
         </LinearLayout>

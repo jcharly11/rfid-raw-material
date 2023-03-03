@@ -8,15 +8,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.checkpoint.rfid_raw_material.adapter.ItemsAdapter
 import com.checkpoint.rfid_raw_material.databinding.FragmentTestBinding
-import com.checkpoint.rfid_raw_material.db.tblItem
+import com.checkpoint.rfid_raw_material.source.db.tblItem
 import com.checkpoint.rfid_raw_material.utils.LogCreator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -90,7 +88,7 @@ class TestFragment : Fragment() {
             checkPermission()
             val log= LogCreator(requireContext())
 
-            log.createLog("write")
+            
 
 //            val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
 //            val dateFormatter: String = df.format(Date())

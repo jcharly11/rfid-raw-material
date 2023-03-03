@@ -3,18 +3,20 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal">
+    android:layout_gravity="center_horizontal"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:gravity="center_horizontal"
-        android:background="@color/denim">
+        android:layout_height="80dp"
+        android:gravity="bottom|center_horizontal"
+        android:background="@color/navy"
+        android:paddingTop="20dp">
         <ImageView
             android:layout_width="30dp"
             android:layout_height="wrap_content"
             android:src="@drawable/logockp"
-            android:layout_gravity="center_horizontal"></ImageView>
+            android:layout_gravity="bottom"></ImageView>
 
     </LinearLayout>
 
@@ -23,11 +25,12 @@
         android:layout_height="100dp"
         android:background="@drawable/bg_menu"
         android:padding="10dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="RFID Raw Materials"
+            android:text="@string/tittle_app_menu"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:textSize="25sp"
@@ -36,7 +39,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Checkpoint Systems"
+            android:text="@string/checkpoint_tittle"
             android:textColor="@color/white"
             android:textAlignment="center"
             android:textSize="18sp"

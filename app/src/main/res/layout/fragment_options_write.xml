@@ -18,7 +18,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Choose Option"
+                android:text=""
                 android:textColor="@color/navy"
                 android:textSize="30sp"
                 android:textStyle="bold"
@@ -42,10 +42,10 @@
                 android:layout_marginBottom="25dp"
                 android:background="@drawable/button_icon_large"
                 android:drawableStart="@drawable/ic_inventory"
+                android:drawableTint="@color/white"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
-                android:text="Inventory"
-                android:drawableTint="@color/white"
+                android:text="@string/item_menu_inventory"
                 android:textColor="@color/white" />
 
         </RelativeLayout>
@@ -67,11 +67,11 @@
                 android:layout_marginBottom="25dp"
                 android:background="@drawable/button_icon_large"
                 android:drawableStart="@drawable/ic_scan"
+                android:drawableTint="@color/white"
                 android:paddingLeft="30dp"
                 android:paddingRight="30dp"
-                android:text="Write TAG"
-                android:textColor="@color/white"
-                android:drawableTint="@color/white" />
+                android:text="@string/item_menu_write"
+                android:textColor="@color/white" />
 
         </RelativeLayout>
 
