@@ -31,6 +31,5 @@ class ConversionTest {
         println(hexValueEpc)
 
         assertEquals("90801A249B1F10A06C96AFF20001E240",hexValueEpc)
-
     }
 }

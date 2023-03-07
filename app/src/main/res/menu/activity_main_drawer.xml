@@ -5,22 +5,22 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_inventory"
+            android:id="@+id/inventoryPagerFragment"
             android:icon="@drawable/ic_inventory"
-            android:title="Inventory"
-            android:iconTint="@color/denim">
+            android:title="@string/item_menu_inventory"
+            android:iconTint="@color/navy">
         </item>
         <item
-            android:id="@+id/nav_write_tag"
+            android:id="@+id/writeTagFragment"
             android:icon="@drawable/ic_tag"
-            android:title="Write Tag"
-            android:iconTint="@color/denim">
+            android:title="@string/item_menu_write"
+            android:iconTint="@color/navy">
         </item>
         <item
-            android:id="@+id/nav_provider"
+            android:id="@+id/providerListFragment"
             android:icon="@drawable/ic_user"
-            android:title="Providers"
-            android:iconTint="@color/denim">
+            android:title="@string/item_menu_provider"
+            android:iconTint="@color/navy">
         </item>
     </group>
 </menu>

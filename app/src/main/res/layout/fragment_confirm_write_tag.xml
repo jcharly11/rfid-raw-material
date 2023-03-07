@@ -21,7 +21,7 @@
             android:layout_marginRight="25dp"
             android:gravity="center_horizontal"
             android:text="Confirm Write Tag"
-            android:textColor="@color/denim"
+            android:textColor="@color/navy"
             android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
 
         <LinearLayout

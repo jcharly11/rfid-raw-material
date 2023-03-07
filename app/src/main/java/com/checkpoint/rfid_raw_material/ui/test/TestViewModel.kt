@@ -2,11 +2,9 @@ package com.checkpoint.rfid_raw_material.ui.test
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import com.checkpoint.rfid_raw_material.db.tblItem
+import com.checkpoint.rfid_raw_material.source.db.tblItem
 import com.checkpoint.rfid_raw_material.source.DataRepository
-import com.checkpoint.rfid_raw_material.source.ItemsDatabase
-import com.checkpoint.rfid_raw_material.source.model.Item
+import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -16,7 +14,7 @@ class TestViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         repository = DataRepository.getInstance(
-            ItemsDatabase.getDatabase(application.baseContext)
+            RawMaterialsDatabase.getDatabase(application.baseContext)
         )
     }
 

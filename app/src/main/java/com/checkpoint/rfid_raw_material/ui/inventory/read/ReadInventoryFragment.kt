@@ -11,9 +11,11 @@ import com.checkpoint.rfid_raw_material.R
 class ReadInventoryFragment : Fragment() {
 
     companion object {
-        fun newInstance() = ReadInventoryFragment()
-    }
+        @JvmStatic
+        fun newInstance() = ReadInventoryFragment().apply {
 
+        }
+    }
     private lateinit var viewModel: ReadInventoryViewModel
 
     override fun onCreateView(

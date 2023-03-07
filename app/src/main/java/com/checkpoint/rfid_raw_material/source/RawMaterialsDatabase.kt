@@ -4,33 +4,35 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.checkpoint.rfid_raw_material.db.tblItem
+import com.checkpoint.rfid_raw_material.source.db.tblItem
 import com.checkpoint.rfid_raw_material.source.dao.ItemDao
+import com.checkpoint.rfid_raw_material.source.dao.ProviderDao
+import com.checkpoint.rfid_raw_material.source.db.Provider
 
 @Database(
     entities = [
-        tblItem::class
+        tblItem::class,
+        Provider::class
     ], version = 2, exportSchema = false
 )
-abstract class ItemsDatabase : RoomDatabase() {
+abstract class RawMaterialsDatabase : RoomDatabase() {
     abstract fun itemDao(): ItemDao
+    abstract fun providerDao(): ProviderDao
 
     companion object {
         @Volatile
-        private var INSTANCE: ItemsDatabase? = null
+        private var INSTANCE: RawMaterialsDatabase? = null
 
-        fun getDatabase(context: Context): ItemsDatabase {
+        fun getDatabase(context: Context): RawMaterialsDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    ItemsDatabase::class.java,
-                    "items"
+                    RawMaterialsDatabase::class.java,
+                    "rawMaterials"
                 ).build()
                 INSTANCE = instance
                 instance
             }
         }
-
-
     }
 }

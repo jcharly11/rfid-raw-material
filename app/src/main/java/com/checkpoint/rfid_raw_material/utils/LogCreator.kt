@@ -3,16 +3,10 @@ package com.checkpoint.rfid_raw_material.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
-import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContentProviderCompat.requireContext
-import com.checkpoint.rfid_raw_material.db.tblItem
-import com.checkpoint.rfid_raw_material.ui.test.TestFragment
+import com.checkpoint.rfid_raw_material.source.model.Logs
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -36,16 +30,17 @@ class LogCreator constructor(context: Context): View(context) {
         isFileExists=false
     }
 
-    suspend fun createLog(type:String){
+    fun createLog(typeCSV:String, date: String, epc:String, version:String, type:String,
+                          subversion:String, identifier:String,supplier:String){
         //val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
         val dateFormatter: String = df.format(Date())
-        var fileName = "write_$dateFormatter.csv"
+        var fileName = "${typeCSV}_$dateFormatter.csv"
         var fullPath= "$pathApplication/$fileName"
 
         var initialFile: File
         var targetStream: InputStream
-        var list= listOf<tblItem>()
+        var list= listOf<Logs>()
 
         createFile(fileName)
 
@@ -55,7 +50,8 @@ class LogCreator constructor(context: Context): View(context) {
             list = readCsv(targetStream)
         }
 
-        FileOutputStream(fullPath).apply { writeCsv( list,fileName) }
+        FileOutputStream(fullPath).apply {
+            writeCsv(list,date,epc,version,type,subversion,identifier,supplier) }
         Toast.makeText(context, "Log created $fullPath", Toast.LENGTH_SHORT).show()
     }
 
@@ -79,40 +75,34 @@ class LogCreator constructor(context: Context): View(context) {
         }
     }
 
-    private fun OutputStream.writeCsv(listCSV: List<tblItem>, fileName:String) {
+    private fun OutputStream.writeCsv(listCSV: List<Logs>,date: String, epc:String, version:String,
+                                      type:String,subversion:String, identifier:String,supplier:String ) {
         val writer= bufferedWriter()
-        writer.write("""ID,Name""")
+        writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
         writer.newLine()
 
         listCSV.forEach {
-            writer.write("${it.id},${it.nameItem}")
+            writer.write("${it.date},${it.epc},${it.version},${it.type}" +
+                    ",${it.subversion},${it.identifier},${it.suplier}")
             writer.newLine()
         }
 
-        /*items.forEach {
-            //writer.write("${date},${epc},${it.id},${type},${subversion},${identifier},${supplier}")
-            writer.write("${it.id},${epc}")
-            writer.newLine()
-        }*/
-
-        var epc="epc"
-        writer.write("1,$epc")
         writer.flush()
+        writer.write("${date},${epc},${version},${type},${subversion},${identifier},${supplier}")
         writer.close()
     }
 
-
-
-    fun readCsv(inputStream: InputStream): List<tblItem> {
+    fun readCsv(inputStream: InputStream): List<Logs> {
         val reader = inputStream.bufferedReader()
         val header = reader.readLine()
         return reader.lineSequence()
             .filter { it.isNotBlank() }
             .map {
-                val (id, name) = it.split(',', ignoreCase = false, limit = 3)
-                tblItem(id.toInt(), name.trim().removeSurrounding("\""))
+                val (date, epc,version,type,subversion,identifier,supplier) = it.split(",", ignoreCase = false, limit = 7)
+                Logs(date,epc,version,type,subversion,identifier,supplier.trim().removeSurrounding("\""))
             }.toList()
     }
-
-
 }
+
+operator fun <T> List<T>.component6() = this[5]
+operator fun <T> List<T>.component7() = this[6]

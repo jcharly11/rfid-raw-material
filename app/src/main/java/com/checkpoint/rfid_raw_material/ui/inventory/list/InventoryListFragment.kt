@@ -6,21 +6,30 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryListBinding
+import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
+import com.checkpoint.rfid_raw_material.ui.selection.OptionsWriteViewModel
 
 class InventoryListFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = InventoryListFragment()
-    }
-
     private lateinit var viewModel: InventoryListViewModel
+    private var _binding: FragmentInventoryListBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_inventory_list, container, false)
+        viewModel = ViewModelProvider(this)[InventoryListViewModel::class.java]
+        _binding = FragmentInventoryListBinding.inflate(inflater, container, false)
+
+        binding.btnStartInventory.setOnClickListener {
+            findNavController().navigate(R.id.inventoryPagerFragment)
+        }
+        return  binding.root
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

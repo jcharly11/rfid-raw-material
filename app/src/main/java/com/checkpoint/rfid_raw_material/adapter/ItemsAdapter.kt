@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.checkpoint.rfid_raw_material.R
-import com.checkpoint.rfid_raw_material.db.tblItem
+import com.checkpoint.rfid_raw_material.source.db.tblItem
 
 class ItemsAdapter(private val dataSet: List<tblItem>) :
     RecyclerView.Adapter<ItemsAdapter.ViewHolder>() {
