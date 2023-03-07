@@ -215,7 +215,8 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
                 if (!reader.isConnected()) {
                     // Establish connection to the RFID Reader
                     reader.connect();
-                    ConfigureReaderToRead();
+                   // ConfigureReaderToRead();
+                    ConfigureReaderToWrite();
                     return "Connected";
                 }
             } catch (InvalidUsageException e) {
@@ -258,30 +259,22 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
                 for (int x = 0; x<= value.length-1; x++) {
                     Log.e("---->",""+value[x]);
                 }
-                //MAX_POWER = reader.ReaderCapabilities.getTransmitPowerLevelValues().length ;
-                Log.e("Choice: ",""+MAX_POWER);
 
                 Antennas.AntennaRfConfig config = reader.Config.Antennas.getAntennaRfConfig(1);
-                config.setTransmitPowerIndex(MAX_POWER);
+                config.setTransmitPowerIndex(240);
                 config.setrfModeTableIndex(0);
                 config.setTari(0);
                 reader.Config.Antennas.setAntennaRfConfig(1, config);
-                // Set the singulation control
+
                 Antennas.SingulationControl s1_singulationControl = reader.Config.Antennas.getSingulationControl(1);
-
-                if (session.equals("SESSION_0")){
-                    s1_singulationControl.setSession(SESSION.SESSION_S0);
-                }
-
-                if (session.equals("SESSION_1")){
-                    s1_singulationControl.setSession(SESSION.SESSION_S1);
-                }
+                s1_singulationControl.setSession(SESSION.SESSION_S0);
                 s1_singulationControl.Action.setInventoryState(INVENTORY_STATE.INVENTORY_STATE_A);
                 s1_singulationControl.Action.setSLFlag(SL_FLAG.SL_ALL);
                 reader.Config.Antennas.setSingulationControl(1, s1_singulationControl);
-                // delete any prefilters
-                reader.Actions.PreFilters.deleteAll();
-                //
+                reader.Config.setDPOState(DYNAMIC_POWER_OPTIMIZATION.DISABLE);
+
+
+
             } catch (InvalidUsageException | OperationFailureException e) {
                 e.printStackTrace();
             }
@@ -293,8 +286,11 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
          try {
 
             ConfigureReaderToRead();
-            reader.Config.setDPOState(true ? DYNAMIC_POWER_OPTIMIZATION.ENABLE : DYNAMIC_POWER_OPTIMIZATION.DISABLE);
-            reader.Config.setAccessOperationWaitTimeout(1000);
+           Boolean sp  =reader.ReaderCapabilities.isBlockWriteSupported();
+           Log.e("ReaderCapabilities : WRITE",sp.toString()) ;
+
+             reader.Config.setAccessOperationWaitTimeout(1000);
+             reader.Actions.Inventory.stop();
 
         } catch (InvalidUsageException e) {
             e.printStackTrace();
@@ -304,33 +300,7 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
 
 
     }
-    private void writeTag(String sourceEPC, String Password, MEMORY_BANK memory_bank, String targetData, int offset) {
-        Log.d(TAG, "WriteTag " + targetData);
-        try {
-            TagData tagData = null;
-            String tagId = sourceEPC;
-            TagAccess tagAccess = new TagAccess();
-            TagAccess.WriteAccessParams writeAccessParams = tagAccess.new WriteAccessParams();
-            String writeData = targetData;
-            writeAccessParams.setAccessPassword(Long.parseLong(Password,16));
-            writeAccessParams.setMemoryBank(memory_bank);
-            writeAccessParams.setOffset(offset);
-            writeAccessParams.setWriteData(writeData);
-            // set retries in case of partial write happens
-            writeAccessParams.setWriteRetries(3);
-            // data length in words
-            writeAccessParams.setWriteDataLength(writeData.length() / 4);
-            // 5th parameter bPrefilter flag is true which means API will apply pre filter internally
-            // 6th parameter should be true in case of changing EPC ID it self i.e. source and target both is EPC
-            boolean useTIDfilter = memory_bank == MEMORY_BANK.MEMORY_BANK_EPC;
-            reader.Actions.TagAccess.writeWait(tagId, writeAccessParams, null, tagData, true, useTIDfilter);
 
-        } catch (InvalidUsageException e) {
-            e.printStackTrace();
-        } catch (OperationFailureException e) {
-            e.printStackTrace();
-        }
-    }
     private synchronized void disconnect() {
         Log.d(TAG, "disconnect " + reader);
         try {
@@ -372,6 +342,49 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             e.printStackTrace();
         }
     }
+    synchronized void performWriteTag() {
+
+
+        String EPC = "E2806894000040270002262A";
+        String data = "90801A249B1F10A06C96AFF20001E240";
+        String password = "00";
+        writeTag(EPC, password, MEMORY_BANK.MEMORY_BANK_EPC, data, 2);
+
+
+    }
+    synchronized private void writeTag(String sourceEPC, String Password, MEMORY_BANK memory_bank, String targetData, int offset) {
+        Log.d(TAG, "WriteTag " + targetData);
+        try {
+            TagData tagData = null;
+            String tagId = sourceEPC;
+            TagAccess tagAccess = new TagAccess();
+            TagAccess.WriteAccessParams writeAccessParams = tagAccess.new WriteAccessParams();
+            String writeData = targetData; //write data in string
+            writeAccessParams.setAccessPassword(Long.parseLong(Password,16));
+            writeAccessParams.setMemoryBank(memory_bank);
+            writeAccessParams.setOffset(offset); // start writing from word offset 0
+            writeAccessParams.setWriteData(writeData);
+            // set retries in case of partial write happens
+            writeAccessParams.setWriteRetries(3);
+            // data length in words
+            writeAccessParams.setWriteDataLength(writeData.length() / 4);
+            // 5th parameter bPrefilter flag is true which means API will apply pre filter internally
+            // 6th parameter should be true in case of changing EPC ID it self i.e. source and target both is EPC
+            boolean useTIDfilter = memory_bank == MEMORY_BANK.MEMORY_BANK_EPC;
+            reader.Actions.TagAccess.writeWait(tagId, writeAccessParams, null, tagData, true, useTIDfilter);
+        } catch (InvalidUsageException e) {
+            e.printStackTrace();
+        } catch (OperationFailureException e) {
+            e.printStackTrace();
+            Log.e("EXCEPTION", e.getVendorMessage().toString());
+            Log.e("RESULTS", e.getResults().toString());
+            Log.e("RESULTS", e.getStatusDescription().toString());
+
+
+
+        }
+    }
+
 
     synchronized void stopInventory() {
         // check reader connection
@@ -451,6 +464,8 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             return null;
         }
     }
+
+
 
 
 }

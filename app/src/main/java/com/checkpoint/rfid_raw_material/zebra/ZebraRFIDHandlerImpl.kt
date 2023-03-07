@@ -39,6 +39,10 @@ class ZebraRFIDHandlerImpl {
     fun perform(){
         zebraRfidHandler.performInventory()
     }
+
+    fun performWriteTag(){
+        zebraRfidHandler.performWriteTag()
+    }
     fun stop(){
         zebraRfidHandler.stopInventory()
     }
