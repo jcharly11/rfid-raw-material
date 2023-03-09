@@ -1,13 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.inventory.items.ItemsReadFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.inventory.items.ItemsReadFragment"
+    android:orientation="vertical"
+    android:padding="25dp">
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableInventory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:expandable_duration="200"
+                app:expandable_isExpanded="false"
+                app:expandable_parentLayout="@layout/header_inventory"
+                app:expandable_secondLayout="@layout/content_inventory"
+                app:expandable_spinner="@drawable/ic_arrow_down"
+                app:expandable_spinner_color="@color/navy"></com.skydoves.expandablelayout.ExpandableLayout>
 
-</FrameLayout>
+            <com.skydoves.expandablelayout.ExpandableLayout
+                android:id="@+id/expandableTags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:expandable_duration="200"
+                app:expandable_isExpanded="false"
+                app:expandable_parentLayout="@layout/header_tags"
+                app:expandable_secondLayout="@layout/content_tags"
+                app:expandable_spinner="@drawable/ic_arrow_down"
+                app:expandable_spinner_color="@color/navy"></com.skydoves.expandablelayout.ExpandableLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

@@ -18,7 +18,7 @@ class CustomDialogLoader(private val fragment: Fragment, private val typeLoading
                 setCancelable(true)
             }
             else->{
-                setCancelable(false)
+                setCancelable(true)
             }
 
         }
@@ -28,14 +28,14 @@ class CustomDialogLoader(private val fragment: Fragment, private val typeLoading
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.custom_dialog_loader)
-        val tvMessageLoader =findViewById<TextView>(R.id.tvMessageLoader)
-        val lytLoaderView = findViewById<LinearLayout>(R.id.lytLoaderView)
-        val lytblueToothAdvice= findViewById<LinearLayout>(R.id.lytblueToothAdvice)
+        setContentView(R.layout.custom_dialog3)
+        //val tvMessageLoader =findViewById<TextView>(R.id.tvMessageLoader)
+        //val lytLoaderView = findViewById<LinearLayout>(R.id.lytLoaderView)
+        //val lytblueToothAdvice= findViewById<LinearLayout>(R.id.lytblueToothAdvice)
 
         val resource = context.resources
-        lytLoaderView.visibility= View.VISIBLE
-        tvMessageLoader.text=when(typeLoading){
+       // lytLoaderView.visibility= View.VISIBLE
+       /* tvMessageLoader.text=when(typeLoading){
             TypeLoading.BLUETOOTH_DEVICE->{
                 resource.getString(R.string.loading_text_bluetooth)
             }
@@ -49,10 +49,10 @@ class CustomDialogLoader(private val fragment: Fragment, private val typeLoading
                 lytLoaderView.visibility = View.GONE
                 lytblueToothAdvice.visibility = View.VISIBLE
                 resource.getString(R.string.bt_message_device_discovery)
-            }
+            }*/
 
 
-        }
+        //}
 
     }
 }

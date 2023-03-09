@@ -39,5 +39,14 @@
     <string name="finish_inventory">Finish</string>
     <string name="new_provider">New Provider</string>
     <string name="check_fields">Validate all fields</string>
+    <string name="tags_list">Tags List</string>
+    <string name="finish_inventory_title">Finish Inventory</string>
+    <string name="finish_inventory_question">Do you want finish inventory?</string>
+    <string name="pause_inventory_title">Pause Inventory</string>
+    <string name="pause_inventory_question">Do you want pause inventory?</string>
+    <string name="start_inventory_title">Start Inventory</string>
+    <string name="start_inventory_question">Do you want start inventory?</string>
+    <string name="yes">Accept</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

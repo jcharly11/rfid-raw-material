@@ -65,6 +65,9 @@ class WriteTagFragment : Fragment(),
                         hexValueEpc += conversor.toHexadecimalString(it)
                     }
 
+
+                    var newTag= viewModel.newTag(versionValue,subversionValue,typeValue,pieceValue,idProvider,hexValueEpc)
+
                     Toast.makeText(context, "$hexValueEpc", Toast.LENGTH_SHORT).show()
                 }
             }

@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
+import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.db.tblItem
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 class WriteTagViewModel (application: Application) : AndroidViewModel(application){
     private var repository: DataRepository
@@ -41,5 +44,24 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         }
         listProviders= listProviders!!.toMutableList()
         listProviders
+    }
+
+    suspend fun newTag(version: String,subversion:String,type:String,piece:String,
+    idProvider:Int,epc:String): Tags = withContext(Dispatchers.IO) {
+        val nowDate: OffsetDateTime = OffsetDateTime.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+
+        repository.insertNewTag(
+            Tags(
+                0,
+                version,
+                subversion,
+                type,
+                piece,
+                idProvider,
+                epc,
+                formatter.format(nowDate)
+            )
+        )
     }
 }
