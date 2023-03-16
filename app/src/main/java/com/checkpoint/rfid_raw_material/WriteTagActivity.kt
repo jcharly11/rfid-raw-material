@@ -3,15 +3,24 @@ package com.checkpoint.rfid_raw_material
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
+import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
+import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.zebra.ZebraRFIDHandlerImpl
+import com.zebra.barcode.sdk.BarcodeDataEventArgs
+import com.zebra.barcode.sdk.BarcodeDataListener
+import com.zebra.rfid.api3.ENUM_TRANSPORT
+import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
+import com.zebra.rfid.api3.SESSION
 import com.zebra.rfid.api3.TagData
+import kotlinx.coroutines.launch
 
-private  var zebraRFIDHandlerImpl: ZebraRFIDHandlerImpl? = null
-private var maxLevel = 300
+class WriteTagActivity : AppCompatActivity(),ResponseHandlerInterface,BatteryHandlerInterface {
 
-class WriteTagActivity : AppCompatActivity(), ResponseHandlerInterface, BatteryHandlerInterface {
+   private lateinit var rfidHandler: RFIDHandler
+   private var writeMode: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_write_tag)
@@ -19,33 +28,58 @@ class WriteTagActivity : AppCompatActivity(), ResponseHandlerInterface, BatteryH
 
     override fun onStart() {
         super.onStart()
-        zebraRFIDHandlerImpl = ZebraRFIDHandlerImpl()
-        zebraRFIDHandlerImpl?.listener(this, this)
-        zebraRFIDHandlerImpl?.start(application, 150,"RFD850019323520100189", "SESSION_1")
+
+
+        rfidHandler = RFIDHandler(
+            this,
+            DeviceConfig(
+                150,
+                SESSION.SESSION_S1,
+                "RFD850019323520100189",
+                ENUM_TRIGGER_MODE.RFID_MODE,
+                ENUM_TRANSPORT.BLUETOOTH
+
+            )
+        )
+
+        rfidHandler.setResponseHandlerInterface(this)
+        rfidHandler.setBatteryHandlerInterface(this)
 
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        val code = tagData?.get(0)?.tagID.toString()
-        val rssi = tagData?.get(0)?.peakRSSI.toString()
-        Log.e("RSSI",rssi)
-        Log.e("CODE",code)
+        tagData!!.iterator().forEachRemaining {
+            Log.e("handleTagdata","${it!!.tagID}")
+        }
 
     }
 
     override fun handleTriggerPress(pressed: Boolean) {
-        if (pressed) {
-            zebraRFIDHandlerImpl?.performWriteTag()
-        } else {
-            zebraRFIDHandlerImpl?.stop()
+
+         lifecycleScope.launch {
+
+            if (pressed){
+                if (writeMode){
+                    rfidHandler.write("","","")
+                }else{
+                    rfidHandler!!.perform()
+                }
+
+            }else{
+                rfidHandler!!.stop()
+            }
+
         }
+
     }
 
     override fun handleStartConnect(connected: Boolean) {
-       Log.e("handleStartConnect", "handleStartConnect : $connected")
+        Log.e("handleStartConnect","${connected}")
     }
 
     override fun batteryLevel(level: Int) {
-        Log.e("batteryLevel", "batteryLevel : $level")
+        Log.e("batteryLevel","${level}")
     }
+
+
 }

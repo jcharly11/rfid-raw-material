@@ -8,18 +8,19 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentWriteTagBinding
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.utils.Conversor
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.NonDisposableHandle.parent
-import kotlinx.coroutines.launch
 import java.util.*
 
 class WriteTagFragment : Fragment(),
@@ -42,6 +43,18 @@ class WriteTagFragment : Fragment(),
         dialogProvider = CustomDialogProvider(this@WriteTagFragment)
 
         getProviderList()
+        viewModel.liveCode.observe(viewLifecycleOwner){
+            binding.tvIdentifier.setText(it)
+        }
+
+        binding.tvIdentifier.setOnFocusChangeListener { view, b ->
+            Log.e("------>","$b")
+            //launch dialog for handheld  scan barcode ready
+            this.lifecycleScope.launch {
+                viewModel.startHandHeldBarCode()
+            }
+        }
+
 
         binding.btnWriteTag.setOnClickListener {
             try {
@@ -59,13 +72,27 @@ class WriteTagFragment : Fragment(),
                     var supplier = conversor.toBinaryString(idProvider.toString(),32,'0')
                     var piece = conversor.toBinaryString(pieceValue,80,'0')
 
+
                     var binaryChain = "$version$type$subVersion$piece$supplier"
                     var binaryGroup = binaryChain.chunked(4)
                     binaryGroup.iterator().forEach {
                         hexValueEpc += conversor.toHexadecimalString(it)
                     }
 
-                    Toast.makeText(context, "$hexValueEpc", Toast.LENGTH_SHORT).show()
+/*
+                    MainScope().launch {
+                        val disconnectDevice = async {
+                           viewModel.disconnectDevice()
+                        }
+                        disconnectDevice.await().let {
+
+                            var bundle= bundleOf("epc" to hexValueEpc)
+                            findNavController().navigate(R.id.confirmWriteTagFragment,bundle)
+                        }
+                    }*/
+                    var bundle= bundleOf("epc" to hexValueEpc)
+                    findNavController().navigate(R.id.confirmWriteTagFragment,bundle)
+
                 }
             }
             catch (ex:Exception){
@@ -81,19 +108,13 @@ class WriteTagFragment : Fragment(),
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(WriteTagViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
     fun getProviderList(){
         CoroutineScope(Dispatchers.Main).launch {
-            val providerList= viewModel.getProviderList()
+            val providerList=  viewModel.getProviderList()
 
             val adapter: ArrayAdapter<ProviderModel> =
                 ArrayAdapter<ProviderModel>(requireContext(), android.R.layout.simple_spinner_dropdown_item, providerList)
-            binding.spProviderList.setAdapter(adapter)
+            binding.spProviderList.adapter = adapter
 
             binding.spProviderList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

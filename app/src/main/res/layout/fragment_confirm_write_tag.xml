@@ -35,7 +35,54 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:textSize="23sp"
-                android:text="Tag Code"
+                android:text="Tag ID"
+                android:textColor="@color/black">
+            </com.google.android.material.textview.MaterialTextView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal">
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_tag"
+                        android:backgroundTint="@color/navy"
+                        android:gravity="center_horizontal|center_vertical"></TextView>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:layout_marginBottom="15dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tvTID"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginTop="5dp"
+                        android:inputType="none"
+                        android:text=""
+                        android:background="@drawable/bg_custom_entry"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:textSize="23sp"
+                android:text="New Tag Code"
                 android:textColor="@color/black">
             </com.google.android.material.textview.MaterialTextView>
 
@@ -64,13 +111,14 @@
                     android:layout_weight="9"
                     android:layout_marginBottom="15dp">
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtTagEPC"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="25dp"
                         android:layout_marginTop="5dp"
                         android:inputType="textUri"
-                        android:text="0000000000000001"
+                        android:text=""
                         android:background="@drawable/bg_custom_entry"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -91,6 +139,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp">
                     <android.widget.Button
+                        android:id="@+id/btnCancel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
@@ -111,6 +160,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp">
                     <android.widget.Button
+                        android:id="@+id/btnWrite"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical|center_horizontal"

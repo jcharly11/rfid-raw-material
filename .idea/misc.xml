@@ -4,8 +4,20 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/rfid_raw_material/app/src/main/res/layout/fragment_inventory_list.xml" value="0.19947916666666668" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_hand_held_gun.xml" value="0.1485" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_inventory.xml" value="0.1485" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_provider.xml" value="0.1485" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_scan.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_stop.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_tag.xml" value="0.1485" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_tag_check.xml" value="0.1485" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_bar_code.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_write_tag.xml" value="0.21" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/content_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_wait_for_handheld.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_write_tag_confirmation.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_confirm_write_tag.xml" value="0.2" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_test.xml" value="0.18" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_write_tag.xml" value="0.20416666666666666" />
       </map>
     </option>

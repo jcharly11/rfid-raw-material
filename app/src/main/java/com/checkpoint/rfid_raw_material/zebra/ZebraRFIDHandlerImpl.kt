@@ -1,6 +1,7 @@
 package com.checkpoint.rfid_raw_material.zebra
 
 import android.content.Context
+import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 
 class ZebraRFIDHandlerImpl {
 
@@ -16,8 +17,6 @@ class ZebraRFIDHandlerImpl {
         zebraRfidHandler.setBatterListener(batteryHandlerInterface)
     }
 
-
-    //Soupported list power level
     fun list(): IntArray? {
         val list = zebraRfidHandler.powerSoupportedList()
         return list
@@ -31,7 +30,6 @@ class ZebraRFIDHandlerImpl {
     fun power(): Int{
         return zebraRfidHandler.currentPower()
     }
-
     fun destroy() {
         zebraRfidHandler.onDestroy()
     }
@@ -41,7 +39,7 @@ class ZebraRFIDHandlerImpl {
     }
 
     fun performWriteTag(){
-        zebraRfidHandler.performWriteTag()
+         zebraRfidHandler.performWriteTag("","","")
     }
     fun stop(){
         zebraRfidHandler.stopInventory()
@@ -50,7 +48,16 @@ class ZebraRFIDHandlerImpl {
 
         zebraRfidHandler.batteryLevel()
     }
-    fun write(){
 
+    fun write(tid: String, epc: String, pass: String){
+
+        zebraRfidHandler.performWriteTag(tid, epc, pass)
+    }
+
+    fun mode(mode: Int){
+        when(mode){
+            0-> zebraRfidHandler.switchMode(ENUM_TRIGGER_MODE.RFID_MODE)
+            1-> zebraRfidHandler.switchMode(ENUM_TRIGGER_MODE.BARCODE_MODE)
+        }
     }
 }

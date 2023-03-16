@@ -13,42 +13,42 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="500" />
-                            <option name="y" value="724" />
+                            <option name="x" value="520" />
+                            <option name="y" value="701" />
                           </Point>
                         </option>
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="inventoryListFragment">
+                  <entry key="handHeldConfigFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="288" />
-                            <option name="y" value="366" />
+                            <option name="x" value="256" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="inventoryPagerFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_inventoryListFragment_to_newInventoryFragment">
+                            <entry key="action_inventoryPagerFragment_to_handHeldConfigFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
                           </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="newInventoryFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="500" />
-                            <option name="y" value="368" />
-                          </Point>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -76,7 +76,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_optionsWriteFragment_to_inventoryListFragment">
+                            <entry key="action_optionsWriteFragment_to_inventoryPagerFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -112,18 +112,6 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="testFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="62" />
-                            <option name="y" value="750" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="writeTagFragment">
                     <value>
                       <LayoutPositions>
@@ -132,15 +120,6 @@
                             <option name="x" value="256" />
                             <option name="y" value="724" />
                           </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_writeTagFragment_to_confirmWriteTagFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>

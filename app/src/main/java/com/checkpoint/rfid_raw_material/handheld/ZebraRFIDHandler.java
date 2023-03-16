@@ -41,7 +41,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     private static ReaderDevice readerDevice;
     private static RFIDReader reader;
     private EventHandler eventHandler;
-    TextView textView;
     private Context context;
     private int MAX_POWER = 270;
     String readername = "RFD850019323520100198";

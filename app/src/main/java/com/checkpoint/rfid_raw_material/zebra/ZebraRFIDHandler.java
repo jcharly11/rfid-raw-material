@@ -32,7 +32,6 @@ import com.zebra.rfid.api3.TagAccess;
 import com.zebra.rfid.api3.TagData;
 import com.zebra.rfid.api3.TriggerInfo;
 import java.util.ArrayList;
-import android.widget.TextView;
 
 
 
@@ -45,7 +44,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     private static ReaderDevice readerDevice;
     private static RFIDReader reader;
     private EventHandler eventHandler;
-    TextView textView;
     private Context context;
     private int MAX_POWER = 270;
     String readername = "RFD850019323520100198";
@@ -217,6 +215,8 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
                     reader.connect();
                    // ConfigureReaderToRead();
                     ConfigureReaderToWrite();
+
+
                     return "Connected";
                 }
             } catch (InvalidUsageException e) {
@@ -285,12 +285,9 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         Log.d(TAG, "ConfigureReader Write" + reader.getHostName());
          try {
 
-            ConfigureReaderToRead();
-           Boolean sp  =reader.ReaderCapabilities.isBlockWriteSupported();
-           Log.e("ReaderCapabilities : WRITE",sp.toString()) ;
-
-             reader.Config.setAccessOperationWaitTimeout(1000);
-             reader.Actions.Inventory.stop();
+           ConfigureReaderToRead();
+           reader.Config.setAccessOperationWaitTimeout(1000);
+           reader.Actions.Inventory.stop();
 
         } catch (InvalidUsageException e) {
             e.printStackTrace();
@@ -342,13 +339,10 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             e.printStackTrace();
         }
     }
-    synchronized void performWriteTag() {
+    synchronized void performWriteTag( String tid, String epc, String password ) {
 
 
-        String EPC = "E2806894000040270002262A";
-        String data = "90801A249B1F10A06C96AFF20001E240";
-        String password = "00";
-        writeTag(EPC, password, MEMORY_BANK.MEMORY_BANK_EPC, data, 2);
+        writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2);
 
 
     }
@@ -359,17 +353,13 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
             String tagId = sourceEPC;
             TagAccess tagAccess = new TagAccess();
             TagAccess.WriteAccessParams writeAccessParams = tagAccess.new WriteAccessParams();
-            String writeData = targetData; //write data in string
+            String writeData = targetData;
             writeAccessParams.setAccessPassword(Long.parseLong(Password,16));
             writeAccessParams.setMemoryBank(memory_bank);
-            writeAccessParams.setOffset(offset); // start writing from word offset 0
+            writeAccessParams.setOffset(offset);
             writeAccessParams.setWriteData(writeData);
-            // set retries in case of partial write happens
             writeAccessParams.setWriteRetries(3);
-            // data length in words
             writeAccessParams.setWriteDataLength(writeData.length() / 4);
-            // 5th parameter bPrefilter flag is true which means API will apply pre filter internally
-            // 6th parameter should be true in case of changing EPC ID it self i.e. source and target both is EPC
             boolean useTIDfilter = memory_bank == MEMORY_BANK.MEMORY_BANK_EPC;
             reader.Actions.TagAccess.writeWait(tagId, writeAccessParams, null, tagData, true, useTIDfilter);
         } catch (InvalidUsageException e) {
@@ -466,6 +456,29 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     }
 
 
+    public void switchMode( ENUM_TRIGGER_MODE mode){
+        try {
+
+            switch (mode){
+                case  RFID_MODE:
+                    reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, true);
+                    reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.BARCODE_MODE, false);
+                    break;
+                case  BARCODE_MODE:
+                    reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.BARCODE_MODE, true);
+                    reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false);
+                    break;
+
+
+            }
+
+
+        } catch (InvalidUsageException e) {
+            e.printStackTrace();
+        } catch (OperationFailureException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

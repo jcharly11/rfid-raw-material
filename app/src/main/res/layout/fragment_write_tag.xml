@@ -158,8 +158,9 @@
                             android:layout_height="55dp"
                             android:layout_marginRight="15dp"
                             android:inputType="number"
-                            android:text="123456789012345678901234"
-                            android:background="@color/transparent"/>
+                            android:background="@color/transparent"
+
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
