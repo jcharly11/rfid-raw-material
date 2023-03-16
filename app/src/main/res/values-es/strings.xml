@@ -49,5 +49,6 @@
     <string name="start_inventory_question">¿Deseas iniciar el inventario?</string>
     <string name="yes">Aceptar</string>
     <string name="cancel">Cancelar</string>
-
+    <string name="configuration">Configuración</string>
+    <string name="language">Idioma</string>
 </resources>

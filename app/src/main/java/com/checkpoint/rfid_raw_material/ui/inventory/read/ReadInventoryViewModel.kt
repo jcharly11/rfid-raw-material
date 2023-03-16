@@ -48,4 +48,11 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
     fun pauseInventory(status: Boolean){
         localSharedPreferences.setPauseStatus(status)
     }
+
+
+    suspend fun insertInventory(inventory: Inventory): Inventory = withContext(
+        Dispatchers.IO) {
+        repository.insertNewInventory(inventory)
+    }
+
 }

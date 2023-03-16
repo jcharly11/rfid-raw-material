@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.configuration.ConfigurationFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="50dp"
+        android:paddingRight="20dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:gravity="center_horizontal"
+            android:text="@string/configuration"
+            android:textColor="@color/navy"
+            android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="40dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="18sp"
+                    android:text="@string/language"
+                    android:textColor="@color/black"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_custom_entry"
+                        android:paddingLeft="8dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|center_horizontal">
+                            <TextView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@drawable/ic_lang"
+                                android:backgroundTint="@color/blue_tint"
+                                android:gravity="center_horizontal|center_vertical"></TextView>
+                        </LinearLayout>
+
+                        <Spinner
+                            android:id="@+id/spLanguageList"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp"
+                            android:layout_weight="8.5"
+                            android:layout_marginTop="3dp"
+                            android:layout_marginBottom="0.5dp"
+                            android:layout_marginRight="6dp"
+                            app:boxBackgroundColor="@color/white"
+                            app:boxStrokeColor="@color/gray"
+                            app:endIconTint="@color/black"
+                            android:spinnerMode="dialog">
+                        </Spinner>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|center_horizontal"
+                android:gravity="center_horizontal"
+                android:paddingBottom="20dp">
+                <android.widget.Button
+                    android:id="@+id/btnSaveConfiguration"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center_horizontal"
+                    android:background="@drawable/button_icon_large"
+                    android:drawableStart="@drawable/ic_save"
+                    android:drawableTint="@color/white"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="40dp"
+                    android:text="@string/save"
+                    android:textColor="@color/white"></android.widget.Button>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

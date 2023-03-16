@@ -48,5 +48,7 @@
     <string name="start_inventory_question">Do you want start inventory?</string>
     <string name="yes">Accept</string>
     <string name="cancel">Cancel</string>
+    <string name="configuration">Configuration</string>
+    <string name="language">Language</string>
 
 </resources>

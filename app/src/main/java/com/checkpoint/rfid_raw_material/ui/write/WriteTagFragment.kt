@@ -94,23 +94,44 @@ class WriteTagFragment : Fragment(),
         CoroutineScope(Dispatchers.Main).launch {
             val providerList= viewModel.getProviderList()
 
-            val adapter: ArrayAdapter<ProviderModel> =
-                ArrayAdapter<ProviderModel>(requireContext(), android.R.layout.simple_spinner_dropdown_item, providerList)
-            binding.spProviderList.setAdapter(adapter)
+            if(providerList.size>0) {
+                val adapter: ArrayAdapter<ProviderModel> =
+                    ArrayAdapter<ProviderModel>(
+                        requireContext(),
+                        android.R.layout.simple_spinner_dropdown_item,
+                        providerList
+                    )
+                binding.spProviderList.setAdapter(adapter)
 
-            binding.spProviderList.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    idProvider = providerList[position].id
-                    var a=0
-                }
-                override fun onNothingSelected(p0: AdapterView<*>?) {
-                }
+                binding.spProviderList.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            idProvider = providerList[position].id
+                            var a = 0
+                        }
+
+                        override fun onNothingSelected(p0: AdapterView<*>?) {
+                        }
+                    }
             }
+            else
+                insertProviders()
 
             closeDialog()
         }
     }
 
+    fun insertProviders(){
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.insertInitialProviders()
+            getProviderList()
+        }
+    }
     override fun saveProvider() {
         val idProvider= dialogProvider.tvIdProvider!!.text.toString()
         val idASProvider= dialogProvider.tvIdASProvider!!.text.toString()

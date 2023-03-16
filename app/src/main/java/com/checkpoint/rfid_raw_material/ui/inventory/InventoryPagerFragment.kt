@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
@@ -16,9 +17,16 @@ import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
 import com.checkpoint.rfid_raw_material.enums.TypeLoading
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.google.android.material.tabs.TabLayoutMediator
 import com.checkpoint.rfid_raw_material.utils.PagerAdapter
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
 class InventoryPagerFragment : Fragment() {
 
@@ -34,10 +42,7 @@ class InventoryPagerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
-
-
+        
         viewModel = ViewModelProvider(requireActivity())[InventoryPagerViewModel::class.java]
         _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
@@ -99,6 +104,14 @@ class InventoryPagerFragment : Fragment() {
                 "currentPower" to currentPower,
             )
             findNavController().navigate(R.id.handHeldConfigFragment,bundle)
+        }
+
+        activityMain!!.btnCreateLog!!.setOnClickListener {
+            var logCreator= LogCreator(requireContext())
+            CoroutineScope(Dispatchers.Main).launch {
+                var inventoryList= viewModel.getInventoryList()
+                logCreator.createLog("read",inventoryList)
+            }
         }
 
 
