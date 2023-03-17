@@ -78,11 +78,11 @@ class ReadInventoryFragment : Fragment(),CustomDialogInventoryInterface {
         viewModel!!.pauseInventory(false)
 
         //dummy data
-        /*CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             val nowDate: OffsetDateTime = OffsetDateTime.now()
             val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
             viewModel.insertInventory(Inventory(0, "epc123", formatter.format(nowDate)))
-        }*/
+        }
         closeDialog()
     }
 

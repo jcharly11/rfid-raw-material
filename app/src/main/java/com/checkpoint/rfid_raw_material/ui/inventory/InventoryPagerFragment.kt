@@ -110,7 +110,10 @@ class InventoryPagerFragment : Fragment() {
             var logCreator= LogCreator(requireContext())
             CoroutineScope(Dispatchers.Main).launch {
                 var inventoryList= viewModel.getInventoryList()
+                var tagList= viewModel.getTagsList()
                 logCreator.createLog("read",inventoryList)
+                Thread.sleep(1500)
+                logCreator.createLog("write",tagList)
             }
         }
 

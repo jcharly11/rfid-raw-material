@@ -16,6 +16,8 @@ import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Inventory
+import com.checkpoint.rfid_raw_material.source.db.Tags
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -147,5 +149,11 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
         Dispatchers.IO) {
         var listItems= repository.getInventoryListLogs()
         listItems
+    }
+
+    suspend fun getTagsList(): List<Tags> = withContext(
+        Dispatchers.IO) {
+        var listTags= repository.getTagsList()
+        listTags
     }
 }
