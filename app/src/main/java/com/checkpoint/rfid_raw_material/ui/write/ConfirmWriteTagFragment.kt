@@ -8,7 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogPrepareTrigger
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWaitForHandHeld
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWriteTagConfirmation
 import kotlinx.coroutines.delay
@@ -19,8 +23,11 @@ class ConfirmWriteTagFragment : Fragment() {
     private lateinit var viewModel: ConfirmWriteTagViewModel
     private var _binding: FragmentConfirmWriteTagBinding? = null
     private val binding get() = _binding!!
-    private var dialogWaitForHandHeld: DialogWaitForHandHeld? = null
-    private var dialogWriteTagConfirmation: DialogWriteTagConfirmation? = null
+    private lateinit var dialogWaitForHandHeld: DialogWaitForHandHeld
+    private lateinit var dialogWriteTagConfirmation: DialogWriteTagConfirmation
+    private lateinit var dialogPrepareTrigger: DialogPrepareTrigger
+    private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
+    private var startDevice: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,47 +36,83 @@ class ConfirmWriteTagFragment : Fragment() {
         val epc = arguments?.getString("epc")
         viewModel = ViewModelProvider(this)[ConfirmWriteTagViewModel::class.java]
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
-        dialogWaitForHandHeld = DialogWaitForHandHeld(this)
-
-        dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this,Pair("",""))
-
+        dialogWaitForHandHeld = DialogWaitForHandHeld(this@ConfirmWriteTagFragment)
+        dialogPrepareTrigger = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
+        dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this@ConfirmWriteTagFragment,Pair("",""))
+        dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
         viewModel.liveTID.observe(viewLifecycleOwner){
 
             Log.e("observe","${it}")
             binding.tvTID.setText(it)
 
         }
+        viewModel.readyToRead.observe(viewLifecycleOwner){
 
-        binding.edtTagEPC.setText(epc)
-        binding.btnWrite.setOnClickListener {
-            lifecycleScope.launch{
-                val tid = binding.tvTID.text.toString()
-                val epc = binding.edtTagEPC.text.toString()
 
-                viewModel.prepareToWrite(tid,epc,"").apply {
-                    it
+            Log.e("readyToRead","$it")
+            if(!it && startDevice ){
+                dialogWaitForHandHeld.dismiss()
+                binding.btnWrite.isEnabled = false
+                binding.tvTID.isEnabled = false
+                binding.edtTagEPC.isEnabled = false
+                dialogErrorDeviceConnected.show()
+                startDevice=false
+            }else{
+                dialogWaitForHandHeld.dismiss()
 
+            }
+
+
+        }
+        viewModel.writeComplete.observe(viewLifecycleOwner){
+            if(it){
+                lifecycleScope.launch {
+                    dialogPrepareTrigger.dismiss()
+                    viewModel.disconectDevice()
+                    findNavController().navigate(R.id.optionsWriteFragment)
                 }
             }
         }
 
-        return binding.root
-    }
+        binding.tvTID.setOnFocusChangeListener { view, b ->
+            if(b){
+                dialogWaitForHandHeld.show()
+                lifecycleScope.launch {
+                    delay(5000)
+                    viewModel.initReaderRFID()
+                    startDevice=true
 
-    override fun onStart() {
-        super.onStart()
+                }
 
-        dialogWaitForHandHeld!!.show()
-        lifecycleScope.launch {
-            delay(5000)
-            viewModel.initReaderRFID()
-            dialogWaitForHandHeld!!.dismiss()
-
-            binding.tvTID.setText("E28068940000502700022E2A")
-            binding.edtTagEPC.setText("9080000000000000047971CE00000000")
-
+            }
         }
 
+        binding.edtTagEPC.setText(epc)
+        binding.btnWrite.setOnClickListener {
+             lifecycleScope.launch{
+                val tid = binding.tvTID.text.toString()
+                val epc = binding.edtTagEPC.text.toString()
+
+                viewModel.prepareToWrite(tid,epc,"").apply {
+
+                    Log.e("prepareToWrite","$this")
+
+                    if(this){
+                        dialogPrepareTrigger.show()
+                    }
+                }
+            }
+        }
+
+        binding.btnCancel.setOnClickListener {
+
+            binding.tvTID.setText("")
+            binding.edtTagEPC.setText("")
+
+            startDevice= false
+            findNavController().popBackStack()
+        }
+        return binding.root
     }
 
 

@@ -22,5 +22,11 @@
             android:title="@string/item_menu_provider"
             android:iconTint="@color/navy">
         </item>
+        <item
+            android:id="@+id/configurationFragment"
+            android:icon="@drawable/ic_lang"
+            android:title="@string/language"
+            android:iconTint="@color/navy">
+        </item>
     </group>
 </menu>

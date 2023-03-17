@@ -2,7 +2,8 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
  import android.content.Context
  import android.util.Log
- import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
+ import com.checkpoint.rfid_raw_material.handheld.WritingTagInterface
+  import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
  import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
  import com.zebra.rfid.api3.*
  import kotlinx.coroutines.*
@@ -17,23 +18,36 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
     private val triggerInfo = TriggerInfo()
     private var responseHandlerInterface: ResponseHandlerInterface? = null
     private var batteryHandlerInterface: BatteryHandlerInterface? =null
+    private var writingTagInterface: WritingTagInterface? = null
 
 
     init{
         GlobalScope.launch(Dispatchers.Main) {
 
-                val connected = async {
-                    connectionTask()
-                }
-                connected.await().let {
-
-                    Log.e("DEVICE CONNECTED", "connect " + reader!!.hostName)
-                    responseHandlerInterface!!.handleStartConnect(true)
-                }
-
+            Connect()
         }
     }
 
+    fun Connect(){
+        GlobalScope.launch(Dispatchers.Main) {
+
+            val connected = async {
+                connectionTask()
+            }
+            connected.await().let {
+
+
+                Log.e("DEVICE CONNECTED", "connect " + reader!!.hostName+"$it")
+                if (it){
+                    reader!!.Actions.Inventory.stop()
+                    reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.ENABLE
+
+                }
+                responseHandlerInterface!!.handleStartConnect(it)
+            }
+
+        }
+    }
       @JvmName("setResponseHandlerInterface1")
       fun setResponseHandlerInterface(_responseHandlerInterface: ResponseHandlerInterface?) {
         responseHandlerInterface = _responseHandlerInterface
@@ -61,6 +75,9 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
                        }
                    }
                }
+
+               Log.e("device status:", "${reader!!.isConnected}")
+
                reader!!.connect()
                triggerInfo.StartTrigger.triggerType =
                    START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
@@ -89,7 +106,11 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
                reader!!.Actions.PreFilters.deleteAll()
                return@withContext  reader!!.isConnected
 
-           } catch (ie: InvalidUsageException) {
+           } catch (e: InvalidUsageException) {
+               e.printStackTrace()
+               return@withContext false
+           } catch (e: OperationFailureException) {
+               e.printStackTrace()
                return@withContext false
            }
 
@@ -174,10 +195,16 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
                 true,
                 useTIDfilter
             )
+            writingTagInterface!!.writingTagStatus(true)
+
         } catch (e: InvalidUsageException) {
             e.printStackTrace()
+            writingTagInterface!!.writingTagStatus(false)
+
         } catch (e: OperationFailureException) {
             e.printStackTrace()
+            writingTagInterface!!.writingTagStatus(false)
+
             Log.e("EXCEPTION", e.vendorMessage.toString())
             Log.e("RESULTS", e.results.toString())
             Log.e("RESULTS", e.statusDescription.toString())
@@ -229,6 +256,11 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
     override fun RFIDReaderDisappeared(p0: ReaderDevice?) {
      }
+
+    fun setWriteTagHandlerInterface(_writingTagInterface: WritingTagInterface) {
+
+        writingTagInterface = _writingTagInterface
+    }
 
 
     inner class  EventHandler : RfidEventsListener {

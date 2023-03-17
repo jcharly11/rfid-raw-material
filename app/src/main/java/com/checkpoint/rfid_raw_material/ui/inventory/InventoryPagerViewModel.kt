@@ -14,10 +14,13 @@ import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.ZebraRFIDHandlerImpl
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
+import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
@@ -44,6 +47,7 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
     private var context: Context = application.baseContext
     private var zebraRFIDHandlerImpl: ZebraRFIDHandlerImpl? = null
     private var maxLevel = 0
+    private var repository: DataRepository
 
 
     init {
@@ -67,6 +71,12 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
             zebraRFIDHandlerImpl?.listener(this, this)
             zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName!!, "SESSION_1")
         }
+
+
+        repository = DataRepository.getInstance(
+            RawMaterialsDatabase.getDatabase(application.baseContext)
+        )
+
     }
 
     fun restartHandeldSetNewPower(newPower: Int, session: String) {
@@ -131,5 +141,11 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
     override fun batteryLevel(level: Int) {
         Log.e("#########model", "$level")
         _percentCharge.postValue(level)
+    }
+
+    suspend fun getInventoryList(): List<Inventory> = withContext(
+        Dispatchers.IO) {
+        var listItems= repository.getInventoryListLogs()
+        listItems
     }
 }

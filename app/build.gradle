@@ -73,8 +73,8 @@ dependencies {
     implementation ('androidx.room:room-runtime:2.4.2')
     kapt "androidx.room:room-compiler:2.4.2"
 
-
-
+    implementation(name:'zebra_lib_rfid', ext:'aar')
+    implementation "com.github.skydoves:expandablelayout:1.0.7"
 
 
 }

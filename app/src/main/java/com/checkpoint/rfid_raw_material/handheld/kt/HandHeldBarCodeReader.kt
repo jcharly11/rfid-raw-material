@@ -21,6 +21,7 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
     var connectedScannerID = 0
     private lateinit var barcodeHandHeldInterface: BarcodeHandHeldInterface
     private var deviceConfig: DeviceConfig?= null
+    private var deviceConnected: Boolean= false
 
 
     override suspend fun instance(context: Context?, device: DeviceConfig?){
@@ -35,7 +36,15 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
             }
             connected.await().let {
 
-                sdkHandler!!.dcssdkEstablishCommunicationSession(mScannerInfoList[0].scannerID)
+                if(mScannerInfoList.size>0) {
+                    sdkHandler!!.dcssdkEstablishCommunicationSession(mScannerInfoList[0].scannerID)
+                    deviceConnected=true
+
+                }
+
+                barcodeHandHeldInterface.connected(deviceConnected)
+
+
 
             }
         }
@@ -107,9 +116,8 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
     private suspend fun disconnectDevice(){
         return withContext(Dispatchers.Default) {
             try {
-                if (reader != null) {
-                    reader!!.disconnect()
-                }
+                readers.Dispose()
+                reader!!.disconnect()
             } catch (e: InvalidUsageException) {
                 e.printStackTrace()
             } catch (e: OperationFailureException) {

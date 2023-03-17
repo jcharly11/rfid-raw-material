@@ -22,9 +22,7 @@ class TestViewModel(application: Application) : AndroidViewModel(application) {
         return repository.getItems()
     }
 
-    suspend fun getItemsListForCSV(id:Int): List<tblItem> {
-        return repository.getItemsFilter(id)
-    }
+
 
     suspend fun newItem(itemName: String):
             tblItem = withContext(Dispatchers.IO) {

@@ -43,4 +43,8 @@ class BarCodeActivity : AppCompatActivity(),BarcodeHandHeldInterface {
         Log.e("setData",code)
     }
 
+    override fun connected(status: Boolean) {
+        TODO("Not yet implemented")
+    }
+
 }

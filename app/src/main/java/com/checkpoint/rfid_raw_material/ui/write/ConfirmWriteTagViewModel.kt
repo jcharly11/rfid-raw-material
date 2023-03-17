@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.checkpoint.rfid_raw_material.handheld.WritingTagInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(application),
-    ResponseHandlerInterface{
+    ResponseHandlerInterface,WritingTagInterface{
 
     private val _liveTID: MutableLiveData<String> = MutableLiveData("")
     var liveTID: LiveData<String> = _liveTID
@@ -24,6 +25,8 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
     private val _readyToRead: MutableLiveData<Boolean> = MutableLiveData(false)
     var readyToRead: LiveData<Boolean> = _readyToRead
 
+    private val _writeComplete: MutableLiveData<Boolean> = MutableLiveData(false)
+    var writeComplete: LiveData<Boolean> = _writeComplete
 
     private var writeMode: Boolean = false
     private var epc:String ?= null
@@ -50,6 +53,7 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
             )
         )
         rfidHandler!!.setResponseHandlerInterface(this)
+        rfidHandler!!.setWriteTagHandlerInterface(this)
     }
 
 
@@ -81,6 +85,12 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
     override fun handleStartConnect(connected: Boolean) {
         Log.e("handleStartConnect","${connected}")
+        if (!connected){
+
+            rfidHandler!!.Connect()
+        }
+        _readyToRead.postValue(connected)
+
     }
 
     suspend fun disconectDevice(){
@@ -98,8 +108,16 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
         Log.e("prepareToWrite","$tid,$epc,$pass")
 
-        writeMode =  rfidHandler!!.prepareReaderToWrite()
-        writeMode
+        try {
+
+            writeMode =  rfidHandler!!.prepareReaderToWrite()
+            writeMode
+
+        }catch (ex: Exception){
+
+            false
+        }
+
     }
 
     suspend fun prepareToRead(){
@@ -108,5 +126,9 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
             rfidHandler!!.prepareReaderToRead()
             writeMode = false
         }
+    }
+
+    override fun writingTagStatus(status: Boolean) {
+        _writeComplete.postValue(status)
     }
 }

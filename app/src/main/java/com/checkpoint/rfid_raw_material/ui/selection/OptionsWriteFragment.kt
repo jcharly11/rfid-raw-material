@@ -14,18 +14,25 @@ import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
+import com.checkpoint.rfid_raw_material.enums.TypeLoading
 import com.checkpoint.rfid_raw_material.source.model.Item
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
+import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
+import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 
-class OptionsWriteFragment : Fragment() {
+class OptionsWriteFragment : Fragment(){
 
     private lateinit var viewModel: OptionsWriteViewModel
     private var _binding: FragmentOptionsWriteBinding? = null
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
+
+
+    private lateinit var dialogLoaderHandHeld: CustomDialogLoader
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,12 +43,19 @@ class OptionsWriteFragment : Fragment() {
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
 
+        dialogLoaderHandHeld = CustomDialogLoader(
+            this@OptionsWriteFragment,
+            TypeLoading.BLUETOOTH_DEVICE
+        )
+
+
         binding.btnInventory.setOnClickListener {
             findNavController().navigate(R.id.inventoryPagerFragment)
         }
         binding.btnWriteTag.setOnClickListener {
             findNavController().navigate(R.id.writeTagFragment)
         }
+
 
         return binding.root
     }
@@ -64,4 +78,7 @@ class OptionsWriteFragment : Fragment() {
         super.onStart()
         (activity as AppCompatActivity).supportActionBar!!.show()
     }
+
+
+
 }

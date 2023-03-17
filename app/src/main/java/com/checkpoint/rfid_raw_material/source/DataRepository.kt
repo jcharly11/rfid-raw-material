@@ -1,8 +1,8 @@
 package com.checkpoint.rfid_raw_material.source
 
+import androidx.lifecycle.LiveData
 import com.checkpoint.rfid_raw_material.source.dao.ProviderDao
-import com.checkpoint.rfid_raw_material.source.db.Provider
-import com.checkpoint.rfid_raw_material.source.db.tblItem
+import com.checkpoint.rfid_raw_material.source.db.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -24,9 +24,6 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.itemDao().getItems()
     }
 
-    suspend fun getItemsFilter(id:Int):List<tblItem> = withContext(Dispatchers.IO) {
-        localDataSource.itemDao().getItemsFilter(id)
-    }
 
     suspend fun insertNewItem(item: tblItem):tblItem = withContext(Dispatchers.IO) {
         localDataSource.itemDao().insertItem(item)
@@ -41,5 +38,41 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
     suspend fun insertNewProvider(provider: Provider):Provider = withContext(Dispatchers.IO) {
         localDataSource.providerDao().insertProvider(provider)
         localDataSource.providerDao().getLastProvider()
+    }
+
+    fun getInventoryList(): LiveData<List<Inventory>> {
+        return localDataSource.inventoryDao().getInventoryList()
+    }
+
+    fun getInventoryListLogs():List<Inventory> {
+        return localDataSource.inventoryDao().getInventoryListLogs()
+    }
+
+    suspend fun getTagsList(): List<Tags> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsList()
+    }
+
+    suspend fun insertNewTag(tag: Tags):Tags = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().insertTag(tag)
+        localDataSource.tagsDao().getLastTag()
+    }
+
+
+    suspend fun getLanguages():List<Language> = withContext(Dispatchers.IO) {
+        localDataSource.languageDao().getLanguageList()
+    }
+
+    suspend fun insertNewLang(language: Language):Language = withContext(Dispatchers.IO) {
+        localDataSource.languageDao().insertLanguage(language)
+        localDataSource.languageDao().getLastLang()
+    }
+
+    suspend fun insertNewInventory(inventory: Inventory):Inventory = withContext(Dispatchers.IO) {
+        localDataSource.inventoryDao().insertInventory(inventory)
+        localDataSource.inventoryDao().getLastInventory()
+    }
+
+    fun deletePoviders() {
+        localDataSource.providerDao().deleteAll()
     }
 }

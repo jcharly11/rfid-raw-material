@@ -1,20 +1,14 @@
 package com.checkpoint.rfid_raw_material
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
-import com.checkpoint.rfid_raw_material.zebra.ZebraRFIDHandlerImpl
-import com.zebra.barcode.sdk.BarcodeDataEventArgs
-import com.zebra.barcode.sdk.BarcodeDataListener
-import com.zebra.rfid.api3.ENUM_TRANSPORT
-import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
-import com.zebra.rfid.api3.SESSION
-import com.zebra.rfid.api3.TagData
+ import com.zebra.rfid.api3.*
 import kotlinx.coroutines.launch
 
 class WriteTagActivity : AppCompatActivity(),ResponseHandlerInterface,BatteryHandlerInterface {
@@ -50,6 +44,27 @@ class WriteTagActivity : AppCompatActivity(),ResponseHandlerInterface,BatteryHan
     override fun handleTagdata(tagData: Array<TagData?>?) {
         tagData!!.iterator().forEachRemaining {
             Log.e("handleTagdata","${it!!.tagID}")
+            Log.e("handleTagdata","${it!!.tagEvent}")
+            Log.e("handleTagdata","${it!!.memoryBankData}")
+
+            if (it.getOpCode() === ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                it.getOpStatus() === ACCESS_OPERATION_STATUS.ACCESS_SUCCESS
+            ) {
+                if (it.getMemoryBankData().length > 0) {
+                    Log.d(
+                        "TAG",
+                        " Mem Bank Data " + it.getMemoryBankData()
+                    )
+                }
+            }
+            if (it.isContainsLocationInfo()) {
+                val dist: Short = it.LocationInfo.getRelativeDistance()
+                Log.d(
+                    "TAG",
+                    "Tag relative distance $dist"
+                )
+            }
+
         }
 
     }

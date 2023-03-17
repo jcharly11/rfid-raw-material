@@ -17,7 +17,6 @@ class LocalPreferences(application: Application) {
         flagPowerValue= application.resources.getString(R.string.power_config_settings)
         flagPauseValue= "pause"
         selectedLanguageValue="language"
-
     }
 
     fun saveMaxToPreferences(maxPower : Int){
@@ -37,8 +36,6 @@ class LocalPreferences(application: Application) {
             apply()
             Log.e("---setPauseStatus-->",""+sharedPreferences.getBoolean(flagPauseValue,false))
         }
-
-
     }
     fun getPauseStatus(): Boolean{
         return sharedPreferences.getBoolean(flagPauseValue,false)

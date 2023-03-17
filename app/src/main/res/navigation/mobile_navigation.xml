@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/confirmWriteTagFragment">
+    app:startDestination="@+id/optionsWriteFragment">
 
     <fragment
         android:id="@+id/optionsWriteFragment"
@@ -61,8 +61,15 @@
         android:label="fragment_hand_held_config"
         tools:layout="@layout/fragment_hand_held_config" />
     <fragment
+
         android:id="@+id/confirmWriteTagFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.write.ConfirmWriteTagFragment"
         android:label="fragment_confirm_write_tag"
         tools:layout="@layout/fragment_confirm_write_tag" />
+    <fragment
+        android:id="@+id/configurationFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.configuration.ConfigurationFragment"
+        android:label="fragment_configuration"
+        tools:layout="@layout/fragment_configuration" />
+
 </navigation>

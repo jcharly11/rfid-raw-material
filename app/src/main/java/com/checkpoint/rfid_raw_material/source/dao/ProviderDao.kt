@@ -7,7 +7,7 @@ import com.checkpoint.rfid_raw_material.source.db.Provider
 
 @Dao
 interface ProviderDao {
-    @Query("SELECT * FROM Provider")
+    @Query("SELECT * FROM Provider ORDER BY Name ASC")
     fun getProviders(): List<Provider>
 
     @Query("SELECT * FROM Provider ORDER BY ID DESC LIMIT 1")
@@ -15,4 +15,7 @@ interface ProviderDao {
 
     @Insert
     fun insertProvider(provider: Provider)
+
+    @Query("DELETE FROM provider")
+    fun deleteAll()
 }

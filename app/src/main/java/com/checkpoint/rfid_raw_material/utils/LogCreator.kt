@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.model.Logs
 import java.io.*
 import java.text.DateFormat
@@ -52,7 +53,20 @@ class LogCreator constructor(context: Context): View(context) {
 
         FileOutputStream(fullPath).apply {
             writeCsv(list,date,epc,version,type,subversion,identifier,supplier) }
-        Toast.makeText(context, "Log created $fullPath", Toast.LENGTH_SHORT).show()
+    }
+
+    fun createLog(typeCSV:String, inventorylist: List<Inventory>){
+        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val dateFormatter: String = df.format(Date())
+        var fileName = "${typeCSV}_$dateFormatter.csv"
+        var fullPath= "$pathApplication/$fileName"
+
+        createFile(fileName)
+
+        FileOutputStream(fullPath).apply {
+            writeCsvFromList(inventorylist) }
+
+        Toast.makeText(context, "Log file create in $fullPath", Toast.LENGTH_LONG).show()
     }
 
     private fun createFile(fileName: String) {
@@ -91,6 +105,21 @@ class LogCreator constructor(context: Context): View(context) {
         writer.write("${date},${epc},${version},${type},${subversion},${identifier},${supplier}")
         writer.close()
     }
+
+    private fun OutputStream.writeCsvFromList(list: List<Inventory>) {
+        val writer= bufferedWriter()
+        writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
+        writer.newLine()
+
+        list.forEach {
+            writer.write("${it.timeStamp},${it.epc}")
+            writer.newLine()
+        }
+
+        writer.flush()
+        writer.close()
+    }
+
 
     fun readCsv(inputStream: InputStream): List<Logs> {
         val reader = inputStream.bufferedReader()
