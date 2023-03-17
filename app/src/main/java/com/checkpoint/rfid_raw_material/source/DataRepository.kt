@@ -3,6 +3,7 @@ package com.checkpoint.rfid_raw_material.source
 import androidx.lifecycle.LiveData
 import com.checkpoint.rfid_raw_material.source.dao.ProviderDao
 import com.checkpoint.rfid_raw_material.source.db.*
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -50,6 +51,10 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
 
     suspend fun getTagsList(): List<Tags> = withContext(Dispatchers.IO) {
         localDataSource.tagsDao().getTagsList()
+    }
+
+    suspend fun getTagsListForLogs(): List<TagsLogs> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsListForLogs()
     }
 
     suspend fun insertNewTag(tag: Tags):Tags = withContext(Dispatchers.IO) {

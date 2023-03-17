@@ -7,7 +7,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.checkpoint.rfid_raw_material.source.db.Inventory
+import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.Logs
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -55,7 +57,7 @@ class LogCreator constructor(context: Context): View(context) {
             writeCsv(list,date,epc,version,type,subversion,identifier,supplier) }
     }
 
-    fun createLog(typeCSV:String, inventorylist: List<Inventory>){
+    fun  <T: Any> createLog(typeCSV:String, list: List<T>){
         val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
         val dateFormatter: String = df.format(Date())
         var fileName = "${typeCSV}_$dateFormatter.csv"
@@ -63,8 +65,10 @@ class LogCreator constructor(context: Context): View(context) {
 
         createFile(fileName)
 
-        FileOutputStream(fullPath).apply {
-            writeCsvFromList(inventorylist) }
+        if(typeCSV=="read")
+            FileOutputStream(fullPath).apply { writeCsvInventory(list as List<Inventory>) }
+        else
+            FileOutputStream(fullPath).apply { writeCsvTags(list as List<Tags>) }
 
         Toast.makeText(context, "Log file create in $fullPath", Toast.LENGTH_LONG).show()
     }
@@ -106,7 +110,7 @@ class LogCreator constructor(context: Context): View(context) {
         writer.close()
     }
 
-    private fun OutputStream.writeCsvFromList(list: List<Inventory>) {
+    private fun OutputStream.writeCsvInventory(list: List<Inventory>) {
         val writer= bufferedWriter()
         writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
         writer.newLine()
@@ -115,7 +119,19 @@ class LogCreator constructor(context: Context): View(context) {
             writer.write("${it.timeStamp},${it.epc}")
             writer.newLine()
         }
+        writer.flush()
+        writer.close()
+    }
 
+    private fun OutputStream.writeCsvTags(list: List<Tags>) {
+        val writer= bufferedWriter()
+        writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
+        writer.newLine()
+
+        list.forEach {
+            writer.write("${it.timeStamp},${it.epc},${it.version},${it.type},${it.subversion},${it.piece},${it.idProvider}")
+            writer.newLine()
+        }
         writer.flush()
         writer.close()
     }
