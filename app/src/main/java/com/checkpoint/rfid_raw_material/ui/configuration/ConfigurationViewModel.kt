@@ -31,24 +31,26 @@ class ConfigurationViewModel(application: Application) : AndroidViewModel(applic
         var listLanguage:MutableList<LanguageModel> = mutableListOf()
 
         list.iterator().forEachRemaining {
-            var itemLang= LanguageModel(it.lang)
+            var itemLang= LanguageModel(it.language, it.lang)
             listLanguage!!.add(itemLang)
         }
         listLanguage= listLanguage!!.toMutableList()
         listLanguage
     }
 
-    suspend fun insertLanguage() = withContext(Dispatchers.IO) {
-        var language:Language?=null
-        for(item in LanguageOptions.values()){
+    suspend fun insertLanguages() = withContext(Dispatchers.IO) {
+        /*var language: Language? = null
+        for (item in LanguageOptions.values()) {
             repository.insertNewLang(
-                language= Language(
+                language = Language(
                     0,
                     item.name,
                     item.getDisplayLang().toString()
                 )
             )
-        }
+        }*/
+        repository.insertNewLang(Language(0,"Spanish","es"))
+        repository.insertNewLang(Language(0,"English","en"))
     }
 
     fun setLanguage(language: String){

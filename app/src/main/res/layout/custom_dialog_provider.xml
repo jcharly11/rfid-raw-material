@@ -61,7 +61,7 @@
                         android:layout_weight="2"
                         android:gravity="center_horizontal"
                         android:text="@string/new_provider"
-                        android:textColor="@color/navy"
+                        android:textColor="?android:textColorSecondary"
                         android:textSize="25dp"></com.google.android.material.textview.MaterialTextView>
 
                     <LinearLayout
@@ -76,7 +76,6 @@
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:text="@string/id"
-                            android:textColor="@color/black"
                             android:textStyle="bold">
                         </com.google.android.material.textview.MaterialTextView>
 
@@ -86,13 +85,16 @@
                             android:orientation="horizontal"
                             android:background="@drawable/bg_custom_entry"
                             android:paddingLeft="8dp"
-                            android:paddingRight="8dp">
+                            android:paddingRight="8dp"
+                            android:paddingTop="1dp"
+                            android:paddingBottom="1dp">
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center_vertical|center_horizontal">
+                                android:gravity="center_vertical|center_horizontal"
+                                android:background="@color/white">
                                 <TextView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
@@ -104,7 +106,8 @@
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
                                 android:layout_height="55dp"
-                                android:layout_weight="9">
+                                android:layout_weight="9"
+                                android:background="@color/white">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/tvIdProvider"
                                     android:layout_width="match_parent"
@@ -112,7 +115,7 @@
                                     android:layout_marginRight="25dp"
                                     android:inputType="number"
                                     android:textSize="14sp"
-                                    android:background="@color/transparent"/>
+                                    android:background="@color/white"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -130,8 +133,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:text="@string/id_as400"
-                            android:textStyle="bold"
-                            android:textColor="@color/black">
+                            android:textStyle="bold">
                         </com.google.android.material.textview.MaterialTextView>
 
                         <LinearLayout
@@ -140,12 +142,15 @@
                             android:orientation="horizontal"
                             android:background="@drawable/bg_custom_entry"
                             android:paddingRight="8dp"
-                            android:paddingLeft="8dp">
+                            android:paddingLeft="8dp"
+                            android:paddingTop="1dp"
+                            android:paddingBottom="1dp">>
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center_vertical|center_horizontal">
+                                android:gravity="center_vertical|center_horizontal"
+                                android:background="@color/white">
                                 <TextView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
@@ -157,7 +162,8 @@
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
                                 android:layout_height="55dp"
-                                android:layout_weight="9">
+                                android:layout_weight="9"
+                                android:background="@color/white">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/tvIdASProvider"
                                     android:layout_width="match_parent"
@@ -165,7 +171,7 @@
                                     android:layout_marginRight="25dp"
                                     android:inputType="phone"
                                     android:textSize="14sp"
-                                    android:background="@color/transparent"/>
+                                    android:background="@color/white"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>
@@ -183,8 +189,7 @@
                             android:layout_height="wrap_content"
                             android:textSize="18sp"
                             android:text="@string/provider"
-                            android:textStyle="bold"
-                            android:textColor="@color/black">
+                            android:textStyle="bold">
                         </com.google.android.material.textview.MaterialTextView>
 
                         <LinearLayout
@@ -193,13 +198,16 @@
                             android:orientation="horizontal"
                             android:background="@drawable/bg_custom_entry"
                             android:paddingLeft="8dp"
-                            android:paddingRight="8dp">
+                            android:paddingRight="8dp"
+                            android:paddingTop="1dp"
+                            android:paddingBottom="1dp">
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center_vertical|center_horizontal">
+                                android:gravity="center_vertical|center_horizontal"
+                                android:background="@color/white">
                                 <TextView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
@@ -211,7 +219,8 @@
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="0dp"
                                 android:layout_height="55dp"
-                                android:layout_weight="9">
+                                android:layout_weight="9"
+                                android:background="@color/white">
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/tvNameProvider"
                                     android:layout_width="match_parent"
@@ -219,7 +228,7 @@
                                     android:layout_marginRight="25dp"
                                     android:inputType="textCapSentences"
                                     android:textSize="14sp"
-                                    android:background="@color/transparent"/>
+                                    android:background="@color/white"/>
                             </com.google.android.material.textfield.TextInputLayout>
                         </LinearLayout>
                     </LinearLayout>

@@ -6,6 +6,6 @@ data class LanguageModel (
 
 ){
     override fun toString(): String {
-        return lang!!
+        return namelang!!
     }
 }

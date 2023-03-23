@@ -24,7 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/read_inventory"
-                android:textColor="@color/navy"
+                android:textColor="?android:textColorSecondary"
                 android:textSize="30sp" />
         </RelativeLayout>
 
@@ -78,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="0"
-                    android:textColor="@color/navy"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="55dp"
                     android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
 
@@ -87,8 +87,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="@string/items_write"
-                    android:textSize="20dp"
-                    android:textColor="@color/black"></com.google.android.material.textview.MaterialTextView>
+                    android:textSize="20dp"></com.google.android.material.textview.MaterialTextView>
 
             </LinearLayout>
             <LinearLayout
@@ -105,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="0"
-                    android:textColor="@color/navy"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="55dp"
                     android:textStyle="bold"></com.google.android.material.textview.MaterialTextView>
 
@@ -114,8 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:text="@string/items_scanned"
-                    android:textSize="20dp"
-                    android:textColor="@color/black"></com.google.android.material.textview.MaterialTextView>
+                    android:textSize="20dp"></com.google.android.material.textview.MaterialTextView>
 
             </LinearLayout>
         </LinearLayout>
