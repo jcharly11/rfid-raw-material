@@ -53,16 +53,11 @@ class ItemsReadFragment : Fragment() {
                 lvInventory.adapter = InventoryListAdapter(it)
             }
             val tags = viewModel!!.getTagsList()
-            val adapterTags = TagsListAdapter(tags)
+             val adapterTags = TagsListAdapter(tags)
             lvTags.adapter = adapterTags
         }
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ItemsReadViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
 
 }

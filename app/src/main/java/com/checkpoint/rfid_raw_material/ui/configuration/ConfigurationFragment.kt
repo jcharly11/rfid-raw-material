@@ -29,7 +29,7 @@ class ConfigurationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewModel = ViewModelProvider(this)[ConfigurationViewModel::class.java]
         _binding = FragmentConfigurationBinding.inflate(inflater, container, false)
 
@@ -42,7 +42,7 @@ class ConfigurationFragment : Fragment() {
         return binding.root
     }
 
-    fun getLanguageList() {
+    private fun getLanguageList() {
         CoroutineScope(Dispatchers.Main).launch {
             val languageList = viewModel.getLanguageList()
             if (languageList.size > 0) {
@@ -52,21 +52,21 @@ class ConfigurationFragment : Fragment() {
                         android.R.layout.simple_spinner_dropdown_item,
                         languageList
                     )
-                binding.spLanguageList.setAdapter(adapter)
+                binding.spLanguageList.adapter = adapter
             } else
                 insertLanguage()
         }
     }
 
-    fun insertLanguage() {
+    private fun insertLanguage() {
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.insertLanguage()
             getLanguageList()
         }
     }
 
-    fun changeLanguage(){
-        var lang:String= binding.spLanguageList.selectedItem.toString()
+    private fun changeLanguage(){
+        val lang:String= binding.spLanguageList.selectedItem.toString()
         viewModel.setLanguage(lang).apply {
             val config = resources.configuration
             val locale = Locale(lang)
@@ -76,12 +76,6 @@ class ConfigurationFragment : Fragment() {
             requireActivity().recreate()
             findNavController().navigate(R.id.optionsWriteFragment)
         }
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ConfigurationViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

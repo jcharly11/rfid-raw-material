@@ -217,7 +217,6 @@
                             android:layout_marginLeft="5dp"
                             android:layout_marginRight="15dp"
                             android:inputType="number"
-                            android:text="18"
                             android:background="@color/transparent"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -274,8 +273,7 @@
                             android:layout_height="55dp"
                             android:layout_marginRight="15dp"
                             android:inputType="number"
-                            android:text="4"
-                            android:background="@color/transparent"/>
+                             android:background="@color/transparent"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -330,8 +328,7 @@
                             android:layout_height="55dp"
                             android:layout_marginRight="15dp"
                             android:inputType="number"
-                            android:text="0"
-                            android:background="@color/transparent"/>
+                             android:background="@color/transparent"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>

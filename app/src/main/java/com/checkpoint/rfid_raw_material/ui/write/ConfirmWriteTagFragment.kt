@@ -32,7 +32,7 @@ class ConfirmWriteTagFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val epc = arguments?.getString("epc")
         viewModel = ViewModelProvider(this)[ConfirmWriteTagViewModel::class.java]
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
@@ -42,7 +42,7 @@ class ConfirmWriteTagFragment : Fragment() {
         dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
         viewModel.liveTID.observe(viewLifecycleOwner){
 
-            Log.e("observe","${it}")
+            Log.e("observe", it)
             binding.tvTID.setText(it)
 
         }
@@ -74,7 +74,7 @@ class ConfirmWriteTagFragment : Fragment() {
             }
         }
 
-        binding.tvTID.setOnFocusChangeListener { view, b ->
+        binding.tvTID.setOnFocusChangeListener { _, b ->
             if(b){
                 dialogWaitForHandHeld.show()
                 lifecycleScope.launch {
@@ -91,9 +91,9 @@ class ConfirmWriteTagFragment : Fragment() {
         binding.btnWrite.setOnClickListener {
              lifecycleScope.launch{
                 val tid = binding.tvTID.text.toString()
-                val epc = binding.edtTagEPC.text.toString()
+                val epcTag = binding.edtTagEPC.text.toString()
 
-                viewModel.prepareToWrite(tid,epc,"").apply {
+                viewModel.prepareToWrite(tid,epcTag,"").apply {
 
                     Log.e("prepareToWrite","$this")
 

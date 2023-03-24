@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.ui.inventory.read
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +45,13 @@ class ReadInventoryFragment : Fragment(),CustomDialogInventoryInterface {
 
         CoroutineScope(Dispatchers.Main).launch {
             binding.tvTagsWrited.text = "${viewModel?.getTagsList()!!.size}"
+
+            viewModel?.counterTags()!!.observe(viewLifecycleOwner){
+                binding.tvTagsWrited.text = "${it!!.size}"
+
+            }
+
+
             viewModel?.getInventoryList()!!.observe(viewLifecycleOwner) {
                 binding.tvItemsScanned.text = "${it.size}"
             }
@@ -66,23 +74,13 @@ class ReadInventoryFragment : Fragment(),CustomDialogInventoryInterface {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ReadInventoryViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
 
     override fun startInventory() {
         binding.btnStart.visibility = View.INVISIBLE
         binding.btnPause.visibility = View.VISIBLE
         viewModel!!.pauseInventory(false)
 
-        //dummy data
-        CoroutineScope(Dispatchers.Main).launch {
-            val nowDate: OffsetDateTime = OffsetDateTime.now()
-            val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
-            viewModel.insertInventory(Inventory(0, "epc123", formatter.format(nowDate)))
-        }
+
         closeDialog()
     }
 
@@ -102,4 +100,10 @@ class ReadInventoryFragment : Fragment(),CustomDialogInventoryInterface {
         dialog.dismiss()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.disconnectDevice()
+    }
+
 }
+

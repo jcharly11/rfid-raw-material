@@ -21,7 +21,7 @@ class InventoryListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         viewModel = ViewModelProvider(this)[InventoryListViewModel::class.java]
         _binding = FragmentInventoryListBinding.inflate(inflater, container, false)
 
@@ -30,12 +30,6 @@ class InventoryListFragment : Fragment() {
         }
         return  binding.root
 
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(InventoryListViewModel::class.java)
-        // TODO: Use the ViewModel
     }
 
 }

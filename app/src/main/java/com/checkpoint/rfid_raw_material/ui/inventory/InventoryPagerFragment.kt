@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
@@ -15,42 +14,36 @@ import androidx.viewpager2.widget.ViewPager2
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
-import com.checkpoint.rfid_raw_material.enums.TypeLoading
-import com.checkpoint.rfid_raw_material.utils.CustomBattery
 import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.google.android.material.tabs.TabLayoutMediator
 import com.checkpoint.rfid_raw_material.utils.PagerAdapter
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWaitForHandHeld
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.util.*
 
 class InventoryPagerFragment : Fragment() {
 
     private lateinit var viewModel: InventoryPagerViewModel
     private var _binding: FragmentInventoryPagerBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dialogLoaderHandHeld: CustomDialogLoader
+     private lateinit var dialogWaitForHandHeld: DialogWaitForHandHeld
     private var activityMain: MainActivity? = null
-    var batteryView: CustomBattery? = null
     private var batteryLevel: Int? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        
-        viewModel = ViewModelProvider(requireActivity())[InventoryPagerViewModel::class.java]
+    ): View {
+        viewModel = ViewModelProvider(this)[InventoryPagerViewModel::class.java]
         _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
 
-        dialogLoaderHandHeld = CustomDialogLoader(
-            this@InventoryPagerFragment,
-            TypeLoading.BLUETOOTH_DEVICE
-        )
+        dialogWaitForHandHeld =  DialogWaitForHandHeld(this)
+
+
+
 
         val viewPager = binding.pager
         val tabLayout = binding.tabLayout
@@ -70,15 +63,20 @@ class InventoryPagerFragment : Fragment() {
                     activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
                     activityMain!!.batteryView!!.visibility = View.GONE
                     activityMain!!.btnHandHeldGun!!.visibility = View.GONE
+
+
+
                 }
                 else{
                     activityMain!!.lyCreateLog!!.visibility = View.GONE
                     activityMain!!.batteryView!!.visibility = View.VISIBLE
                     activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+
                 }
             }
         })
 
+        viewModel.startHandHeld()
         val maxPower = arguments?.getInt("maxPower")
         val session = arguments?.getString("session")
 
@@ -86,7 +84,7 @@ class InventoryPagerFragment : Fragment() {
             if (maxPower > 0) {
 
                 viewModel.restartHandeldSetNewPower(maxPower, session!!)
-                dialogLoaderHandHeld.show()
+                dialogWaitForHandHeld.show()
             }
         }
 
@@ -105,7 +103,6 @@ class InventoryPagerFragment : Fragment() {
             )
             findNavController().navigate(R.id.handHeldConfigFragment,bundle)
         }
-
         activityMain!!.btnCreateLog!!.setOnClickListener {
             var logCreator= LogCreator(requireContext())
             CoroutineScope(Dispatchers.Main).launch {
@@ -113,27 +110,24 @@ class InventoryPagerFragment : Fragment() {
                 var tagList= viewModel.getTagsList()
                 logCreator.createLog("read",inventoryList)
                 Thread.sleep(1500)
-                logCreator.createLog("write",tagList)
+                logCreator.createLog("write",tagList!!)
             }
         }
 
 
-
-
         viewModel.dialogVisible.observe(viewLifecycleOwner) {
-            //if (it) {
-            if (!it) {
-                dialogLoaderHandHeld.dismiss()
+            if (it) {
+                dialogWaitForHandHeld.dismiss()
                 activityMain!!.batteryView!!.visibility = View.VISIBLE
                 activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
                 viewModel.callBatteryLevel()
             } else {
-                dialogLoaderHandHeld.show()
+                dialogWaitForHandHeld.show()
             }
         }
 
         viewModel.percentCharge.observe(viewLifecycleOwner) {
-            Log.e("#########observing", "$it")
+            Log.e("Battery level: ", "$it")
             activityMain!!.batteryView!!.setPercent(it)
             batteryLevel = it
 
@@ -144,10 +138,18 @@ class InventoryPagerFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(InventoryPagerViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.destroy()
+        Log.e("onDetach:  ", "$.....")
+
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+      //  viewModel.destroy()
+
     }
 
 }

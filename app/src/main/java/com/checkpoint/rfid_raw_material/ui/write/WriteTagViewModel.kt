@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.BarcodeHandHeldInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.HandHeldBarCodeReader
@@ -13,9 +14,6 @@ import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.db.tblItem
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
-import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
-import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
-import com.checkpoint.rfid_raw_material.zebra.ZebraRFIDHandlerImpl
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.SESSION
@@ -26,12 +24,14 @@ import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+@SuppressLint("MissingPermission")
 class WriteTagViewModel (application: Application) : AndroidViewModel(application),BarcodeHandHeldInterface {
     private var repository: DataRepository
     private var handHeldBarCodeReader: HandHeldBarCodeReader? = null
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
-
+    private var bluetoothHandler: BluetoothHandler? = null
+    private var deviceName: String ?= null
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var deviceConnected: LiveData<Boolean> = _deviceConnected
 
@@ -44,7 +44,16 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         )
         handHeldBarCodeReader = HandHeldBarCodeReader()
         handHeldBarCodeReader!!.setBarcodeResponseInterface(this)
+        bluetoothHandler = BluetoothHandler(context)
+        val devices = bluetoothHandler!!.list()
 
+        if (devices != null) {
+            for (device in devices) {
+                if (device.name.contains("RFD8")) {
+                    deviceName = device.name
+                }
+            }
+        }
     }
 
     suspend fun newProvider(id: Int,idAS:String,nameProvider:String): Provider = withContext(Dispatchers.IO) {
@@ -84,10 +93,12 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
     }
 
     suspend fun startHandHeldBarCode(){
+
+
         handHeldBarCodeReader!!.instance(context, DeviceConfig(
             0,
             SESSION.SESSION_S1,
-            "RFD850019323520100189",
+            deviceName!!,
             ENUM_TRIGGER_MODE.BARCODE_MODE,
             ENUM_TRANSPORT.BLUETOOTH
 

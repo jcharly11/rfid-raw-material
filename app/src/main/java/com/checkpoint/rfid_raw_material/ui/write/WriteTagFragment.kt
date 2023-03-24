@@ -23,8 +23,6 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorEmptyFields
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
 import kotlinx.coroutines.*
-import kotlinx.coroutines.NonDisposableHandle.parent
-import java.util.*
 
 class WriteTagFragment : Fragment(),
     CustomDialogProviderInterface{
@@ -38,12 +36,12 @@ class WriteTagFragment : Fragment(),
     private val binding get() = _binding!!
 
     var idProvider:Int=0
-    var deviceStarted= false
+    private var deviceStarted= false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         viewModel = ViewModelProvider(this)[WriteTagViewModel::class.java]
         _binding = FragmentWriteTagBinding.inflate(inflater, container, false)
 
@@ -58,12 +56,12 @@ class WriteTagFragment : Fragment(),
         }
 
 
-        binding.tvIdentifier.setOnFocusChangeListener { view, b ->
+        binding.tvIdentifier.setOnFocusChangeListener { _, b ->
 
             Log.e("setOnFocusChangeListener","$b")
             if(b){
 
-                deviceStarted= true
+                deviceStarted = true
                 dialogBarcodeReaderStatus.show()
                 this.lifecycleScope.launch {
                     viewModel.startHandHeldBarCode()
@@ -98,22 +96,22 @@ class WriteTagFragment : Fragment(),
 
                         val conversor =  Conversor()
                         var hexValueEpc = ""
-                        var version = conversor.toBinaryString(versionValue,5,'0')
-                        var subVersion = conversor.toBinaryString(subversionValue,5,'0')
-                        var type = conversor.toBinaryString(typeValue,6,'0')
-                        var supplier = conversor.toBinaryString(idProvider.toString(),32,'0')
-                        var piece = conversor.toBinaryString(pieceValue,80,'0')
+                        val version = conversor.toBinaryString(versionValue,5,'0')
+                        val subVersion = conversor.toBinaryString(subversionValue,5,'0')
+                        val type = conversor.toBinaryString(typeValue,6,'0')
+                        val supplier = conversor.toBinaryString(idProvider.toString(),32,'0')
+                        val piece = conversor.toBinaryString(pieceValue,80,'0')
 
 
-                        var binaryChain = "$version$type$subVersion$piece$supplier"
-                        var binaryGroup = binaryChain.chunked(4)
+                        val binaryChain = "$version$type$subVersion$piece$supplier"
+                        val binaryGroup = binaryChain.chunked(4)
                         binaryGroup.iterator().forEach {
                             hexValueEpc += conversor.toHexadecimalString(it)
                         }
 
 
-                        var newTag= viewModel.newTag(versionValue,subversionValue,typeValue,pieceValue,idProvider,hexValueEpc)
-                        var bundle= bundleOf("epc" to hexValueEpc)
+                          viewModel.newTag(versionValue,subversionValue,typeValue,pieceValue,idProvider,hexValueEpc)
+                        val bundle= bundleOf("epc" to hexValueEpc)
                         lifecycleScope.launch {
                             viewModel.disconnectDevice()
                         }
@@ -140,7 +138,7 @@ class WriteTagFragment : Fragment(),
         return binding.root
     }
 
-    fun getProviderList(){
+    private fun getProviderList(){
         CoroutineScope(Dispatchers.Main).launch {
             val providerList=  viewModel.getProviderList()
 
@@ -164,7 +162,7 @@ class WriteTagFragment : Fragment(),
                             id: Long
                         ) {
                             idProvider = providerList[position].id
-                            var a = 0
+
                         }
 
                         override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -178,7 +176,7 @@ class WriteTagFragment : Fragment(),
         }
     }
 
-    fun insertProviders(){
+    private fun insertProviders(){
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.insertInitialProviders()
             getProviderList()
@@ -189,8 +187,8 @@ class WriteTagFragment : Fragment(),
         val idASProvider= dialogProvider.tvIdASProvider!!.text.toString()
         val nameProvider= dialogProvider.tvNameProvider!!.text.toString()
 
-        if(!idProvider.isNullOrEmpty() && !idASProvider.isNullOrEmpty() && !nameProvider.isNullOrEmpty()){
-            var newProvider = CoroutineScope(Dispatchers.Main).launch {
+        if(idProvider.isNotEmpty() && idASProvider.isNotEmpty() && nameProvider.isNotEmpty()){
+            CoroutineScope(Dispatchers.Main).launch {
                 viewModel.newProvider(idProvider.toInt(),idASProvider,nameProvider)
             }
             Thread.sleep(1000)
@@ -198,15 +196,12 @@ class WriteTagFragment : Fragment(),
             binding.spProviderList.refreshDrawableState()
         }
         else
-            Toast.makeText(context, "${requireContext()!!.resources.getString(R.string.check_fields)}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,
+                requireContext().resources.getString(R.string.check_fields), Toast.LENGTH_SHORT).show()
     }
 
     override fun closeDialog() {
         dialogProvider.dismiss()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 }

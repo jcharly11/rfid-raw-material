@@ -39,6 +39,12 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
         repository.getTagsList()
     }
 
+
+    suspend fun counterTags(): LiveData<List<Tags>> = withContext(
+        Dispatchers.IO) {
+        repository.getTagsListLive()
+    }
+
     suspend fun getInventoryList(): LiveData<List<Inventory>> = withContext(
         Dispatchers.IO) {
         repository.getInventoryList()
@@ -53,6 +59,11 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
     suspend fun insertInventory(inventory: Inventory): Inventory = withContext(
         Dispatchers.IO) {
         repository.insertNewInventory(inventory)
+    }
+
+    fun disconnectDevice() {
+
+
     }
 
 }

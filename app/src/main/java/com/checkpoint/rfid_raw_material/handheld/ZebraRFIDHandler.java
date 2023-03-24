@@ -43,7 +43,7 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     private EventHandler eventHandler;
     private Context context;
     private int MAX_POWER = 270;
-    String readername = "RFD850019323520100198";
+    String readername = "";
     String session="";
     ResponseHandlerInterface responseHandlerInterface;
     BatteryHandlerInterface batteryHandlerInterface;
@@ -86,7 +86,9 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
     }
 
     void onDestroy() {
-        dispose();
+
+        disconnect();
+
     }
 
 
@@ -186,7 +188,6 @@ class ZebraRFIDHandler implements Readers.RFIDReaderEventHandler {
         }
     }
 
-    // handler for receiving reader appearance events
     @Override
     public void RFIDReaderAppeared(ReaderDevice readerDevice) {
         Log.d(TAG, "RFIDReaderAppeared " + readerDevice.getName());

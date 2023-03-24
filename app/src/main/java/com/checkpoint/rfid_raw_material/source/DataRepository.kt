@@ -52,6 +52,9 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
     suspend fun getTagsList(): List<Tags> = withContext(Dispatchers.IO) {
         localDataSource.tagsDao().getTagsList()
     }
+    suspend fun getTagsListLive():LiveData< List<Tags>> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsListLive()
+    }
 
     suspend fun getTagsListForLogs(): List<TagsLogs> = withContext(Dispatchers.IO) {
         localDataSource.tagsDao().getTagsListForLogs()

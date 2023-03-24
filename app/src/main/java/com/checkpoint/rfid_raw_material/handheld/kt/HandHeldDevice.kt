@@ -1,9 +1,8 @@
 package com.checkpoint.rfid_raw_material.handheld.kt
 
 import android.content.Context
-import android.util.Log
-import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
-import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.BatteryHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
 import com.zebra.rfid.api3.*
 
 interface HandHeldDevice {

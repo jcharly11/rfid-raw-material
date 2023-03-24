@@ -4,20 +4,22 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.ZebraRFIDHandlerImpl
+import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
+import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
+import com.zebra.rfid.api3.ENUM_TRANSPORT
+import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
+import com.zebra.rfid.api3.SESSION
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +29,7 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @SuppressLint("MissingPermission")
-class InventoryPagerViewModel(application: Application) : AndroidViewModel(application),
+class InventoryPagerViewModel2(application: Application) : AndroidViewModel(application),
     ResponseHandlerInterface,
     BatteryHandlerInterface {
     //private var repository: DataRepository
@@ -41,20 +43,19 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
 
 
     private var bluetoothHandler: BluetoothHandler? = null
-
+    private var rfidHandler: RFIDHandler?= null
     private var deviceName: String? = null
-
-    private var idInventory = 0
-
     private var context: Context = application.baseContext
-    private var zebraRFIDHandlerImpl: ZebraRFIDHandlerImpl? = null
     private var maxLevel = 0
     private var repository: DataRepository
 
 
     init {
 
-        //repository = DataRepository.getInstance(InventoryDataBase.getDatabase(application.baseContext))
+
+        repository = DataRepository.getInstance(
+            RawMaterialsDatabase.getDatabase(application.baseContext)
+        )
         maxLevel = localSharedPreferences.getMaxFromPreferences()
         Log.e("maxLevel--->", "$maxLevel")
         bluetoothHandler = BluetoothHandler(context)
@@ -68,7 +69,19 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
             }
         }
 
-
+        rfidHandler = RFIDHandler(
+            context,
+            DeviceConfig(
+                150,
+                SESSION.SESSION_S1,
+                deviceName!!,
+                ENUM_TRIGGER_MODE.RFID_MODE,
+                ENUM_TRANSPORT.BLUETOOTH
+            )
+        )
+        rfidHandler!!.setResponseHandlerInterface(this)
+        rfidHandler!!.setBatteryHandlerInterface(this)
+        rfidHandler!!.batteryLevel()
 
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
@@ -76,74 +89,62 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
 
     }
 
-    fun startHandHeld(){
-        if (deviceName != null) {
-            zebraRFIDHandlerImpl = ZebraRFIDHandlerImpl()
-            zebraRFIDHandlerImpl?.listener(this, this)
-            zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName!!, "SESSION_1")
-        }
-
-    }
-
-    fun restartHandeldSetNewPower(newPower: Int, session: String) {
-        zebraRFIDHandlerImpl?.onDestroy()
-        zebraRFIDHandlerImpl?.start(getApplication(), newPower, deviceName!!, session)
-    }
-
-    fun setIdInventory(id: Int) {
-        idInventory = id
-    }
-
-    fun resume() {
-        zebraRFIDHandlerImpl?.onPostResume()
-    }
-
-    fun destroy() {
-        zebraRFIDHandlerImpl?.onDestroy()
-    }
-
-    fun callBatteryLevel() {
-        zebraRFIDHandlerImpl?.battery()
-    }
-
-    fun getCapabilities(): IntArray? {
-        return zebraRFIDHandlerImpl?.powerSoupportedList()
-    }
-
-    fun currentPower(): Int? {
-        return zebraRFIDHandlerImpl?.currentPower()
-    }
 
     override  fun handleTagdata(tagData: Array<TagData?>?) {
         val code = tagData?.get(0)?.tagID.toString()
-
-        Log.e("handleTagdata","$code")
-
+        val rssi = tagData?.get(0)?.peakRSSI.toString()
+        CoroutineScope(Dispatchers.IO).launch {
             try {
-                 tagData!!.iterator().forEachRemaining {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            newTag(it!!.tagID.toString())
-                        }
-                    }
 
-             } catch (ex: Exception) {
+                Log.e("handleTagdata", code)
+                newTag(code)
+
+            } catch (ex: Exception) {
 
             }
-
+        }
     }
 
     override fun handleTriggerPress(pressed: Boolean) {
         Log.e("hanheldtriggerpress", "${localSharedPreferences.getPauseStatus()}")
 
         if (!localSharedPreferences.getPauseStatus()) {
-            if (pressed) {
-                zebraRFIDHandlerImpl?.perform()
-            } else {
-                zebraRFIDHandlerImpl?.stop()
+
+            viewModelScope.launch {
+
+                if (pressed) {
+                     rfidHandler!!.perform()
+
+                } else {
+                    rfidHandler!!.stop()
+                }
             }
         }
 
 
+    }
+
+    override fun handleStartConnect(connected: Boolean) {
+        _dialogVisible.postValue(true)
+    }
+
+
+
+    override fun batteryLevel(level: Int) {
+        Log.e("#########model", "$level")
+        _percentCharge.postValue(level)
+    }
+
+    suspend fun getInventoryList(): List<Inventory> = withContext(
+        Dispatchers.IO) {
+        var listItems= repository.getInventoryListLogs()
+        listItems
+    }
+
+    suspend fun getTagsList(): List<Tags> = withContext(
+        Dispatchers.IO) {
+        var listTags= repository.getTagsList()
+        listTags
     }
 
     suspend fun newTag(epc:String): Tags = withContext(Dispatchers.IO) {
@@ -162,26 +163,5 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
                 formatter.format(nowDate)
             )
         )
-    }
-
-    override fun handleStartConnect(connected: Boolean) {
-        _dialogVisible.postValue(true)
-    }
-
-    override fun batteryLevel(level: Int) {
-        Log.e("#########model", "$level")
-        _percentCharge.postValue(level)
-    }
-
-    suspend fun getInventoryList(): List<Inventory> = withContext(
-        Dispatchers.IO) {
-        var listItems= repository.getInventoryListLogs()
-        listItems
-    }
-
-    suspend fun getTagsList(): List<Tags> = withContext(
-        Dispatchers.IO) {
-        var listTags= repository.getTagsList()
-        listTags
     }
 }

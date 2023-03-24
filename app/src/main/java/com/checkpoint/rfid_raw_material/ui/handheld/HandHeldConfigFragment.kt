@@ -28,7 +28,7 @@ class HandHeldConfigFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val inventoryId = arguments?.getInt("inventoryId")
         val batteryPercent = arguments?.getInt("batteryLevel")
         val currentPower = arguments?.getInt("currentPower")
@@ -80,11 +80,4 @@ class HandHeldConfigFragment : Fragment() {
         }
         return binding.root
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(HandHeldConfigViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
 }

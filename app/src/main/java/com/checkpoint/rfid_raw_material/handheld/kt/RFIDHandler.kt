@@ -2,9 +2,10 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
  import android.content.Context
  import android.util.Log
+ import com.checkpoint.rfid_raw_material.handheld.BatteryHandlerInterface
+ import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
  import com.checkpoint.rfid_raw_material.handheld.WritingTagInterface
-  import com.checkpoint.rfid_raw_material.zebra.BatteryHandlerInterface
- import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
+
  import com.zebra.rfid.api3.*
  import kotlinx.coroutines.*
 
@@ -36,7 +37,6 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
             }
             connected.await().let {
 
-
                 Log.e("DEVICE CONNECTED", "connect " + reader!!.hostName+"$it")
                 if (it){
                     reader!!.Actions.Inventory.stop()
@@ -59,7 +59,7 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
     }
 
 
-   suspend fun connectionTask(): Boolean{
+   private suspend fun connectionTask(): Boolean{
        return withContext(Dispatchers.Default) {
            try {
                availableRFIDReaderList = readers.GetAvailableRFIDReaderList()
@@ -252,9 +252,29 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
     override fun RFIDReaderAppeared(p0: ReaderDevice?) {
 
+        GlobalScope.launch(Dispatchers.Main) {
+
+            val connected = async {
+                connectionTask()
+            }
+            connected.await().let {
+                Log.e("Device connected","${p0!!.rfidReader.hostName}")
+            }
+
+        }
     }
 
     override fun RFIDReaderDisappeared(p0: ReaderDevice?) {
+        if (p0!!.name == reader!!.hostName){
+            GlobalScope.launch(Dispatchers.Main) {
+                val disconnect = async { disconnect()
+                }
+                disconnect.await().let {
+                    Log.e("Device connected","${p0!!.rfidReader.hostName}")
+                }
+            }
+
+        }
      }
 
     fun setWriteTagHandlerInterface(_writingTagInterface: WritingTagInterface) {
@@ -320,5 +340,17 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
             }
 
+    }
+
+    fun batteryLevel() {
+        try {
+            if (reader != null && reader!!.Config != null) {
+               reader!!.Config.getDeviceStatus(true, true, false)
+            }
+        } catch (e: InvalidUsageException) {
+            e.printStackTrace()
+        } catch (e: OperationFailureException) {
+            e.printStackTrace()
+        }
     }
 }

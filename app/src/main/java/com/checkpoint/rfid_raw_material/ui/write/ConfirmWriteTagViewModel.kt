@@ -4,10 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
+import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.WritingTagInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
-import com.checkpoint.rfid_raw_material.zebra.ResponseHandlerInterface
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.SESSION
@@ -32,22 +33,32 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
     private var epc:String ?= null
     private var tid:String ?= null
     private var pass:String ?= null
+    private var deviceName: String ?= null
 
     @SuppressLint("StaticFieldLeak")
     private var context = application.applicationContext
-
-
-
     private var rfidHandler: RFIDHandler?= null
+    private var bluetoothHandler: BluetoothHandler? = null
 
-    suspend fun initReaderRFID() {
+    @SuppressLint("MissingPermission")
+    fun initReaderRFID() {
+        bluetoothHandler = BluetoothHandler(context)
+        val devices = bluetoothHandler!!.list()
+
+        if (devices != null) {
+            for (device in devices) {
+                if (device.name.contains("RFD8")) {
+                    deviceName = device.name
+                }
+            }
+        }
 
         rfidHandler = RFIDHandler(
             context,
             DeviceConfig(
                 150,
                 SESSION.SESSION_S1,
-                "RFD850019323520100189",
+                deviceName!!,
                 ENUM_TRIGGER_MODE.RFID_MODE,
                 ENUM_TRANSPORT.BLUETOOTH
             )
@@ -84,7 +95,7 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
     }
 
     override fun handleStartConnect(connected: Boolean) {
-        Log.e("handleStartConnect","${connected}")
+        Log.e("handleStartConnect","$connected")
         if (!connected){
 
             rfidHandler!!.Connect()
@@ -120,13 +131,6 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
     }
 
-    suspend fun prepareToRead(){
-        viewModelScope.launch {
-
-            rfidHandler!!.prepareReaderToRead()
-            writeMode = false
-        }
-    }
 
     override fun writingTagStatus(status: Boolean) {
         _writeComplete.postValue(status)
