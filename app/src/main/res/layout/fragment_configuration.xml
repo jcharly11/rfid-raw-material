@@ -22,7 +22,7 @@
             android:layout_marginRight="25dp"
             android:gravity="center_horizontal"
             android:text="@string/configuration"
-            android:textColor="@color/navy"
+            android:textColor="?android:textColorSecondary"
             android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
 
         <LinearLayout
@@ -43,9 +43,8 @@
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="18sp"
-                    android:text="@string/language"
-                    android:textColor="@color/black"
-                    android:textStyle="bold">
+                    android:textStyle="bold"
+                    android:text="@string/language">
                 </com.google.android.material.textview.MaterialTextView>
 
                 <LinearLayout

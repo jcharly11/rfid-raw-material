@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfigurationBinding
@@ -25,6 +26,9 @@ class ConfigurationFragment : Fragment() {
     private lateinit var viewModel: ConfigurationViewModel
     private var _binding: FragmentConfigurationBinding? = null
     private val binding get() = _binding!!
+
+    var selectedLanguage:String=""
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,30 +56,50 @@ class ConfigurationFragment : Fragment() {
                         android.R.layout.simple_spinner_dropdown_item,
                         languageList
                     )
-                binding.spLanguageList.adapter = adapter
-            } else
+                 binding.spLanguageList.adapter = adapter
+
+                binding.spLanguageList.onItemSelectedListener =
+                    object : AdapterView.OnItemSelectedListener {
+                        override fun onItemSelected(
+                            parent: AdapterView<*>?,
+                            view: View?,
+                            position: Int,
+                            id: Long
+                        ) {
+                            selectedLanguage = languageList[position].lang!!
+                            var a = 0
+                        }
+                        override fun onNothingSelected(p0: AdapterView<*>?) {
+                        }
+                    }
+
+             } else
                 insertLanguage()
         }
     }
 
-    private fun insertLanguage() {
+     private fun insertLanguage() {
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.insertLanguage()
+            viewModel.insertLanguages()
             getLanguageList()
         }
     }
 
-    private fun changeLanguage(){
-        val lang:String= binding.spLanguageList.selectedItem.toString()
-        viewModel.setLanguage(lang).apply {
-            val config = resources.configuration
-            val locale = Locale(lang)
-            Locale.setDefault(locale)
-            config.locale = locale
-            resources.updateConfiguration(config, resources.displayMetrics)
-            requireActivity().recreate()
-            findNavController().navigate(R.id.optionsWriteFragment)
-        }
+
+    fun changeLanguage(){
+        if(selectedLanguage!="") {
+            viewModel.setLanguage(selectedLanguage).apply {
+                val config = resources.configuration
+                val locale = Locale(selectedLanguage)
+                Locale.setDefault(locale)
+                config.locale = locale
+                resources.updateConfiguration(config, resources.displayMetrics)
+                requireActivity().recreate()
+                findNavController().navigate(R.id.optionsWriteFragment)
+            }
+         }
+        else
+            Toast.makeText(context, "Please, selected language", Toast.LENGTH_SHORT).show()
     }
 
 }
