@@ -1,4 +1,4 @@
-package com.checkpoint.rfid_raw_material.handheld.kt
+package com.checkpoint.rfid_raw_material.handheld.kt.model
 
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE

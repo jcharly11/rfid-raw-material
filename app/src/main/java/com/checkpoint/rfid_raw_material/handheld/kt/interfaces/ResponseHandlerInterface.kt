@@ -1,4 +1,4 @@
-package com.checkpoint.rfid_raw_material.handheld
+package com.checkpoint.rfid_raw_material.handheld.kt.interfaces
 
 import com.zebra.rfid.api3.TagData
 

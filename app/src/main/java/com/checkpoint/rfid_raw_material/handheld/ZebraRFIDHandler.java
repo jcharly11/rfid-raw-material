@@ -4,8 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface;
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface;
 import com.zebra.rfid.api3.ACCESS_OPERATION_CODE;
 import com.zebra.rfid.api3.ACCESS_OPERATION_STATUS;
 import com.zebra.rfid.api3.Antennas;

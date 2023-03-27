@@ -4,17 +4,17 @@ import android.content.Context
 import android.os.Handler
 import android.os.Message
 import android.util.Log
-import com.checkpoint.rfid_raw_material.handheld.BarcodeHandHeldInterface
-import com.zebra.rfid.api3.InvalidUsageException
-import com.zebra.rfid.api3.OperationFailureException
-import com.zebra.rfid.api3.Readers
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
+import com.zebra.rfid.api3.*
 import com.zebra.scannercontrol.*
 import kotlinx.coroutines.*
 
 
-class HandHeldBarCodeReader(): ZebraReader8500(),
-    IDcsSdkApiDelegate {
+class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
 
+    private var availableRFIDReaderList: ArrayList<ReaderDevice>? = null
+    private var readerDevice: ReaderDevice? = null
     private var sdkHandler: SDKHandler? = null
     var mScannerInfoList = ArrayList<DCSScannerInfo>()
     private val BARCODE_RECEIVED = 1
@@ -22,9 +22,11 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
     private lateinit var barcodeHandHeldInterface: BarcodeHandHeldInterface
     private var deviceConfig: DeviceConfig?= null
     private var deviceConnected: Boolean= false
+    private var readers: Readers? = null
+    private var reader: RFIDReader?= null
 
 
-    override suspend fun instance(context: Context?, device: DeviceConfig?){
+    suspend fun instance(context: Context?, device: DeviceConfig?){
         sdkHandler = SDKHandler(context!!)
         sdkHandler!!.dcssdkSetDelegate(this)
         readers = Readers(context, device!!.type)
@@ -59,22 +61,22 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
         return withContext(Dispatchers.Default) {
             try {
 
-                availableRFIDReaderList = readers.GetAvailableRFIDReaderList()
-                if (availableRFIDReaderList.size != 0) {
-                    if (availableRFIDReaderList.size == 1) {
-                        readerDevice = availableRFIDReaderList[0]
-                        reader = readerDevice.rfidReader
+                availableRFIDReaderList = readers!!.GetAvailableRFIDReaderList()
+                if (availableRFIDReaderList!!.size != 0) {
+                    if (availableRFIDReaderList!!.size == 1) {
+                        readerDevice = availableRFIDReaderList!![0]
+                        reader = readerDevice!!.rfidReader
 
                     } else {
-                        availableRFIDReaderList.iterator().forEachRemaining {
+                        availableRFIDReaderList!!.iterator().forEachRemaining {
                             if (it.name.equals(deviceConfig!!.device))
                                 reader = it.rfidReader
 
                         }
                     }
                 }
-                reader.connect()
-                reader.Config.setTriggerMode(deviceConfig!!.mode, false)
+                reader!!.connect()
+                reader!!.Config.setTriggerMode(deviceConfig!!.mode, false)
 
                 sdkHandler!!.dcssdkSetOperationalMode(DCSSDKDefs.DCSSDK_MODE.DCSSDK_OPMODE_BT_NORMAL)
 
@@ -102,13 +104,13 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
             }
         }
     }
-    override  suspend fun disconnect() {
+    suspend fun disconnect() {
         GlobalScope.launch(Dispatchers.Main) {
             val disconnect = async {
                 disconnectDevice()
             }
             disconnect.await()
-            Log.e("DEVICE DISCONNECTED", "disconnecting " + reader.hostName)
+            Log.e("DEVICE DISCONNECTED", "disconnecting " + reader!!.hostName)
 
         }
 
@@ -116,7 +118,7 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
     private suspend fun disconnectDevice(){
         return withContext(Dispatchers.Default) {
             try {
-                readers.Dispose()
+                readers!!.Dispose()
                 reader!!.disconnect()
             } catch (e: InvalidUsageException) {
                 e.printStackTrace()
@@ -135,15 +137,6 @@ class HandHeldBarCodeReader(): ZebraReader8500(),
         }
     }
 
-
-    override suspend fun resume() {
-    }
-    override suspend fun perform() {
-
-    }
-    override suspend fun stop() {
-
-    }
 
 
 

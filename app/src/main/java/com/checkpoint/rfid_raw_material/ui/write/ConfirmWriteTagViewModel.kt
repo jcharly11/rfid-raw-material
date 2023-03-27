@@ -5,9 +5,9 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
-import com.checkpoint.rfid_raw_material.handheld.ResponseHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.WritingTagInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.DeviceConfig
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(application),
-    ResponseHandlerInterface,WritingTagInterface{
+    ResponseHandlerInterface, WritingTagInterface {
 
     private val _liveTID: MutableLiveData<String> = MutableLiveData("")
     var liveTID: LiveData<String> = _liveTID

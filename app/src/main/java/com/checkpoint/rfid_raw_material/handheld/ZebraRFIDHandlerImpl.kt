@@ -1,6 +1,8 @@
 package com.checkpoint.rfid_raw_material.handheld
 
 import android.content.Context
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 
 class ZebraRFIDHandlerImpl {
 
@@ -9,7 +11,8 @@ class ZebraRFIDHandlerImpl {
         zebraRfidHandler.onCreate(context,maxPower,nameDevice,session)
     }
     fun listener(responseHandlerInterface: ResponseHandlerInterface,
-                 batteryHandlerInterface: BatteryHandlerInterface){
+                 batteryHandlerInterface: BatteryHandlerInterface
+    ){
         zebraRfidHandler.setListener(responseHandlerInterface)
         zebraRfidHandler.setBatterListener(batteryHandlerInterface)
     }
