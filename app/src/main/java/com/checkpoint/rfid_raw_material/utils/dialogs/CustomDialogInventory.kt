@@ -3,16 +3,13 @@ package com.checkpoint.rfid_raw_material.utils.dialogs
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.view.View
 import android.view.Window
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.enums.TypeInventory
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogInventoryInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogInventoryInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class CustomDialogInventory(val fragment: Fragment, private val typeDialogInventory: TypeInventory

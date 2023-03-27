@@ -2,7 +2,6 @@ package com.checkpoint.rfid_raw_material.ui.inventory.read
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +11,11 @@ import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentReadInventoryBinding
 import com.checkpoint.rfid_raw_material.enums.TypeInventory
-import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogInventory
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogInventoryInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogInventoryInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 class ReadInventoryFragment : Fragment(),CustomDialogInventoryInterface {
 

@@ -21,7 +21,7 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogBarcodeReaderStatus
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorEmptyFields
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogProviderInterface
 import kotlinx.coroutines.*
 
 class WriteTagFragment : Fragment(),

@@ -6,23 +6,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
 import com.checkpoint.rfid_raw_material.enums.TypeLoading
-import com.checkpoint.rfid_raw_material.source.model.Item
-import com.checkpoint.rfid_raw_material.utils.CustomBattery
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 
 class OptionsWriteFragment : Fragment(){
 
