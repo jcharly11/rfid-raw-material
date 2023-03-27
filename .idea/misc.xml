@@ -22,15 +22,22 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_prepare_trigger.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_wait_for_handheld.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_write_tag_confirmation.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_configuration.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_confirm_write_tag.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_hand_held_config.xml" value="0.2" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_inventory_list.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_inventory_pager.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_items_read.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_new_inventory.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_new_provider.xml" value="0.15" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_options_write.xml" value="0.2" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_provider_list.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_read_inventory.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_slideshow.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_test.xml" value="0.18" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_write_tag.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/menu/activity_main_drawer.xml" value="0.5" />
       </map>
     </option>
   </component>

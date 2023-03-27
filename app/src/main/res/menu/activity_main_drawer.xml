@@ -5,24 +5,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/inventoryPagerFragment"
-            android:icon="@drawable/ic_inventory"
-            android:title="@string/item_menu_inventory"
-            android:iconTint="@color/navy">
-        </item>
-        <item
-            android:id="@+id/writeTagFragment"
-            android:icon="@drawable/ic_tag"
-            android:title="@string/item_menu_write"
-            android:iconTint="@color/navy">
-        </item>
-        <item
-            android:id="@+id/providerListFragment"
-            android:icon="@drawable/ic_user"
-            android:title="@string/item_menu_provider"
-            android:iconTint="@color/navy">
-        </item>
-        <item
             android:id="@+id/configurationFragment"
             android:icon="@drawable/ic_lang"
             android:title="@string/language"

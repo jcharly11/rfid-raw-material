@@ -73,7 +73,10 @@ class ConfirmWriteTagFragment : Fragment() {
             }
         }
         viewModel.multipleTags.observe(viewLifecycleOwner){
-            dialogErrorMultipleTags.show()
+
+            if(!it && startDevice ) {
+                dialogErrorMultipleTags.show()
+            }
         }
 
         binding.tvTID.setOnFocusChangeListener { _, b ->

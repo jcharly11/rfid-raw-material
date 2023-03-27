@@ -13,11 +13,11 @@
         <action
             android:id="@+id/action_optionsWriteFragment_to_writeTagFragment"
             app:destination="@id/writeTagFragment" />
-
-
         <action
             android:id="@+id/action_optionsWriteFragment_to_inventoryPagerFragment"
             app:destination="@id/inventoryPagerFragment" />
+
+
     </fragment>
 
     <fragment
@@ -29,17 +29,11 @@
         <action
             android:id="@+id/action_writeTagFragment_to_confirmWriteTagFragment"
             app:destination="@id/confirmWriteTagFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/providerListFragment"
-        android:name="com.checkpoint.rfid_raw_material.ui.provider.list.ProviderListFragment"
-        android:label="fragment_provider_list"
-        tools:layout="@layout/fragment_provider_list" >
         <action
-            android:id="@+id/action_providerListFragment_to_newProviderFragment"
+            android:id="@+id/action_writeTagFragment_to_newProviderFragment"
             app:destination="@id/newProviderFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/newProviderFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.provider.add.NewProviderFragment"
@@ -50,16 +44,16 @@
         android:id="@+id/inventoryPagerFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.inventory.InventoryPagerFragment"
         android:label="fragment_inventory_pager"
-        tools:layout="@layout/fragment_inventory_pager" >
-        <action
-            android:id="@+id/action_inventoryPagerFragment_to_handHeldConfigFragment"
-            app:destination="@id/handHeldConfigFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_inventory_pager" />
     <fragment
         android:id="@+id/handHeldConfigFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment"
         android:label="fragment_hand_held_config"
-        tools:layout="@layout/fragment_hand_held_config" />
+        tools:layout="@layout/fragment_hand_held_config" >
+        <action
+            android:id="@+id/action_handHeldConfigFragment_to_optionsWriteFragment"
+            app:destination="@id/optionsWriteFragment" />
+    </fragment>
     <fragment
 
         android:id="@+id/confirmWriteTagFragment"
@@ -70,6 +64,10 @@
         android:id="@+id/configurationFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.configuration.ConfigurationFragment"
         android:label="fragment_configuration"
-        tools:layout="@layout/fragment_configuration" />
+        tools:layout="@layout/fragment_configuration" >
+        <action
+            android:id="@+id/action_configurationFragment_to_optionsWriteFragment"
+            app:destination="@id/optionsWriteFragment" />
+    </fragment>
 
 </navigation>
