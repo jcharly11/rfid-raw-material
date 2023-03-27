@@ -11,10 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogPrepareTrigger
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWaitForHandHeld
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWriteTagConfirmation
+import com.checkpoint.rfid_raw_material.utils.dialogs.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -27,6 +24,7 @@ class ConfirmWriteTagFragment : Fragment() {
     private lateinit var dialogWriteTagConfirmation: DialogWriteTagConfirmation
     private lateinit var dialogPrepareTrigger: DialogPrepareTrigger
     private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
+    private lateinit var dialogErrorMultipleTags: DialogErrorMultipleTags
     private var startDevice: Boolean = false
 
     override fun onCreateView(
@@ -40,6 +38,7 @@ class ConfirmWriteTagFragment : Fragment() {
         dialogPrepareTrigger = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this@ConfirmWriteTagFragment,Pair("",""))
         dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
+        dialogErrorMultipleTags = DialogErrorMultipleTags(this@ConfirmWriteTagFragment)
         viewModel.liveTID.observe(viewLifecycleOwner){
 
             Log.e("observe", it)
@@ -72,6 +71,9 @@ class ConfirmWriteTagFragment : Fragment() {
                     findNavController().navigate(R.id.optionsWriteFragment)
                 }
             }
+        }
+        viewModel.multipleTags.observe(viewLifecycleOwner){
+            dialogErrorMultipleTags.show()
         }
 
         binding.tvTID.setOnFocusChangeListener { _, b ->

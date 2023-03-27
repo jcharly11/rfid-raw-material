@@ -58,4 +58,6 @@
     <string name="configuration">Configuration</string>
     <string name="language">Language</string>
 
+    <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your area in order to read only one</string>
+
 </resources>
