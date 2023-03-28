@@ -6,11 +6,12 @@ class Conversor {
 
     fun toBinaryString(value : String,length: Int, padding: Char): String {
 
+        var binary= String()
         var input = BigInteger(value)
         var salida = input.divideAndRemainder(BigInteger("2"))
         var div = salida[0]
         var res = salida[1]
-        var binary=""
+
         binary += if(res.compareTo(BigInteger("0") ) == 0){
             "0"
         }else{
@@ -35,7 +36,7 @@ class Conversor {
 
     }
     fun toHexadecimalString(value: String): String{
-        var result = ""
+        var result = String()
         when(value){
             "0000"->{ result = "0"  }
             "0001"->{ result = "1" }
@@ -57,5 +58,16 @@ class Conversor {
         }
         return result
     }
+    fun stringBinaryPadding(values: Array<String>): String {
+        var stringComplete = String()
+        values.iterator().forEachRemaining {
+            stringComplete += it
+        }
+        return stringComplete
+    }
+    fun groupBytes(): String{
+        var hexValue = String()
 
+        return hexValue
+    }
 }
