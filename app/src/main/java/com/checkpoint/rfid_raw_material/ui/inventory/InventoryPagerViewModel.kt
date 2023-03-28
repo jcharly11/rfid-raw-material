@@ -151,6 +151,7 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
         repository.insertNewTag(
             Tags(
                 0,
+                0,
                 "0",
                 "0",
                 "0",

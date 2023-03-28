@@ -7,8 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
@@ -28,18 +32,28 @@ class ConfirmWriteTagFragment : Fragment() {
     private lateinit var dialogPrepareTrigger: DialogPrepareTrigger
     private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
     private var startDevice: Boolean = false
+    private var readNumber: Int? = 0
+    private var activityMain: MainActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val epc = arguments?.getString("epc")
+        readNumber = arguments?.getInt("readNumber")
+
         viewModel = ViewModelProvider(this)[ConfirmWriteTagViewModel::class.java]
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
+        activityMain = requireActivity() as MainActivity
+
+        activityMain!!.lyCreateLog!!.visibility = View.GONE
         dialogWaitForHandHeld = DialogWaitForHandHeld(this@ConfirmWriteTagFragment)
         dialogPrepareTrigger = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this@ConfirmWriteTagFragment,Pair("",""))
         dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
+
         viewModel.liveTID.observe(viewLifecycleOwner){
 
             Log.e("observe", it)
@@ -69,7 +83,10 @@ class ConfirmWriteTagFragment : Fragment() {
                 lifecycleScope.launch {
                     dialogPrepareTrigger.dismiss()
                     viewModel.disconectDevice()
-                    findNavController().navigate(R.id.optionsWriteFragment)
+                    val bundle = bundleOf(
+                        "readNumber" to readNumber
+                    )
+                    findNavController().navigate(R.id.writeTagFragment,bundle)
                 }
             }
         }
@@ -105,12 +122,14 @@ class ConfirmWriteTagFragment : Fragment() {
         }
 
         binding.btnCancel.setOnClickListener {
-
             binding.tvTID.setText("")
             binding.edtTagEPC.setText("")
-
             startDevice= false
-            findNavController().popBackStack()
+            val bundle = bundleOf(
+                "readNumber" to readNumber
+            )
+            //findNavController().popBackStack()
+            findNavController().navigate(R.id.writeTagFragment,bundle)
         }
         return binding.root
     }
