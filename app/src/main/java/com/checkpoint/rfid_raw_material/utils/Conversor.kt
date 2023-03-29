@@ -65,9 +65,13 @@ class Conversor {
         }
         return stringComplete
     }
-    fun groupBytes(): String{
+    fun groupBytes(binaryChain: String): String{
         var hexValue = String()
+        var binaryGroup = binaryChain.chunked(4)
+        binaryGroup.iterator().forEach {
+            hexValue += toHexadecimalString(it)
 
+        }
         return hexValue
     }
 }
