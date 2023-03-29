@@ -60,5 +60,7 @@
     <string name="finish_write">Finish Write</string>
     <string name="write_question">Do you want finish writing?</string>
     <string name="progress_write">the progress will lost, and not will be save log</string>
+    <string name="error_log">No data exists to save</string>
+    <string name="press_back_again">Press again back button to exit</string>
 
 </resources>

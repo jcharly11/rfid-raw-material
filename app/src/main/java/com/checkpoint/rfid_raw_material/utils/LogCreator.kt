@@ -6,8 +6,6 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.checkpoint.rfid_raw_material.source.db.Inventory
-import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.Logs
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import java.io.*
@@ -65,10 +63,7 @@ class LogCreator constructor(context: Context): View(context) {
 
         createFile(fileName)
 
-        if(typeCSV=="read")
-            FileOutputStream(fullPath).apply { writeCsvInventory(list as List<Inventory>) }
-        else
-            FileOutputStream(fullPath).apply { writeCsvTags(list as List<TagsLogs>) }
+        FileOutputStream(fullPath).apply { writeCsvTags(list as List<TagsLogs>) }
 
         Toast.makeText(context, "Log file create in $fullPath", Toast.LENGTH_LONG).show()
     }
@@ -107,19 +102,6 @@ class LogCreator constructor(context: Context): View(context) {
 
         writer.flush()
         writer.write("${date},${epc},${version},${type},${subversion},${identifier},${supplier}")
-        writer.close()
-    }
-
-    private fun OutputStream.writeCsvInventory(list: List<Inventory>) {
-        val writer= bufferedWriter()
-        writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
-        writer.newLine()
-
-        list.forEach {
-            writer.write("${it.timeStamp},${it.epc}")
-            writer.newLine()
-        }
-        writer.flush()
         writer.close()
     }
 

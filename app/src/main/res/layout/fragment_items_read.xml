@@ -15,19 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/expandableInventory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:expandable_duration="200"
-                app:expandable_isExpanded="false"
-                app:expandable_parentLayout="@layout/header_inventory"
-                app:expandable_secondLayout="@layout/content_inventory"
-                app:expandable_spinner="@drawable/ic_arrow_down"
-                app:expandable_spinner_color="@color/navy"></com.skydoves.expandablelayout.ExpandableLayout>
 
             <com.skydoves.expandablelayout.ExpandableLayout
+                android:visibility="gone"
                 android:id="@+id/expandableTags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

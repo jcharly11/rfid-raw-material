@@ -1,28 +1,23 @@
 package com.checkpoint.rfid_raw_material.ui.selection
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
 import com.checkpoint.rfid_raw_material.enums.TypeLoading
-import com.checkpoint.rfid_raw_material.source.model.Item
-import com.checkpoint.rfid_raw_material.utils.CustomBattery
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
+
 
 class OptionsWriteFragment : Fragment(){
 
@@ -30,6 +25,7 @@ class OptionsWriteFragment : Fragment(){
     private var _binding: FragmentOptionsWriteBinding? = null
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
+    var doubleBackPressed = false
 
 
     private lateinit var dialogLoaderHandHeld: CustomDialogLoader
@@ -43,11 +39,14 @@ class OptionsWriteFragment : Fragment(){
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            exitApp()
+        }
+
         dialogLoaderHandHeld = CustomDialogLoader(
             this@OptionsWriteFragment,
             TypeLoading.BLUETOOTH_DEVICE
         )
-
 
         binding.btnInventory.setOnClickListener {
             findNavController().navigate(R.id.inventoryPagerFragment)
@@ -74,6 +73,16 @@ class OptionsWriteFragment : Fragment(){
         (activity as AppCompatActivity).supportActionBar!!.show()
     }
 
+    fun exitApp(){
+        if(doubleBackPressed){
+            System.exit(0)
+        }
+        doubleBackPressed=true
+        Toast.makeText(context, resources.getText(R.string.press_back_again), Toast.LENGTH_SHORT).show()
 
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            doubleBackPressed = false
+        }, 2000)
+    }
 
 }
