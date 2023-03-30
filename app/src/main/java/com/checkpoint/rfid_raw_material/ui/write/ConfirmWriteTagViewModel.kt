@@ -51,7 +51,7 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
         if (devices != null) {
             for (device in devices) {
-                if (device.name.contains("RFD8")) {
+                if (device.name.contains("RFD8500")) {
                     deviceName = device.name
                 }
             }

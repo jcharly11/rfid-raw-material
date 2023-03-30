@@ -58,7 +58,7 @@ class LogCreator constructor(context: Context): View(context) {
     }
 
     fun  <T: Any> createLog(typeCSV:String, list: List<T>){
-        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         val dateFormatter: String = df.format(Date())
         var fileName = "${typeCSV}_$dateFormatter.csv"
         var fullPath= "$pathApplication/$fileName"
@@ -68,7 +68,7 @@ class LogCreator constructor(context: Context): View(context) {
         if(typeCSV=="read")
             FileOutputStream(fullPath).apply { writeCsvInventory(list as List<Inventory>) }
         else
-            FileOutputStream(fullPath).apply { writeCsvTags(list as List<Tags>) }
+            FileOutputStream(fullPath).apply { writeCsvTags(list as List<TagsLogs>) }
 
         Toast.makeText(context, "Log file create in $fullPath", Toast.LENGTH_LONG).show()
     }
@@ -123,13 +123,13 @@ class LogCreator constructor(context: Context): View(context) {
         writer.close()
     }
 
-    private fun OutputStream.writeCsvTags(list: List<Tags>) {
+    private fun OutputStream.writeCsvTags(list: List<TagsLogs>) {
         val writer= bufferedWriter()
         writer.write("""Date,EPC,Version,Type,Subversion,Identifier,Supplier""")
         writer.newLine()
 
         list.forEach {
-            writer.write("${it.timeStamp},${it.epc},${it.version},${it.type},${it.subversion},${it.piece},${it.idProvider}")
+            writer.write("${it.timestamp},${it.epc},${it.version},${it.type},${it.subversion},${it.piece},${it.provider}")
             writer.newLine()
         }
         writer.flush()

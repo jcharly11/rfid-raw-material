@@ -32,7 +32,7 @@
     <string name="power_config_settings">max_power</string>
     <string name="set_power">Configuracíon de potencia</string>
     <string name="label_max_power_config">Potencia RFID</string>
-    <string name="select_region">Selecciona región</string>
+    <string name="select_session">Selecciona sesion</string>
     <string name="title_dialog_bluetooth">Tu bluetooth esta apagado!</string>
     <string name="subtitle_dialog_rfid">No se logró establecer conexión con su lector RFID. ¿Necesitas ayuda para conectarlo?...</string>
     <string name="radio_option_yes">1.- Enciende tu conexión bluetooth</string>
@@ -51,4 +51,9 @@
     <string name="cancel">Cancelar</string>
     <string name="configuration">Configuración</string>
     <string name="language">Idioma</string>
+    <string name="finish_write">Finalizar Escritura</string>
+    <string name="write_question">¿Deseas terminar la escritura?</string>
+    <string name="progress_write">El progreso se perderá y no se podrá guardar el log</string>
+    <string name="dialog_error_multiple_tags"> Se ha detectado mas de un tag,por favor despeja tu espacio para leer únicamente uno</string>
+
 </resources>

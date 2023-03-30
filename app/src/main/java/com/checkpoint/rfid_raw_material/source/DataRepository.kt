@@ -56,8 +56,8 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.tagsDao().getTagsListLive()
     }
 
-    suspend fun getTagsListForLogs(): List<TagsLogs> = withContext(Dispatchers.IO) {
-        localDataSource.tagsDao().getTagsListForLogs()
+    suspend fun getTagsListForLogs(readNumber:Int): List<TagsLogs> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsListForLogs(readNumber)
     }
 
     suspend fun insertNewTag(tag: Tags):Tags = withContext(Dispatchers.IO) {
@@ -82,5 +82,13 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
 
     fun deletePoviders() {
         localDataSource.providerDao().deleteAll()
+    }
+
+    suspend fun getReadNumber():Int= withContext(Dispatchers.IO) {
+        var list= localDataSource.tagsDao().getReadNumber()
+        if(list.size>0)
+            list[0].readNumber+1
+        else
+            1
     }
 }

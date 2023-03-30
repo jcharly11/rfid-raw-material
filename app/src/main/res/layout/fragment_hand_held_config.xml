@@ -116,7 +116,7 @@ android:layout_width="match_parent"
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="@string/select_region"
+                    android:text="@string/select_session"
                     android:gravity="right" />
 
                 <com.google.android.material.textfield.TextInputLayout

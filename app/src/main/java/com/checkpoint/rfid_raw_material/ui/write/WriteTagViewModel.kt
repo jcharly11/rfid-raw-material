@@ -12,6 +12,7 @@ import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.SESSION
@@ -111,7 +112,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         }
 
 
-    suspend fun newTag(version: String,subversion:String,type:String,piece:String,
+    suspend fun newTag(readNumber:Int,version: String,subversion:String,type:String,piece:String,
     idProvider:Int,epc:String): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
@@ -119,6 +120,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         repository.insertNewTag(
             Tags(
                 0,
+                readNumber,
                 version,
                 subversion,
                 type,
@@ -129,6 +131,17 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
             )
         )
     }
+
+    suspend fun getNewReadNumber():Int= withContext(Dispatchers.IO){
+        repository.getReadNumber()
+    }
+
+    suspend fun getTagsForLog(readNumber: Int): List<TagsLogs> = withContext(Dispatchers.IO){
+        repository.getTagsListForLogs(readNumber)
+    }
+
+
+
 
     suspend fun insertInitialProviders()= withContext(Dispatchers.IO){
         repository.deletePoviders()
