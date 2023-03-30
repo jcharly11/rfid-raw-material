@@ -4,20 +4,11 @@ import android.util.Log
 
 class Reverse {
 
-    fun binaryToDecimal(binaryString: String): String{
-        var decimalString = String()
-        var binaryStringArray =  binaryString.chunked(4)
-            binaryStringArray.iterator().forEachRemaining {
-            decimalString +=  it.toInt(2)
-        }
-
-        return decimalString
-    }
 
     fun hexadecimalToBinaryString(hexadecimalValue: String): String{
         var binaryString = String()
         hexadecimalValue.toCharArray().iterator().forEachRemaining{
-            Log.e("Character: ","$it")
+
             binaryString +=  hexToBinary(it.toString())
         }
         return binaryString
