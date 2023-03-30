@@ -18,29 +18,23 @@ class ReverseTest {
 
 
         var reverse =  Reverse()
-        var binaryString = reverse.hexadecimalToBinaryString("90801A249B1F10A06C96AFF20001E240")
+        reverse.hexadecimalToBinaryString("90801A249B1F10A06C96AFF20001E240")
 
-        "$version$type$subVersion$piece$supplier"
-         supplier = binaryString.subSequence(binaryString.length-32,binaryString.length).toString()
-         piece = binaryString.subSequence(binaryString.length- (32+80),binaryString.length-32).toString()
-
-         subVersion = binaryString.subSequence(binaryString.length- (32+80+5),binaryString.length-(32+80)).toString()
-         type = binaryString.subSequence(binaryString.length- (32+80+5+6),binaryString.length-(32+80+5)).toString()
+        supplier = reverse.getSupplier()
+        piece = reverse.getPiece()
+        subVersion = reverse.getSubVersion()
+        type =  reverse.getType()
+        version =  reverse.getVersion()
 
         println("supplier:$supplier")
-        println( "supplier:" + supplier.toBigInteger(2))
-
         println("piece:$piece")
-        println( "piece:" + piece.toBigInteger(2))
-
-        println("type:$type")
-        println("type:" + type.toBigInteger(2))
-
         println("subVersion:$subVersion")
-        println("subVersion:" + subVersion.toBigInteger(2))
+        println("type:$type")
+        println("version:$version")
 
 
-        Assert.assertNotEquals("123456",supplier.toInt(2))
+
+        Assert.assertEquals("123456",supplier)
 
     }
 

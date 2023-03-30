@@ -1,18 +1,19 @@
 package com.checkpoint.rfid_raw_material.utils
 
 import android.util.Log
+import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
 
 class Reverse {
+    val longValues = ConfigLongValues()
+    var binaryString = String()
 
 
-    fun hexadecimalToBinaryString(hexadecimalValue: String): String{
-        var binaryString = String()
-        hexadecimalValue.toCharArray().iterator().forEachRemaining{
-
+    fun hexadecimalToBinaryString(hexadecimalValue: String): Boolean{
+         hexadecimalValue.toCharArray().iterator().forEachRemaining{
             binaryString +=  hexToBinary(it.toString())
         }
-        return binaryString
 
+        return binaryString.isNotEmpty()
     }
 
     fun hexToBinary(value: String): String{
@@ -39,5 +40,28 @@ class Reverse {
         return result
     }
 
+    fun getSupplier(): String{
+        return binaryString.subSequence(binaryString.length-longValues.supplierLong,binaryString.length
+        ).toString().toBigInteger(2).toString()
+    }
+    fun getPiece(): String{
+        return binaryString.subSequence(binaryString.length- (longValues.supplierLong+longValues.pieceLong),binaryString.length-longValues.supplierLong
+        ).toString().toBigInteger(2).toString()
+    }
+    fun getSubVersion():String{
+        return binaryString.subSequence(binaryString.length- (longValues.supplierLong+longValues.pieceLong+longValues.subVersionLong),binaryString.length-(longValues.supplierLong+longValues.pieceLong)
+        ).toString().toBigInteger(2).toString()
 
+    }
+
+    fun getType():String{
+        return binaryString.subSequence(binaryString.length- (longValues.supplierLong+longValues.pieceLong+longValues.subVersionLong+longValues.typeLong),binaryString.length-(longValues.supplierLong+longValues.pieceLong+longValues.subVersionLong)
+        ).toString().toBigInteger(2).toString()
+    }
+
+    fun getVersion():String{
+        return binaryString.subSequence(binaryString.length- (longValues.supplierLong+longValues.pieceLong+longValues.subVersionLong+longValues.typeLong+longValues.versionLong),binaryString.length-(longValues.supplierLong+longValues.pieceLong+longValues.subVersionLong+longValues.typeLong)
+        ).toString().toBigInteger(2).toString()
+
+    }
 }
