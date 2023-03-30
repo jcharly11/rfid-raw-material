@@ -65,7 +65,7 @@ class HandHeldConfigFragment : Fragment() {
         regionList+="SESSION_1"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
         binding.listRegions.setAdapter(adapter)
-
+        binding.listRegions.setSelection(1)
         binding.listRegions.setOnItemClickListener { adapterView, _, i, _ ->
             sessionSelected = adapterView.getItemAtPosition(i).toString()
             Log.e("----->","" +sessionSelected)

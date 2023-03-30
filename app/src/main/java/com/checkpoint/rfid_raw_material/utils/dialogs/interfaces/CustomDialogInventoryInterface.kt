@@ -1,4 +1,4 @@
-package com.checkpoint.rfid_raw_material.utils.interfaces
+package com.checkpoint.rfid_raw_material.utils.dialogs.interfaces
 
 interface CustomDialogInventoryInterface {
     fun startInventory()

@@ -20,6 +20,10 @@ import kotlinx.coroutines.withContext
 class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(application),
     ResponseHandlerInterface, WritingTagInterface {
 
+    private val _multipleTags: MutableLiveData<Boolean> = MutableLiveData(false)
+    var multipleTags: LiveData<Boolean> = _multipleTags
+
+
     private val _liveTID: MutableLiveData<String> = MutableLiveData("")
     var liveTID: LiveData<String> = _liveTID
 
@@ -71,8 +75,14 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
 
-        _liveTID.postValue(tagData?.get(0)!!.tagID)
 
+        if(tagData!!.size > 1){
+            _multipleTags.postValue(true)
+        }else{
+
+            _liveTID.postValue(tagData?.get(0)!!.tagID)
+
+        }
      }
 
     override fun handleTriggerPress(pressed: Boolean) {

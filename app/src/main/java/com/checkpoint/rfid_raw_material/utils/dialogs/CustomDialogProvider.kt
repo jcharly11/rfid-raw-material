@@ -4,10 +4,9 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.checkpoint.rfid_raw_material.R
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogProviderInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogProviderInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 

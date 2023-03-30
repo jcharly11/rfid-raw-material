@@ -6,15 +6,16 @@ class Conversor {
 
     fun toBinaryString(value : String,length: Int, padding: Char): String {
 
+        var binary= String()
         var input = BigInteger(value)
         var salida = input.divideAndRemainder(BigInteger("2"))
         var div = salida[0]
         var res = salida[1]
-        var binary=""
-        if(res.compareTo(BigInteger("0") ) == 0){
-            binary +="0"
+
+        binary += if(res.compareTo(BigInteger("0") ) == 0){
+            "0"
         }else{
-            binary += "1"
+            "1"
         }
 
         while(div > BigInteger("0")){
@@ -23,10 +24,10 @@ class Conversor {
             div = salida[0]
             res = salida[1]
 
-            if(res.compareTo(BigInteger("0") ) == 0){
-                binary +="0"
+            binary += if(res.compareTo(BigInteger("0") ) == 0){
+                "0"
             }else{
-                binary += "1"
+                "1"
             }
 
         }
@@ -35,7 +36,7 @@ class Conversor {
 
     }
     fun toHexadecimalString(value: String): String{
-        var result: String =""
+        var result = String()
         when(value){
             "0000"->{ result = "0"  }
             "0001"->{ result = "1" }
@@ -57,5 +58,20 @@ class Conversor {
         }
         return result
     }
+    fun stringBinaryPadding(values: Array<String>): String {
+        var stringComplete = String()
+        values.iterator().forEachRemaining {
+            stringComplete += it
+        }
+        return stringComplete
+    }
+    fun groupBytes(binaryChain: String): String{
+        var hexValue = String()
+        var binaryGroup = binaryChain.chunked(4)
+        binaryGroup.iterator().forEach {
+            hexValue += toHexadecimalString(it)
 
+        }
+        return hexValue
+    }
 }
