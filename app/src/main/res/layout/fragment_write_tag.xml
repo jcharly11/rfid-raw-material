@@ -370,7 +370,7 @@
 
                 <android.widget.Button
                     android:id="@+id/btnWriteTag"
-                    android:layout_width="220dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@drawable/button_icon_large"
@@ -383,7 +383,7 @@
 
                 <android.widget.Button
                     android:id="@+id/btnFinishWrite"
-                    android:layout_width="220dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
                     android:background="@drawable/button_icon_large"

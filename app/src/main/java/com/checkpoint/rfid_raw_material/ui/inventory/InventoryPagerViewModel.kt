@@ -52,33 +52,22 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
 
     init {
 
-        //repository = DataRepository.getInstance(InventoryDataBase.getDatabase(application.baseContext))
-        maxLevel = localSharedPreferences.getMaxFromPreferences()
+         maxLevel = localSharedPreferences.getMaxFromPreferences()
         readNumber = 0
 
         Log.e("maxLevel--->", "$maxLevel")
-        bluetoothHandler = BluetoothHandler(context)
-        val devices = bluetoothHandler!!.list()
-
-        if (devices != null) {
-            for (device in devices) {
-                if (device.name.contains("RFD8")) {
-                    deviceName = device.name
-                }
-            }
-        }
 
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
         )
     }
 
-    fun startHandHeld(){
-        if (deviceName != null) {
+    fun startHandHeld(deviceName: String){
+
             zebraRFIDHandlerImpl = ZebraRFIDHandlerImpl()
             zebraRFIDHandlerImpl?.listener(this, this)
-            zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName!!, "SESSION_1")
-        }
+            zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName, "SESSION_1")
+
     }
 
     fun restartHandeldSetNewPower(newPower: Int, session: String) {

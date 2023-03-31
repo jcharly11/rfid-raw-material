@@ -37,18 +37,16 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
                 connect()
             }
             connected.await().let {
-
-                if(mScannerInfoList.size>0) {
+                 if(mScannerInfoList.size>0) {
                     sdkHandler!!.dcssdkEstablishCommunicationSession(mScannerInfoList[0].scannerID)
-                    deviceConnected=true
 
                 }
-
-                barcodeHandHeldInterface.connected(deviceConnected)
+                barcodeHandHeldInterface.connected(it)
 
 
 
             }
+
         }
 
     }

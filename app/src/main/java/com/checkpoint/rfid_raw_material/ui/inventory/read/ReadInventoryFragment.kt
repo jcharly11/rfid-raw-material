@@ -122,6 +122,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
     override fun finishInventory() {
         closeDialog()
         viewModel!!.saveReadNumber(0)
+        viewModel.disconnectDevice()
         findNavController().navigate(R.id.optionsWriteFragment)
     }
 

@@ -217,8 +217,11 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
     suspend fun stop(){
         try {
 
-            reader!!.Actions.Inventory.stop()
+            if(reader!=null){
 
+                reader!!.Actions.Inventory.stop()
+
+            }
         } catch (e: InvalidUsageException) {
 
             e.printStackTrace()

@@ -29,10 +29,12 @@ class ConfirmWriteTagFragment : Fragment() {
     private lateinit var dialogPrepareTrigger: DialogPrepareTrigger
     private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
     private lateinit var dialogErrorMultipleTags: DialogErrorMultipleTags
+    private lateinit var dialogPrepareReading: DialogPrepareReading
     private var startDevice: Boolean = false
     private var readNumber: Int? = 0
     private var activityMain: MainActivity? = null
     private var tid: String? = null
+    private var deviceName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +42,8 @@ class ConfirmWriteTagFragment : Fragment() {
     ): View {
         val epc = arguments?.getString("epc")
         readNumber = arguments?.getInt("readNumber")
+        deviceName = arguments?.getString("deviceName")
+
 
         viewModel = ViewModelProvider(this)[ConfirmWriteTagViewModel::class.java]
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
@@ -51,29 +55,20 @@ class ConfirmWriteTagFragment : Fragment() {
         dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this@ConfirmWriteTagFragment,Pair("",""))
         dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
         dialogErrorMultipleTags = DialogErrorMultipleTags(this@ConfirmWriteTagFragment)
+        dialogPrepareReading = DialogPrepareReading(this@ConfirmWriteTagFragment)
 
         viewModel.liveTID.observe(viewLifecycleOwner){
 
             Log.e("observe", it)
             tid = it
-
+            dialogPrepareReading.dismiss()
+            binding.btnWrite.visibility=View.VISIBLE
         }
         viewModel.readyToRead.observe(viewLifecycleOwner){
 
-
-            Log.e("readyToRead","$it")
-            if(!it && startDevice ){
-                dialogWaitForHandHeld.dismiss()
-                binding.btnWrite.isEnabled = false
-                tid=""
-                binding.edtTagEPC.isEnabled = false
-                dialogErrorDeviceConnected.show()
-                startDevice=false
-            }else{
-                dialogWaitForHandHeld.dismiss()
+            if(it){
 
             }
-
 
         }
         viewModel.writeComplete.observe(viewLifecycleOwner){
@@ -82,7 +77,8 @@ class ConfirmWriteTagFragment : Fragment() {
                     dialogPrepareTrigger.dismiss()
                     viewModel.disconectDevice()
                     val bundle = bundleOf(
-                        "readNumber" to readNumber
+                        "readNumber" to readNumber,
+                        "deviceName" to deviceName
                     )
                     findNavController().navigate(R.id.writeTagFragment,bundle)
                 }
@@ -90,18 +86,40 @@ class ConfirmWriteTagFragment : Fragment() {
         }
         viewModel.multipleTags.observe(viewLifecycleOwner){
 
-            if(!it && startDevice ) {
+            if(it && startDevice ) {
+                dialogPrepareReading.dismiss()
                 dialogErrorMultipleTags.show()
             }
+
         }
 
+        viewModel.deviceConnected.observe(viewLifecycleOwner) {
+            if (it) {
+                if(dialogErrorDeviceConnected.isShowing)
+                {
+                    dialogErrorMultipleTags.dismiss()
+                }
+                dialogWaitForHandHeld.dismiss()
+                dialogPrepareReading.show()
+            }
+
+
+        }
+        viewModel.deviceDisConnected.observe(viewLifecycleOwner){
+
+            if (it){
+
+                dialogWaitForHandHeld.dismiss()
+                dialogErrorDeviceConnected.show()
+
+            }
+        }
 
         binding.edtTagEPC.setText(epc)
         binding.btnWrite.setOnClickListener {
              lifecycleScope.launch{
 
                 val epcTag = binding.edtTagEPC.text.toString()
-
                 viewModel.prepareToWrite(tid!!,epcTag,"").apply {
 
                     Log.e("prepareToWrite","$this")
@@ -112,7 +130,6 @@ class ConfirmWriteTagFragment : Fragment() {
                 }
             }
         }
-
         binding.btnCancel.setOnClickListener {
             tid=""
             binding.edtTagEPC.setText("")
@@ -130,7 +147,7 @@ class ConfirmWriteTagFragment : Fragment() {
         dialogWaitForHandHeld.show()
         lifecycleScope.launch {
             delay(5000)
-            viewModel.initReaderRFID()
+            viewModel.initReaderRFID(deviceName!!)
             startDevice=true
 
         }

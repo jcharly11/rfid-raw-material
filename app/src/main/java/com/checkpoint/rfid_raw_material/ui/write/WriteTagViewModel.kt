@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.ui.write
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
@@ -29,9 +30,12 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
     private var handHeldBarCodeReader: HandHeldBarCodeReader? = null
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
-    private var deviceName: String ?= null
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var deviceConnected: LiveData<Boolean> = _deviceConnected
+
+    private val _deviceDisConnected: MutableLiveData<Boolean> = MutableLiveData(false)
+    var deviceDisConnected: LiveData<Boolean> = _deviceDisConnected
+
 
     @SuppressLint("StaticFieldLeak")
     private var context = application.applicationContext
@@ -69,31 +73,34 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         listProviders
     }
 
-
-
     override fun setDataBarCode(code: String){
 
-      _liveCode.value = code
+      _liveCode.value = code.filter {it in '0'..'9'}
 
     }
 
     override fun connected(status: Boolean) {
-        _deviceConnected.value = status
+        if(status){
+            _deviceConnected.postValue(true)
+        }else{
+            _deviceDisConnected.postValue(true)
+        }
+
 
     }
 
-    suspend fun startHandHeldBarCode(){
+    suspend fun startHandHeldBarCode(deviceName: String){
 
+            handHeldBarCodeReader!!.instance(context, DeviceConfig(
+                0,
+                SESSION.SESSION_S1,
+                deviceName,
+                ENUM_TRIGGER_MODE.BARCODE_MODE,
+                ENUM_TRANSPORT.BLUETOOTH
 
-        handHeldBarCodeReader!!.instance(context, DeviceConfig(
-            0,
-            SESSION.SESSION_S1,
-            deviceName!!,
-            ENUM_TRIGGER_MODE.BARCODE_MODE,
-            ENUM_TRANSPORT.BLUETOOTH
+            )
+            )
 
-        )
-        )
     }
 
     suspend fun disconnectDevice(){

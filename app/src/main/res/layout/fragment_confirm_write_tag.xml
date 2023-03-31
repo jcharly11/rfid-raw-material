@@ -80,18 +80,40 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:gravity="center_horizontal|bottom"
                 android:paddingBottom="80dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp">
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="5"
                     android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
+                    android:paddingRight="10dp"
+                    android:paddingBottom="10dp"
+
+                    >
+                    <android.widget.Button
+                        android:id="@+id/btnWrite"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:background="@drawable/button_icon_large"
+                        android:drawableStart="@drawable/ic_save"
+                        android:drawableTint="@color/white"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="10dp"
+                        android:text="Write"
+                        android:textColor="@color/white"></android.widget.Button>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                     android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="10dp">
                     <android.widget.Button
                         android:id="@+id/btnCancel"
                         android:layout_width="match_parent"
@@ -107,26 +129,7 @@
                         android:textColor="@color/white"></android.widget.Button>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="5"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
-                    <android.widget.Button
-                        android:id="@+id/btnWrite"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:background="@drawable/button_icon_large"
-                        android:drawableStart="@drawable/ic_save"
-                        android:drawableTint="@color/white"
-                        android:paddingLeft="20dp"
-                        android:paddingRight="10dp"
-                        android:text="Write"
-                        android:textColor="@color/white"></android.widget.Button>
 
-                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

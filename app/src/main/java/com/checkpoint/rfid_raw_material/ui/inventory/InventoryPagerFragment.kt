@@ -44,6 +44,7 @@ class InventoryPagerFragment : Fragment() {
 
         dialogWaitForHandHeld =  DialogWaitForHandHeld(this)
         var readNumber = arguments?.getInt("readNumber")
+        var deviceName = arguments?.getString("deviceName")
         if(readNumber==null)
             readNumber= 0
 
@@ -63,7 +64,7 @@ class InventoryPagerFragment : Fragment() {
         activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
 
 
-        viewModel.startHandHeld()
+        viewModel.startHandHeld(deviceName!!)
         val maxPower = arguments?.getInt("maxPower")
         val session = arguments?.getString("session")
 
@@ -118,18 +119,12 @@ class InventoryPagerFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        viewModel.destroy()
-        Log.e("onDetach:  ", "$.....")
 
-
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-      //  viewModel.destroy()
-
+        viewModel.destroy()
+        Log.e("onDestroyView:  ", "$.....")
     }
 
 }

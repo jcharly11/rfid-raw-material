@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
+import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +47,7 @@ class WriteTagFragment : Fragment(),
     private var deviceStarted = false
     private var activityMain: MainActivity? = null
     private var readNumber: Int? = 0
+    private var deviceName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,6 +68,8 @@ class WriteTagFragment : Fragment(),
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
         readNumber = arguments?.getInt("readNumber")
+        deviceName = arguments?.getString("deviceName")
+
         CoroutineScope(Dispatchers.Main).launch {
             if (readNumber == null) {
                 readNumber = viewModel.getNewReadNumber()
@@ -74,28 +78,34 @@ class WriteTagFragment : Fragment(),
 
         getProviderList()
         viewModel.liveCode.observe(viewLifecycleOwner) {
-            binding.tvIdentifier.setText(it)
+            binding.tvIdentifier.setText(it.trim())
         }
 
 
-       /*
+
+        /*
         binding.tvIdentifier.setOnFocusChangeListener { _, b ->
             Log.e("setOnFocusChangeListener", "$b")
             if (b) {
-                deviceStarted = true
-                dialogBarcodeReaderStatus.show()
-                this.lifecycleScope.launch {
-                    viewModel.startHandHeldBarCode()
-                }
+
             }
         }
         */
 
 
-        viewModel.deviceConnected.observe(viewLifecycleOwner) {
-            dialogBarcodeReaderStatus.dismiss()
 
-            if (!it && deviceStarted) {
+        viewModel.deviceConnected.observe(viewLifecycleOwner) {
+            if (it) {
+                dialogBarcodeReaderStatus.dismiss()
+            }
+
+
+        }
+        viewModel.deviceDisConnected.observe(viewLifecycleOwner){
+
+            if (it){
+
+                dialogBarcodeReaderStatus.dismiss()
                 dialogErrorDeviceConnected.show()
                 deviceStarted = false
             }
@@ -119,7 +129,7 @@ class WriteTagFragment : Fragment(),
                         val version = conversor.toBinaryString(versionValue, 5, '0')
                         val subVersion = conversor.toBinaryString(subversionValue, 5, '0')
                         val type = conversor.toBinaryString(typeValue, 6, '0')
-                        val supplier = conversor.toBinaryString(idProvider.toString(), 32, '0')
+                        val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
                         val piece = conversor.toBinaryString(pieceValue, 80, '0')
 
 
@@ -141,11 +151,13 @@ class WriteTagFragment : Fragment(),
                         )
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
-                            "readNumber" to readNumber
+                            "readNumber" to readNumber,
+                            "deviceName" to deviceName
                         )
                         lifecycleScope.launch {
                             viewModel.disconnectDevice()
                         }
+
                         findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
 
                     } else {
@@ -251,12 +263,14 @@ class WriteTagFragment : Fragment(),
         dialogProvider.dismiss()
     }
 
+
     override fun onStart() {
         super.onStart()
         deviceStarted = true
         dialogBarcodeReaderStatus.show()
-        this.lifecycleScope.launch {
-            viewModel.startHandHeldBarCode()
+        lifecycleScope.launch {
+            viewModel.startHandHeldBarCode(deviceName!!)
         }
     }
+
 }

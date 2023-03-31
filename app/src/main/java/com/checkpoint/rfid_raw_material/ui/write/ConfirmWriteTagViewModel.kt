@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
@@ -30,6 +29,13 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
     private val _readyToRead: MutableLiveData<Boolean> = MutableLiveData(false)
     var readyToRead: LiveData<Boolean> = _readyToRead
 
+    private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
+    var deviceConnected: LiveData<Boolean> = _deviceConnected
+
+    private val _deviceDisConnected: MutableLiveData<Boolean> = MutableLiveData(false)
+    var deviceDisConnected: LiveData<Boolean> = _deviceDisConnected
+
+
     private val _writeComplete: MutableLiveData<Boolean> = MutableLiveData(false)
     var writeComplete: LiveData<Boolean> = _writeComplete
 
@@ -37,32 +43,20 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
     private var epc:String ?= null
     private var tid:String ?= null
     private var pass:String ?= null
-    private var deviceName: String ?= null
 
     @SuppressLint("StaticFieldLeak")
     private var context = application.applicationContext
     private var rfidHandler: RFIDHandler?= null
-    private var bluetoothHandler: BluetoothHandler? = null
 
     @SuppressLint("MissingPermission")
-    fun initReaderRFID() {
-        bluetoothHandler = BluetoothHandler(context)
-        val devices = bluetoothHandler!!.list()
-
-        if (devices != null) {
-            for (device in devices) {
-                if (device.name.contains("RFD8500")) {
-                    deviceName = device.name
-                }
-            }
-        }
+    fun initReaderRFID(deviceName: String) {
 
         rfidHandler = RFIDHandler(
             context,
             DeviceConfig(
                 150,
                 SESSION.SESSION_S1,
-                deviceName!!,
+                deviceName,
                 ENUM_TRIGGER_MODE.RFID_MODE,
                 ENUM_TRANSPORT.BLUETOOTH
             )
@@ -77,30 +71,36 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
 
         if(tagData!!.size > 1){
+
             _multipleTags.postValue(true)
+
         }else{
 
-            _liveTID.postValue(tagData?.get(0)!!.tagID)
+            _liveTID.postValue(tagData[0]!!.tagID)
 
         }
      }
 
     override fun handleTriggerPress(pressed: Boolean) {
         viewModelScope.launch {
-            if (pressed){
-                if (writeMode){
-                        rfidHandler!!.write(tid!!,epc!!,"0").let {
-                        writeMode=false
 
+            if(rfidHandler != null){
+                if (pressed ){
+                    if (writeMode){
+                        rfidHandler!!.write(tid!!,epc!!,"0").let {
+                            writeMode=false
+
+                        }
+
+                    }else{
+                        rfidHandler!!.perform()
                     }
 
                 }else{
-                    rfidHandler!!.perform()
+                    rfidHandler!!.stop()
                 }
-
-            }else{
-                rfidHandler!!.stop()
             }
+
         }
     }
 
@@ -110,7 +110,14 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
             rfidHandler!!.Connect()
         }
-        _readyToRead.postValue(connected)
+
+        if(connected){
+
+            _deviceConnected.postValue(true)
+
+        }else{
+            _deviceDisConnected.postValue(true)
+        }
 
     }
 
@@ -143,6 +150,8 @@ class ConfirmWriteTagViewModel(application: Application) : AndroidViewModel(appl
 
 
     override fun writingTagStatus(status: Boolean) {
-        _writeComplete.postValue(status)
+        if(status){
+            _writeComplete.postValue(status)
+        }
     }
 }
