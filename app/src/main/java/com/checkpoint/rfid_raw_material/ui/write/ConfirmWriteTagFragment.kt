@@ -92,7 +92,6 @@ class ConfirmWriteTagFragment : Fragment() {
             }
 
         }
-
         viewModel.deviceConnected.observe(viewLifecycleOwner) {
             if (it) {
                 if(dialogErrorDeviceConnected.isShowing)

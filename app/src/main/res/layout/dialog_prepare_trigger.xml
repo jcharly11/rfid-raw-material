@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="Pull trigger to write tag"
+                    android:text="Pull and keep pressed the trigger to write tag"
                     android:textColor="@color/navy"
                     android:gravity="center"
                     android:textSize="25dp"></TextView>

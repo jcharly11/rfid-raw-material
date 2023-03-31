@@ -251,8 +251,12 @@ class WriteTagFragment : Fragment(),
     }
 
     override fun finishWrite() {
-        dialogWriteTag.dismiss()
-        findNavController().navigate(R.id.optionsWriteFragment)
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.disconnectDevice()
+            dialogWriteTag.dismiss()
+            findNavController().navigate(R.id.optionsWriteFragment)
+        }
+
     }
 
     override fun closeDialogWrite() {

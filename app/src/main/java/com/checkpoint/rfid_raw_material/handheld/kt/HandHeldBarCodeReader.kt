@@ -21,7 +21,6 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
     var connectedScannerID = 0
     private lateinit var barcodeHandHeldInterface: BarcodeHandHeldInterface
     private var deviceConfig: DeviceConfig?= null
-    private var deviceConnected: Boolean= false
     private var readers: Readers? = null
     private var reader: RFIDReader?= null
 
