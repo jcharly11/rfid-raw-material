@@ -18,8 +18,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.app.ActivityCompat
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     var lyCreateLog: LinearLayout? = null
 
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,11 +50,9 @@ class MainActivity : AppCompatActivity() {
         batteryView!!.visibility = View.GONE
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
-
-        val drawerLayout: DrawerLayout = binding.drawerLayout
+         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-
 
 
         appBarConfiguration = AppBarConfiguration(

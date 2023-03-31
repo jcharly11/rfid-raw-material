@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,8 +15,7 @@ import kotlinx.coroutines.withContext
 class ItemsReadViewModel(application: Application) : AndroidViewModel(application)
 {
     private var repository: DataRepository
-    private val _listItems: MutableLiveData<List<Inventory>> = MutableLiveData()
-    var listItems: LiveData<List<Inventory>> = _listItems
+    private var localSharedPreferences: LocalPreferences = LocalPreferences(application)
 
     init {
         repository = DataRepository.getInstance(
@@ -24,15 +23,13 @@ class ItemsReadViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    suspend fun getInventoryList(): LiveData<List<Inventory>> =withContext(
-    Dispatchers.IO) {
-        listItems=repository.getInventoryList()
-        listItems
+
+    fun getTagsList(readNumber: Int): LiveData<List<Tags>> {
+        return repository.getTagsListLive(readNumber)
     }
 
-    suspend fun getTagsList(): List<Tags> =withContext(
-        Dispatchers.IO) {
-        repository.getTagsList()
+    fun getReadNumber():Int{
+        return localSharedPreferences.getReadNumber()
     }
 
 

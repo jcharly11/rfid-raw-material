@@ -12,14 +12,12 @@ import com.checkpoint.rfid_raw_material.source.db.*
         tblItem::class,
         Provider::class,
         Tags::class,
-        Inventory::class,
         Language::class
     ], version = 2, exportSchema = false
 )
 abstract class RawMaterialsDatabase : RoomDatabase() {
     abstract fun itemDao(): ItemDao
     abstract fun providerDao(): ProviderDao
-    abstract fun inventoryDao(): InventoryDao
     abstract fun tagsDao(): TagsDao
     abstract fun languageDao(): LanguageDao
 

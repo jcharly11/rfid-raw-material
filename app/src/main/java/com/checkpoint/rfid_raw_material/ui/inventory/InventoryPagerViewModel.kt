@@ -14,7 +14,6 @@ import com.checkpoint.rfid_raw_material.handheld.ZebraRFIDHandlerImpl
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
@@ -48,12 +47,15 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
     private var zebraRFIDHandlerImpl: ZebraRFIDHandlerImpl? = null
     private var maxLevel = 0
     private var repository: DataRepository
+    private var readNumber: Int
 
 
     init {
 
         //repository = DataRepository.getInstance(InventoryDataBase.getDatabase(application.baseContext))
         maxLevel = localSharedPreferences.getMaxFromPreferences()
+        readNumber = 0
+
         Log.e("maxLevel--->", "$maxLevel")
         bluetoothHandler = BluetoothHandler(context)
         val devices = bluetoothHandler!!.list()
@@ -66,12 +68,9 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
             }
         }
 
-
-
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
         )
-
     }
 
     fun startHandHeld(){
@@ -80,7 +79,6 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
             zebraRFIDHandlerImpl?.listener(this, this)
             zebraRFIDHandlerImpl?.start(getApplication(), 150, deviceName!!, "SESSION_1")
         }
-
     }
 
     fun restartHandeldSetNewPower(newPower: Int, session: String) {
@@ -112,18 +110,17 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
         return zebraRFIDHandlerImpl?.currentPower()
     }
 
-    override  fun handleTagdata(tagData: Array<TagData?>?) {
+    override fun handleTagdata(tagData: Array<TagData?>?) {
+        readNumber= localSharedPreferences.getReadNumber()
         val code = tagData?.get(0)?.tagID.toString()
 
         Log.e("handleTagdata","$code")
-
             try {
                  tagData!!.iterator().forEachRemaining {
                         CoroutineScope(Dispatchers.IO).launch {
-                            newTag(it!!.tagID.toString())
+                            newTag(it!!.tagID.toString(),readNumber)
                         }
                     }
-
              } catch (ex: Exception) {
 
             }
@@ -144,14 +141,34 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
 
     }
 
-    suspend fun newTag(epc:String): Tags = withContext(Dispatchers.IO) {
+    suspend fun newTag(epc:String,readNumb:Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
         repository.insertNewTag(
             Tags(
                 0,
+                readNumb,
+                "0",
+                "0",
+                "0",
+                "0",
                 0,
+                epc,
+                formatter.format(nowDate)
+            )
+        )
+    }
+
+    suspend fun newTagTest(epc:String): Tags = withContext(Dispatchers.IO) {
+        val nowDate: OffsetDateTime = OffsetDateTime.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+        var readNumb= localSharedPreferences.getReadNumber()
+
+        repository.insertNewTag(
+            Tags(
+                0,
+                readNumb,
                 "0",
                 "0",
                 "0",
@@ -172,15 +189,8 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
         _percentCharge.postValue(level)
     }
 
-    suspend fun getInventoryList(): List<Inventory> = withContext(
-        Dispatchers.IO) {
-        var listItems= repository.getInventoryListLogs()
-        listItems
+    fun getReadNumber():Int {
+        return localSharedPreferences.getReadNumber()
     }
 
-    suspend fun getTagsList(): List<Tags> = withContext(
-        Dispatchers.IO) {
-        var listTags= repository.getTagsList()
-        listTags
-    }
 }

@@ -55,5 +55,6 @@
     <string name="write_question">¿Deseas terminar la escritura?</string>
     <string name="progress_write">El progreso se perderá y no se podrá guardar el log</string>
     <string name="dialog_error_multiple_tags"> Se ha detectado mas de un tag,por favor despeja tu espacio para leer únicamente uno</string>
-
+    <string name="error_log">No existen datos para guardar</string>
+    <string name="press_back_again">Presiona nuevamente el boton atrás para salir</string>
 </resources>

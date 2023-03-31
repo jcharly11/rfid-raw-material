@@ -29,7 +29,6 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
     private var handHeldBarCodeReader: HandHeldBarCodeReader? = null
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
-    private var bluetoothHandler: BluetoothHandler? = null
     private var deviceName: String ?= null
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var deviceConnected: LiveData<Boolean> = _deviceConnected
@@ -43,16 +42,8 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         )
         handHeldBarCodeReader = HandHeldBarCodeReader()
         handHeldBarCodeReader!!.setBarcodeResponseInterface(this)
-        bluetoothHandler = BluetoothHandler(context)
-        val devices = bluetoothHandler!!.list()
 
-        if (devices != null) {
-            for (device in devices) {
-                if (device.name.contains("RFD8")) {
-                    deviceName = device.name
-                }
-            }
-        }
+
     }
 
     suspend fun newProvider(id: Int,idAS:String,nameProvider:String): Provider = withContext(Dispatchers.IO) {

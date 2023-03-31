@@ -78,6 +78,7 @@ class WriteTagFragment : Fragment(),
         }
 
 
+       /*
         binding.tvIdentifier.setOnFocusChangeListener { _, b ->
             Log.e("setOnFocusChangeListener", "$b")
             if (b) {
@@ -88,6 +89,7 @@ class WriteTagFragment : Fragment(),
                 }
             }
         }
+        */
 
 
         viewModel.deviceConnected.observe(viewLifecycleOwner) {
@@ -249,4 +251,12 @@ class WriteTagFragment : Fragment(),
         dialogProvider.dismiss()
     }
 
+    override fun onStart() {
+        super.onStart()
+        deviceStarted = true
+        dialogBarcodeReaderStatus.show()
+        this.lifecycleScope.launch {
+            viewModel.startHandHeldBarCode()
+        }
+    }
 }
