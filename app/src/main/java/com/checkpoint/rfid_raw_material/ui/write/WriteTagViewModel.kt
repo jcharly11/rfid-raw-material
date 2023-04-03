@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.ui.write
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
@@ -12,6 +13,7 @@ import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.SESSION
@@ -28,10 +30,12 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
     private var handHeldBarCodeReader: HandHeldBarCodeReader? = null
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
-    private var bluetoothHandler: BluetoothHandler? = null
-    private var deviceName: String ?= null
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
     var deviceConnected: LiveData<Boolean> = _deviceConnected
+
+    private val _deviceDisConnected: MutableLiveData<Boolean> = MutableLiveData(false)
+    var deviceDisConnected: LiveData<Boolean> = _deviceDisConnected
+
 
     @SuppressLint("StaticFieldLeak")
     private var context = application.applicationContext
@@ -42,16 +46,8 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         )
         handHeldBarCodeReader = HandHeldBarCodeReader()
         handHeldBarCodeReader!!.setBarcodeResponseInterface(this)
-        bluetoothHandler = BluetoothHandler(context)
-        val devices = bluetoothHandler!!.list()
 
-        if (devices != null) {
-            for (device in devices) {
-                if (device.name.contains("RFD8")) {
-                    deviceName = device.name
-                }
-            }
-        }
+
     }
 
     suspend fun newProvider(id: Int,idAS:String,nameProvider:String): Provider = withContext(Dispatchers.IO) {
@@ -77,31 +73,34 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         listProviders
     }
 
-
-
     override fun setDataBarCode(code: String){
 
-      _liveCode.value = code
+      _liveCode.value = code.filter {it in '0'..'9'}
 
     }
 
     override fun connected(status: Boolean) {
-        _deviceConnected.value = status
+        if(status){
+            _deviceConnected.postValue(true)
+        }else{
+            _deviceDisConnected.postValue(true)
+        }
+
 
     }
 
-    suspend fun startHandHeldBarCode(){
+    suspend fun startHandHeldBarCode(deviceName: String){
 
+            handHeldBarCodeReader!!.instance(context, DeviceConfig(
+                0,
+                SESSION.SESSION_S1,
+                deviceName,
+                ENUM_TRIGGER_MODE.BARCODE_MODE,
+                ENUM_TRANSPORT.BLUETOOTH
 
-        handHeldBarCodeReader!!.instance(context, DeviceConfig(
-            0,
-            SESSION.SESSION_S1,
-            deviceName!!,
-            ENUM_TRIGGER_MODE.BARCODE_MODE,
-            ENUM_TRANSPORT.BLUETOOTH
+            )
+            )
 
-        )
-        )
     }
 
     suspend fun disconnectDevice(){
@@ -111,7 +110,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         }
 
 
-    suspend fun newTag(version: String,subversion:String,type:String,piece:String,
+    suspend fun newTag(readNumber:Int,version: String,subversion:String,type:String,piece:String,
     idProvider:Int,epc:String): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
@@ -119,6 +118,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         repository.insertNewTag(
             Tags(
                 0,
+                readNumber,
                 version,
                 subversion,
                 type,
@@ -129,6 +129,17 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
             )
         )
     }
+
+    suspend fun getNewReadNumber():Int= withContext(Dispatchers.IO){
+        repository.getReadNumber()
+    }
+
+    suspend fun getTagsForLog(readNumber: Int): List<TagsLogs> = withContext(Dispatchers.IO){
+        repository.getTagsListForLogs(readNumber)
+    }
+
+
+
 
     suspend fun insertInitialProviders()= withContext(Dispatchers.IO){
         repository.deletePoviders()

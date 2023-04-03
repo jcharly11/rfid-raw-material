@@ -1,12 +1,5 @@
 <resources>
     <string name="app_name">rfid_raw_material</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
     <string name="tab_tittle_inventory">Inventory</string>
     <string name="tab_tittle_read">Items Read</string>
     <string name="tittle_app_menu">RFID Raw Materials</string>
@@ -38,7 +31,8 @@
     <string name="power_config_settings">max_power</string>
     <string name="set_power">Set Power Configuration</string>
     <string name="label_max_power_config">Set power transmission</string>
-    <string name="select_region">Select session</string>
+
+    <string name="select_session">Select session</string>
     <string name="title_dialog_bluetooth">Looks like your bluetooth is off!</string>
     <string name="subtitle_dialog_rfid">We couldn´t connect to yout RFID Hand-Held Reader. Would you like help connecting it...</string>
     <string name="radio_option_yes">1.- Turn ON your bluetooth connection</string>
@@ -57,6 +51,11 @@
     <string name="cancel">Cancel</string>
     <string name="configuration">Configuration</string>
     <string name="language">Language</string>
+    <string name="finish_write">Finish Write</string>
+    <string name="write_question">Do you want finish writing?</string>
+    <string name="progress_write">the progress will lost, and not will be save log</string>
+    <string name="error_log">No data exists to save</string>
+    <string name="press_back_again">Press again back button to exit</string>
 
     <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your area in order to read only one</string>
 

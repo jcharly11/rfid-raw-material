@@ -30,25 +30,45 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
-                android:background="@color/gray"></LinearLayout>
+                android:orientation="vertical"
+                android:background="@color/gray"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20dp"
-                android:weightSum="1"
+                android:weightSum="100"
                 android:gravity="center">
 
-                <TextView
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:text="Pull and keep pressed the trigger to write tag"
-                    android:textColor="@color/navy"
-                    android:gravity="center"
-                    android:textSize="25dp"></TextView>
+                    android:layout_height="0dp"
+                    android:layout_weight="80">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/listViewDevices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical" />
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="30" >
+                    <Button
+                        android:id="@+id/btnSelectDevice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="Select device"
+                        android:textColor="@color/white"
+                        android:gravity="center" />
+                </RelativeLayout>
+
+
 
 
 

@@ -13,7 +13,6 @@ import com.checkpoint.rfid_raw_material.handheld.kt.RFIDHandler
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
@@ -133,24 +132,13 @@ class InventoryPagerViewModel2(application: Application) : AndroidViewModel(appl
         _percentCharge.postValue(level)
     }
 
-    suspend fun getInventoryList(): List<Inventory> = withContext(
-        Dispatchers.IO) {
-        var listItems= repository.getInventoryListLogs()
-        listItems
-    }
-
-    suspend fun getTagsList(): List<Tags> = withContext(
-        Dispatchers.IO) {
-        var listTags= repository.getTagsList()
-        listTags
-    }
-
     suspend fun newTag(epc:String): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
         repository.insertNewTag(
             Tags(
+                0,
                 0,
                 "0",
                 "0",

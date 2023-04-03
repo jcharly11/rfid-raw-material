@@ -33,7 +33,6 @@ class ReverseTest {
         println("version:$version")
 
 
-
         Assert.assertEquals("123456",supplier)
 
     }

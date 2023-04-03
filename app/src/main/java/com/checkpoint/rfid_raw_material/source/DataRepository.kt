@@ -41,23 +41,17 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.providerDao().getLastProvider()
     }
 
-    fun getInventoryList(): LiveData<List<Inventory>> {
-        return localDataSource.inventoryDao().getInventoryList()
+
+    suspend fun getTagsList(readNumber: Int): List<Tags> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsList(readNumber)
     }
 
-    fun getInventoryListLogs():List<Inventory> {
-        return localDataSource.inventoryDao().getInventoryListLogs()
+    fun getTagsListLive(readNumber: Int):LiveData<List<Tags>> {
+        return localDataSource.tagsDao().getTagsListLive(readNumber)
     }
 
-    suspend fun getTagsList(): List<Tags> = withContext(Dispatchers.IO) {
-        localDataSource.tagsDao().getTagsList()
-    }
-    suspend fun getTagsListLive():LiveData< List<Tags>> = withContext(Dispatchers.IO) {
-        localDataSource.tagsDao().getTagsListLive()
-    }
-
-    suspend fun getTagsListForLogs(): List<TagsLogs> = withContext(Dispatchers.IO) {
-        localDataSource.tagsDao().getTagsListForLogs()
+    suspend fun getTagsListForLogs(readNumber:Int): List<TagsLogs> = withContext(Dispatchers.IO) {
+        localDataSource.tagsDao().getTagsListForLogs(readNumber)
     }
 
     suspend fun insertNewTag(tag: Tags):Tags = withContext(Dispatchers.IO) {
@@ -75,12 +69,17 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.languageDao().getLastLang()
     }
 
-    suspend fun insertNewInventory(inventory: Inventory):Inventory = withContext(Dispatchers.IO) {
-        localDataSource.inventoryDao().insertInventory(inventory)
-        localDataSource.inventoryDao().getLastInventory()
-    }
 
     fun deletePoviders() {
         localDataSource.providerDao().deleteAll()
     }
+
+    suspend fun getReadNumber():Int= withContext(Dispatchers.IO) {
+        var list= localDataSource.tagsDao().getReadNumber()
+        if(list.size>0)
+            list[0].readNumber+1
+        else
+            1
+    }
+
 }

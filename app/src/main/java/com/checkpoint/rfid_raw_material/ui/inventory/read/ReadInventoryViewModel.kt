@@ -6,8 +6,8 @@ import androidx.lifecycle.LiveData
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import com.checkpoint.rfid_raw_material.source.db.Inventory
 import com.checkpoint.rfid_raw_material.source.db.Tags
+import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -21,20 +21,13 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
         )
     }
 
-    suspend fun getTagsList(): List<Tags> = withContext(
-        Dispatchers.IO) {
-        repository.getTagsList()
+    fun getTagsListLive(readNumber:Int): LiveData<List<Tags>>{
+        return repository.getTagsListLive(readNumber)
     }
 
-
-    suspend fun counterTags(): LiveData<List<Tags>> = withContext(
+    suspend fun getTagsList(readNumber:Int): List<Tags> = withContext(
         Dispatchers.IO) {
-        repository.getTagsListLive()
-    }
-
-    suspend fun getInventoryList(): LiveData<List<Inventory>> = withContext(
-        Dispatchers.IO) {
-        repository.getInventoryList()
+        repository.getTagsList(readNumber)
     }
 
 
@@ -43,14 +36,28 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
     }
 
 
-    suspend fun insertInventory(inventory: Inventory): Inventory = withContext(
-        Dispatchers.IO) {
-        repository.insertNewInventory(inventory)
+
+    suspend fun getNewReadNumber():Int= withContext(Dispatchers.IO){
+        var readNumber= repository.getReadNumber()
+        saveReadNumber(readNumber)
+        readNumber
+    }
+
+    suspend fun getTagsForLog(readNumber: Int): List<TagsLogs> = withContext(Dispatchers.IO){
+        repository.getTagsListForLogs(readNumber)
     }
 
     fun disconnectDevice() {
 
 
+    }
+
+    fun saveReadNumber(readNumber: Int){
+        localSharedPreferences.saveReadNumber(readNumber)
+    }
+
+    fun getReadNumber():Int{
+        return localSharedPreferences.getReadNumber()
     }
 
 }

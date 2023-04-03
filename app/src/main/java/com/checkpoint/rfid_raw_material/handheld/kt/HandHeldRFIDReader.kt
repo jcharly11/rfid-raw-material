@@ -51,13 +51,24 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
         }
     }
-      @JvmName("setResponseHandlerInterface1")
-      fun setResponseHandlerInterface(_responseHandlerInterface: ResponseHandlerInterface?) {
+    fun Disconnect(){
+        GlobalScope.launch(Dispatchers.Main) {
+            val disconnect = async {
+                disConnectionTask()
+            }
+            disconnect.await().let {
+
+                responseHandlerInterface!!.handleStartConnect(it)
+
+            }
+        }
+
+    }
+    @JvmName("setResponseHandlerInterface1")
+    fun setResponseHandlerInterface(_responseHandlerInterface: ResponseHandlerInterface?) {
         responseHandlerInterface = _responseHandlerInterface
     }
-
-
-     fun setBatteryHandlerInterface(_batteryHandlerInterface: BatteryHandlerInterface?) {
+    fun setBatteryHandlerInterface(_batteryHandlerInterface: BatteryHandlerInterface?) {
         batteryHandlerInterface = _batteryHandlerInterface
     }
 
@@ -119,18 +130,33 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
        }
     }
+    private suspend fun disConnectionTask(): Boolean{
+        return withContext(Dispatchers.Default) {
+            try {
 
+                if (reader != null) {
+                    reader!!.Events.removeEventsListener(eventHandler)
+                    reader!!.disconnect()
+                }
+                return@withContext  reader!!.isConnected
 
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+                return@withContext false
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+                return@withContext false
+            }
 
-
-    private fun isReaderConnected(): Boolean {
-        return if (reader!!.isConnected) true else {
-            Log.d("isReaderConnected", "reader is not connected")
-            false
         }
     }
+    suspend fun isReaderConnected(): Boolean = withContext(Dispatchers.IO) {
 
-    suspend fun prepareReaderToWrite():Boolean= withContext(Dispatchers.IO) {
+            Log.d("isConnected", "reader is not connected")
+            reader!!.isConnected
+
+    }
+    suspend fun prepareReaderToWrite():Boolean = withContext(Dispatchers.IO) {
          try {
 
              reader!!.Config.setAccessOperationWaitTimeout(1000)
@@ -147,18 +173,20 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
              false
         }
     }
-
-   suspend fun prepareReaderToRead(){
+    suspend fun prepareReaderToRead():Boolean= withContext(Dispatchers.IO) {
         try {
 
             reader!!.Actions.Inventory.stop()
             reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.ENABLE
+            true
 
 
         } catch (e: InvalidUsageException) {
             e.printStackTrace()
+            false
         } catch (e: OperationFailureException) {
             e.printStackTrace()
+            false
         }
     }
 
@@ -214,11 +242,14 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
         }
     }
 
-    suspend fun stop(){
+    fun stop(){
         try {
 
-            reader!!.Actions.Inventory.stop()
+            if(reader!=null){
 
+                reader!!.Actions.Inventory.stop()
+
+            }
         } catch (e: InvalidUsageException) {
 
             e.printStackTrace()
@@ -226,7 +257,7 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
             e.printStackTrace()
         }
     }
-    suspend fun perform(){
+    fun perform(){
 
         try {
             reader!!.Actions.Inventory.perform()
@@ -236,8 +267,7 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
             e.printStackTrace()
         }
     }
-    private suspend fun dispose(){}
-    suspend fun disconnect(){
+    fun disconnect(){
         try {
             if (reader != null) {
                 reader!!.Events.removeEventsListener(eventHandler)
@@ -281,7 +311,6 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
      }
 
     fun setWriteTagHandlerInterface(_writingTagInterface: WritingTagInterface) {
-
         writingTagInterface = _writingTagInterface
     }
 

@@ -11,12 +11,14 @@ class LocalPreferences(application: Application) {
     private var flagPowerValue:String? = null
     private var flagPauseValue:String? = null
     private var selectedLanguageValue:String? = null
+    private var readNumber:String? = null
 
     init{
         sharedPreferences = application.getSharedPreferences("config_device", Context.MODE_PRIVATE)
         flagPowerValue= application.resources.getString(R.string.power_config_settings)
         flagPauseValue= "pause"
         selectedLanguageValue="language"
+        readNumber="0"
     }
 
     fun saveMaxToPreferences(maxPower : Int){
@@ -50,4 +52,17 @@ class LocalPreferences(application: Application) {
     fun getSelectedLanguage(): String{
         return sharedPreferences.getString(selectedLanguageValue,"")!!
     }
+
+
+    fun saveReadNumber(readNumb : Int){
+        return with (sharedPreferences.edit()) {
+            putInt(readNumber,readNumb)
+            apply()
+        }
+    }
+
+    fun getReadNumber():Int{
+        return sharedPreferences.getInt(readNumber,0)
+    }
+
 }

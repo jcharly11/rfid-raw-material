@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
@@ -18,11 +19,11 @@ import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBindin
 class HandHeldConfigFragment : Fragment() {
 
     private lateinit var viewModel: HandHeldConfigViewModel
-    private  var _binding: FragmentHandHeldConfigBinding? = null
+    private var _binding: FragmentHandHeldConfigBinding? = null
 
     private val binding get() = _binding!!
     private var maxPower: Int = 0
-    private var sessionSelected: String=""
+    private var sessionSelected: String = ""
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
@@ -33,17 +34,24 @@ class HandHeldConfigFragment : Fragment() {
         val batteryPercent = arguments?.getInt("batteryLevel")
         val currentPower = arguments?.getInt("currentPower")
         val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
+        val readNumber = arguments?.getInt("readNumber")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            val bundle = bundleOf(
+                "readNumber" to readNumber
+            )
+            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
+        }
 
         binding.imgBattery.setPercent(batteryPercent!!)
         val valueBattery = "${batteryPercent}%"
 
         binding.txtPercent.text = valueBattery
-        if(powerLevelList!=null){
+        if (powerLevelList != null) {
             binding.seekBarPower.max = powerLevelList.size
-            binding.seekBarPower.progress =currentPower!!
+            binding.seekBarPower.progress = currentPower!!
             binding.txtPower.text = currentPower.toString()
         }
 
@@ -60,23 +68,25 @@ class HandHeldConfigFragment : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {
             }
         })
-        val regionList : MutableList<String> = mutableListOf()
-        regionList+="SESSION_0"
-        regionList+="SESSION_1"
+        val regionList: MutableList<String> = mutableListOf()
+        regionList += "SESSION_0"
+        regionList += "SESSION_1"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
         binding.listRegions.setAdapter(adapter)
         binding.listRegions.setSelection(1)
         binding.listRegions.setOnItemClickListener { adapterView, _, i, _ ->
             sessionSelected = adapterView.getItemAtPosition(i).toString()
-            Log.e("----->","" +sessionSelected)
+            Log.e("----->", "" + sessionSelected)
         }
         binding.btnSetPower.setOnClickListener {
             val bundle = bundleOf(
                 "inventoryId" to inventoryId,
                 "needTag" to true,
                 "maxPower" to maxPower,
-                "session" to sessionSelected)
-            findNavController().navigate(R.id.inventoryPagerFragment,bundle)
+                "session" to sessionSelected,
+                "readNumber" to readNumber
+            )
+            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
         }
         return binding.root
     }

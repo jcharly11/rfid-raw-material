@@ -21,7 +21,6 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
     var connectedScannerID = 0
     private lateinit var barcodeHandHeldInterface: BarcodeHandHeldInterface
     private var deviceConfig: DeviceConfig?= null
-    private var deviceConnected: Boolean= false
     private var readers: Readers? = null
     private var reader: RFIDReader?= null
 
@@ -37,18 +36,16 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
                 connect()
             }
             connected.await().let {
-
-                if(mScannerInfoList.size>0) {
+                 if(mScannerInfoList.size>0) {
                     sdkHandler!!.dcssdkEstablishCommunicationSession(mScannerInfoList[0].scannerID)
-                    deviceConnected=true
 
                 }
-
-                barcodeHandHeldInterface.connected(deviceConnected)
+                barcodeHandHeldInterface.connected(it)
 
 
 
             }
+
         }
 
     }
@@ -118,8 +115,10 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
     private suspend fun disconnectDevice(){
         return withContext(Dispatchers.Default) {
             try {
+
                 readers!!.Dispose()
                 reader!!.disconnect()
+
             } catch (e: InvalidUsageException) {
                 e.printStackTrace()
             } catch (e: OperationFailureException) {

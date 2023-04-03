@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
@@ -31,7 +32,6 @@ class InventoryPagerFragment : Fragment() {
     private var activityMain: MainActivity? = null
     private var batteryLevel: Int? = null
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,11 +39,14 @@ class InventoryPagerFragment : Fragment() {
         viewModel = ViewModelProvider(this)[InventoryPagerViewModel::class.java]
         _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
         dialogWaitForHandHeld =  DialogWaitForHandHeld(this)
-
-
-
+        var readNumber = arguments?.getInt("readNumber")
+        var deviceName = arguments?.getString("deviceName")
+        if(readNumber==null)
+            readNumber= 0
 
         val viewPager = binding.pager
         val tabLayout = binding.tabLayout
@@ -51,32 +54,17 @@ class InventoryPagerFragment : Fragment() {
             resources.getString(R.string.tab_tittle_inventory),
             resources.getString(R.string.tab_tittle_read)
         )
-        viewPager.adapter = PagerAdapter(this@InventoryPagerFragment)
+        viewPager.adapter = PagerAdapter(this@InventoryPagerFragment,readNumber!!)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = itemsTitle[position]
         }.attach()
 
-        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if(position==1){
-                    activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
-                    activityMain!!.batteryView!!.visibility = View.GONE
-                    activityMain!!.btnHandHeldGun!!.visibility = View.GONE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
 
 
-
-                }
-                else{
-                    activityMain!!.lyCreateLog!!.visibility = View.GONE
-                    activityMain!!.batteryView!!.visibility = View.VISIBLE
-                    activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
-
-                }
-            }
-        })
-
-        viewModel.startHandHeld()
+        viewModel.startHandHeld(deviceName!!)
         val maxPower = arguments?.getInt("maxPower")
         val session = arguments?.getString("session")
 
@@ -93,6 +81,7 @@ class InventoryPagerFragment : Fragment() {
         activityMain!!.btnHandHeldGun!!.setOnClickListener {
             val transmitPowerLevelList = viewModel.getCapabilities()
             val currentPower = viewModel.currentPower()
+            val readNumber= viewModel.getReadNumber()
             Log.e("power","$currentPower")
 
             val bundle = bundleOf(
@@ -100,19 +89,11 @@ class InventoryPagerFragment : Fragment() {
                 "needTag" to true,
                 "transmitPowerLevelList" to transmitPowerLevelList,
                 "currentPower" to currentPower,
+                "readNumber" to readNumber
             )
             findNavController().navigate(R.id.handHeldConfigFragment,bundle)
         }
-        activityMain!!.btnCreateLog!!.setOnClickListener {
-            var logCreator= LogCreator(requireContext())
-            CoroutineScope(Dispatchers.Main).launch {
-                var inventoryList= viewModel.getInventoryList()
-                var tagList= viewModel.getTagsList()
-                logCreator.createLog("read",inventoryList)
-                Thread.sleep(1500)
-                logCreator.createLog("write",tagList!!)
-            }
-        }
+
 
 
         viewModel.dialogVisible.observe(viewLifecycleOwner) {
@@ -138,18 +119,12 @@ class InventoryPagerFragment : Fragment() {
         return binding.root
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        viewModel.destroy()
-        Log.e("onDetach:  ", "$.....")
 
-
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-      //  viewModel.destroy()
-
+        viewModel.destroy()
+        Log.e("onDestroyView:  ", "$.....")
     }
 
 }
