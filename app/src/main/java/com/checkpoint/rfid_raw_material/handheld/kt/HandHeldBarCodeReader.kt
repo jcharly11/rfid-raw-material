@@ -115,8 +115,10 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
     private suspend fun disconnectDevice(){
         return withContext(Dispatchers.Default) {
             try {
+
                 readers!!.Dispose()
                 reader!!.disconnect()
+
             } catch (e: InvalidUsageException) {
                 e.printStackTrace()
             } catch (e: OperationFailureException) {
