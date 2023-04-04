@@ -34,7 +34,7 @@ class WriteTagActivity : AppCompatActivity(),
     private lateinit var device: Device
     private var deviceReady = false
     private var bluetoothHandler: BluetoothHandler? = null
-    private var deviceName: String? = null
+    private var deviceName =  String()
     val permissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -67,35 +67,37 @@ class WriteTagActivity : AppCompatActivity(),
         bluetoothHandler = BluetoothHandler(this)
 
 
-
+        permissionRequest.launch(arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_CONNECT
+        ))
         bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
         if (devices != null) {
             if (devices.size > 0){
 
                 for (device in devices) {
+
                     if (ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT)
                         != PackageManager.PERMISSION_GRANTED
                     ) {
-                        permissionRequest.launch(arrayOf(
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.BLUETOOTH_SCAN,
-                            Manifest.permission.BLUETOOTH_ADMIN,
-                            Manifest.permission.BLUETOOTH_CONNECT
-                        ))
-                     }
+                        Log.e("NO PERMISSION_GRANTED","BLUETOOTH_CONNECT")
+                    }
+
+
                     if (device.name.contains("RFD8500")) {
                         deviceName += device.name
                     }
                 }
 
             }
-            device = Device(applicationContext,deviceName!!,this)
         }
 
 
-
+        device = Device(applicationContext,"RFD850019078523021045",this)
 
         var btnReadMode = findViewById<Button>(R.id.btnReadMode)
         btnReadMode.setOnClickListener {
