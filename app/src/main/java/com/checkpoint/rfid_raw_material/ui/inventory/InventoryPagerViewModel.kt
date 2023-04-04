@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.ZebraRFIDHandlerImpl
@@ -36,8 +35,6 @@ class InventoryPagerViewModel(application: Application) : AndroidViewModel(appli
     private val _percentCharge: MutableLiveData<Int> = MutableLiveData(0)
     val percentCharge: LiveData<Int> = _percentCharge
 
-
-    private var bluetoothHandler: BluetoothHandler? = null
 
     private var deviceName: String? = null
 

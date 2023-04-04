@@ -37,7 +37,7 @@ class BluetoothHandler(context: Context) {
     fun discovey() {
         val finish =
             bluetoothAdapter.startDiscovery()
-        Log.e("Dsicovery result","$finish")
+        Log.e("Discovery result","$finish")
     }
 
     fun stopDiscovey(){

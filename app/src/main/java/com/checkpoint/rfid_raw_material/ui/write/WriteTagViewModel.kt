@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
 import com.checkpoint.rfid_raw_material.handheld.kt.HandHeldBarCodeReader

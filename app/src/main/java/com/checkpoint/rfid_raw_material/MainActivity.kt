@@ -1,17 +1,10 @@
 package com.checkpoint.rfid_raw_material
 
-import android.Manifest
-import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.os.Build
+import android.Manifest.permission.*
 import android.os.Bundle
-import android.util.Log
-import android.view.Menu
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -21,11 +14,8 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,19 +30,19 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+            permissions.getOrDefault(ACCESS_FINE_LOCATION, false) -> {
              //   Log.d("ACCESS_FINE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_FINE_LOCATION)}")
             }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+            permissions.getOrDefault(ACCESS_COARSE_LOCATION, false) -> {
                 //    Log.d("ACCESS_COARSE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_COARSE_LOCATION)}")
             }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_SCAN, false) -> {
+            permissions.getOrDefault(BLUETOOTH_SCAN, false) -> {
                 //    Log.d("BLUETOOTH_SCAN","${permissions.getValue(Manifest.permission.BLUETOOTH_SCAN)}")
             }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_ADMIN, false) -> {
+            permissions.getOrDefault(BLUETOOTH_ADMIN, false) -> {
                 //    Log.d("BLUETOOTH_ADMIN","${permissions.getValue(Manifest.permission.BLUETOOTH_ADMIN)}")
             }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
+            permissions.getOrDefault(BLUETOOTH_CONNECT, false) -> {
                 //    Log.d("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
             }
             else -> {
@@ -91,11 +81,11 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         permissionRequest.launch(arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.BLUETOOTH_SCAN,
-                Manifest.permission.BLUETOOTH_ADMIN,
-                Manifest.permission.BLUETOOTH_CONNECT
+                ACCESS_FINE_LOCATION,
+                ACCESS_COARSE_LOCATION,
+                BLUETOOTH_SCAN,
+                BLUETOOTH_ADMIN,
+                BLUETOOTH_CONNECT
             ))
 
     }

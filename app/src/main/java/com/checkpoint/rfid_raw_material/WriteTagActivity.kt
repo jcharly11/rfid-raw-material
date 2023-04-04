@@ -1,9 +1,14 @@
 package com.checkpoint.rfid_raw_material
 
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
@@ -11,6 +16,7 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInt
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.DeviceConnectStatusInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.zebra.rfid.api3.*
 
 
@@ -27,12 +33,69 @@ class WriteTagActivity : AppCompatActivity(),
     private  var deviceInstanceBARCODE: DeviceInstanceBARCODE? = null
     private lateinit var device: Device
     private var deviceReady = false
+    private var bluetoothHandler: BluetoothHandler? = null
+    private var deviceName: String? = null
+    val permissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        when {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                  Log.d("ACCESS_FINE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_FINE_LOCATION)}")
+            }
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                  Log.d("ACCESS_COARSE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_COARSE_LOCATION)}")
+            }
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_SCAN, false) -> {
+                  Log.d("BLUETOOTH_SCAN","${permissions.getValue(Manifest.permission.BLUETOOTH_SCAN)}")
+            }
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_ADMIN, false) -> {
+                  Log.d("BLUETOOTH_ADMIN","${permissions.getValue(Manifest.permission.BLUETOOTH_ADMIN)}")
+            }
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
+                  Log.d("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
+            }
+            else -> {
+                finish()
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_write_tag2)
-        device = Device(applicationContext,"RFD850019078523021045",this)
+        bluetoothHandler = BluetoothHandler(this)
+
+
+
+        bluetoothHandler = BluetoothHandler(this)
+        val devices = bluetoothHandler!!.list()
+        if (devices != null) {
+            if (devices.size > 0){
+
+                for (device in devices) {
+                    if (ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_CONNECT)
+                        != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        permissionRequest.launch(arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.BLUETOOTH_SCAN,
+                            Manifest.permission.BLUETOOTH_ADMIN,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                        ))
+                     }
+                    if (device.name.contains("RFD8500")) {
+                        deviceName += device.name
+                    }
+                }
+
+            }
+            device = Device(applicationContext,deviceName!!,this)
+        }
+
+
+
 
         var btnReadMode = findViewById<Button>(R.id.btnReadMode)
         btnReadMode.setOnClickListener {

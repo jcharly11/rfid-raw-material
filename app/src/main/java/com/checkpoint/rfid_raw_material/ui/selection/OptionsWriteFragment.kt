@@ -25,7 +25,6 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
-import com.zebra.rfid.api3.SESSION
 
 
 class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
@@ -80,7 +79,7 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
 
                     if(devicesRFID.isNotEmpty()){
 
-                        deviceName = devicesRFID.get(0)
+                        deviceName = devicesRFID[0]
                     }else{
                         dialogErrorDeviceConnected.show()
 
