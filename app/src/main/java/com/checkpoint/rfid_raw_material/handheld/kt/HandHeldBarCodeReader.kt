@@ -28,8 +28,9 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
     suspend fun instance(context: Context?, device: DeviceConfig?){
         sdkHandler = SDKHandler(context!!)
         sdkHandler!!.dcssdkSetDelegate(this)
+
         readers = Readers(context, device!!.type)
-        deviceConfig= device
+        deviceConfig = device
         GlobalScope.launch(Dispatchers.Main) {
 
             val connected = async {
@@ -41,8 +42,6 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
 
                 }
                 barcodeHandHeldInterface.connected(it)
-
-
 
             }
 
@@ -116,6 +115,7 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
         return withContext(Dispatchers.Default) {
             try {
 
+                //sdkHandler!!.dcssdkClose()
                 readers!!.Dispose()
                 reader!!.disconnect()
 
@@ -147,7 +147,6 @@ class HandHeldBarCodeReader(): IDcsSdkApiDelegate {
 
         }
     }
-
 
 
     override fun dcssdkEventScannerDisappeared(p0: Int) {

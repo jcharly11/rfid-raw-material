@@ -17,6 +17,15 @@
                             <option name="y" value="-183" />
                           </Point>
                         </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_configurationFragment_to_optionsWriteFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -29,15 +38,6 @@
                             <option name="y" value="566" />
                           </Point>
                         </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_confirmWriteTagFragment_to_writeTagFragment2">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
                       </LayoutPositions>
                     </value>
                   </entry>
@@ -49,6 +49,15 @@
                             <option name="x" value="-252" />
                             <option name="y" value="109" />
                           </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_handHeldConfigFragment_to_optionsWriteFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -65,6 +74,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="mainActivity">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="-212" />
+                            <option name="y" value="424" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="newProviderFragment">
                     <value>
                       <LayoutPositions>
@@ -73,15 +94,6 @@
                             <option name="x" value="480" />
                             <option name="y" value="125" />
                           </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_newProviderFragment_to_writeTagFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
                         </option>
                       </LayoutPositions>
                     </value>
@@ -97,6 +109,11 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_optionsWriteFragment_to_inventoryPagerFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_optionsWriteFragment_to_writeTagFragment">
                               <value>
                                 <LayoutPositions />

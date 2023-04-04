@@ -57,6 +57,6 @@
     <string name="error_log">No data exists to save</string>
     <string name="press_back_again">Press again back button to exit</string>
 
-    <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your area in order to read only one</string>
+    <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your and press trigger again</string>
 
 </resources>

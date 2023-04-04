@@ -58,7 +58,7 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
             }
             disconnect.await().let {
 
-                responseHandlerInterface!!.handleStartConnect(it)
+                responseHandlerInterface!!.handleStartConnect(false)
 
             }
         }
@@ -342,7 +342,6 @@ class RFIDHandler(val context: Context, private val config: DeviceConfig)  : Rea
 
 
         }
-
         override fun eventStatusNotify(rfidStatusEvents: RfidStatusEvents?) {
             Log.d("Status Notification: " , rfidStatusEvents!!.StatusEventData.statusEventType.toString()
 
