@@ -273,7 +273,11 @@ class WriteTagFragment : Fragment(),
         deviceStarted = true
         dialogBarcodeReaderStatus.show()
         lifecycleScope.launch {
-            viewModel.startHandHeldBarCode(deviceName!!)
+            if (deviceName!=null){
+
+                viewModel.startHandHeldBarCode(deviceName!!)
+            }
+
         }
     }
 

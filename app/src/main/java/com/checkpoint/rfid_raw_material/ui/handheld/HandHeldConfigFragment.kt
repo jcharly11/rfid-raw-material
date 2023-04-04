@@ -35,6 +35,7 @@ class HandHeldConfigFragment : Fragment() {
         val currentPower = arguments?.getInt("currentPower")
         val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
         val readNumber = arguments?.getInt("readNumber")
+        val deviceName = arguments?.getString("deviceName")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
@@ -84,7 +85,8 @@ class HandHeldConfigFragment : Fragment() {
                 "needTag" to true,
                 "maxPower" to maxPower,
                 "session" to sessionSelected,
-                "readNumber" to readNumber
+                "readNumber" to readNumber,
+                "deviceName" to deviceName
             )
             findNavController().navigate(R.id.inventoryPagerFragment, bundle)
         }

@@ -58,13 +58,6 @@ class InventoryPagerViewModel2(application: Application) : AndroidViewModel(appl
         bluetoothHandler = BluetoothHandler(context)
         val devices = bluetoothHandler!!.list()
 
-        if (devices != null) {
-            for (device in devices) {
-                if (device.name.contains("RFD8")) {
-                    deviceName = device.name
-                }
-            }
-        }
 
         rfidHandler = RFIDHandler(
             context,

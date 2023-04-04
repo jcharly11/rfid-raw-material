@@ -25,6 +25,7 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
+import com.zebra.rfid.api3.SESSION
 
 
 class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{

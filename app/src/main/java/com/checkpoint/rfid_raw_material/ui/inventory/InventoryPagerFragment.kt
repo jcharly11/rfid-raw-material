@@ -89,7 +89,8 @@ class InventoryPagerFragment : Fragment() {
                 "needTag" to true,
                 "transmitPowerLevelList" to transmitPowerLevelList,
                 "currentPower" to currentPower,
-                "readNumber" to readNumber
+                "readNumber" to readNumber,
+                "deviceName" to deviceName
             )
             findNavController().navigate(R.id.handHeldConfigFragment,bundle)
         }
