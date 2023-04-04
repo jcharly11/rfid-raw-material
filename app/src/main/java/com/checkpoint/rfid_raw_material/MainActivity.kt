@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             permissionRequest.launch(arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
