@@ -11,12 +11,9 @@ class SecurityTest {
     fun isTokenValid(){
         val decoder = JWTDecoder(token)
         var isTokenValid: Boolean
-        val idDevice = decoder.decodeId()
-        val exp =  decoder.decodeExp()
-        println("idDevice:$idDevice")
-        println("exp:$exp")
 
-        isTokenValid = idDevice.isEmpty()
+
+        isTokenValid = decoder.decode().isEmpty()
         Assert.assertEquals(true,isTokenValid)
 
     }
