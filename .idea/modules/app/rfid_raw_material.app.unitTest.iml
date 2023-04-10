@@ -102,6 +102,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/f3161aee35d46b0458bc29d0fe9f531c/transformed/constraintlayout-2.1.4-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/6cbbfe59101900e20fecc7b26a453347/transformed/jetified-commons-csv-1.5.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.room/room-migration/2.4.2/3f681427593343d0b296b8fccc117569184f96f7/room-migration-2.4.2.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/5b7e2f49c7826a72951b9a3263ea0dac/transformed/jetified-jwtdecode-2.0.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/801252996b696fbefafbf1a4c4f05e61/transformed/jetified-zebra_lib_rfid-api.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-32/android.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/build-tools/30.0.3/core-lambda-stubs.jar</arg>
@@ -261,6 +262,7 @@
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.room:room-testing:2.4.2@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: :zebra_lib_rfid:@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.github.skydoves:expandablelayout:1.0.7@aar" level="project" />
+    <orderEntry type="library" scope="TEST" name="Gradle: com.auth0.android:jwtdecode:2.0.2@aar" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="rfid_raw_material.app.main" />
 </module>

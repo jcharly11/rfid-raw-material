@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.checkpoint.rfid_raw_material"
-        minSdk 26
+        minSdk 29
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -70,6 +70,7 @@ dependencies {
 
     implementation(name:'zebra_lib_rfid', ext:'aar')
     implementation "com.github.skydoves:expandablelayout:1.0.7"
+    implementation 'com.auth0.android:jwtdecode:2.0.2'
 
 
 }
