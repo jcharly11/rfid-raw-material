@@ -71,5 +71,12 @@ dependencies {
     implementation(name:'zebra_lib_rfid', ext:'aar')
     implementation "com.github.skydoves:expandablelayout:1.0.7"
 
+    implementation 'com.github.fondesa:kpermissions:3.4.0'
+    // If you want the extensions for RxJava 2.
+    implementation 'com.github.fondesa:kpermissions-rx2:3.4.0'
+    // If you want the extensions for RxJava 3.
+    implementation 'com.github.fondesa:kpermissions-rx3:3.4.0'
+    // If you want the extensions for the Kotlin coroutines.
+    implementation 'com.github.fondesa:kpermissions-coroutines:3.4.0'
 
 }

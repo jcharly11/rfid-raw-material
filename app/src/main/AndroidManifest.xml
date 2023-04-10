@@ -35,8 +35,13 @@
         android:theme="@style/Theme.Rfid_raw_material"
         tools:targetApi="31">
         <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+
+        </activity>
+        <activity
             android:name=".WriteTagActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

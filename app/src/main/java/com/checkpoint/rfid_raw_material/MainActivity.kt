@@ -17,6 +17,14 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.navigation.fragment.NavHostFragment
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+import com.fondesa.kpermissions.coroutines.flow
+import com.fondesa.kpermissions.coroutines.sendSuspend
+import com.fondesa.kpermissions.extension.liveData
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.isDenied
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -28,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     var batteryView: CustomBattery? = null
     var btnCreateLog: AppCompatImageView? = null
     var lyCreateLog: LinearLayout? = null
-     val permissionRequest = registerForActivityResult(
+   /*  val permissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
@@ -51,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }
         }
-    }
+    }*/
 
 
      override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,13 +89,14 @@ class MainActivity : AppCompatActivity() {
          )
          setupActionBarWithNavController(navController, appBarConfiguration)
 
-         permissionRequest.launch(arrayOf(
+        /* permissionRequest.launch(arrayOf(
              Manifest.permission.ACCESS_FINE_LOCATION,
              Manifest.permission.ACCESS_COARSE_LOCATION,
              Manifest.permission.BLUETOOTH_SCAN,
              Manifest.permission.BLUETOOTH_ADMIN,
              Manifest.permission.BLUETOOTH_CONNECT
-         ))
+         ))*/
+
 
     }
 

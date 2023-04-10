@@ -58,5 +58,6 @@
     <string name="press_back_again">Press again back button to exit</string>
 
     <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your and press trigger again</string>
+    <string name="accept_permissions">You need to accept all permissions</string>
 
 </resources>
