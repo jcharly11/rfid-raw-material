@@ -1,6 +1,8 @@
 package com.checkpoint.rfid_raw_material.ui.selection
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -25,9 +28,10 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
+import kotlinx.coroutines.CoroutineScope
 
 
-class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
+class OptionsWriteFragment : Fragment(), SelectDeviceDialogInterface {
 
     private lateinit var viewModel: OptionsWriteViewModel
     private var _binding: FragmentOptionsWriteBinding? = null
@@ -56,53 +60,13 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
             exitApp()
         }
 
-        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this@OptionsWriteFragment)
-        bluetoothHandler = BluetoothHandler(requireContext())
-        val devices = bluetoothHandler!!.list()
-        var devicesRFID = listOf<String>()
 
-        if (devices != null) {
-            if (devices.size > 0){
-
-                for (device in devices) {
-                    if (device.name.contains("RFD8500")) {
-                        devicesRFID += device.name
-                    }
-                }
-                if (devicesRFID.size>1){
-
-                    dialogSelectPairDevices = DialogSelectPairDevices(
-                        this@OptionsWriteFragment,
-                         devicesRFID)
-                    dialogSelectPairDevices.show()
-                }else{
-
-                    if(devicesRFID.isNotEmpty()){
-
-                        deviceName = devicesRFID[0]
-                    }else{
-                        dialogErrorDeviceConnected.show()
-
-                    }
-                }
-
-            }else{
-                dialogErrorDeviceConnected.show()
-                // DIALOG TURN ON BLUETOOTH
-            }
-
-        }
-
-        dialogLoaderHandHeld = CustomDialogLoader(
-            this@OptionsWriteFragment,
-            TypeLoading.BLUETOOTH_DEVICE
-        )
 
         binding.btnInventory.setOnClickListener {
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
-            findNavController().navigate(R.id.inventoryPagerFragment,bundle)
+            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
         }
         binding.btnWriteTag.setOnClickListener {
             val bundle = bundleOf(
@@ -112,7 +76,7 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
         }
 
 
-        Log.e("DEVICE SELECTED ","$deviceName")
+        Log.e("DEVICE SELECTED ", "$deviceName")
         return binding.root
     }
 
@@ -124,18 +88,61 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
     }
 
 
-
     override fun onStart() {
         super.onStart()
         (activity as AppCompatActivity).supportActionBar!!.show()
+        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this@OptionsWriteFragment)
+        bluetoothHandler = BluetoothHandler(requireContext())
+        val devices = bluetoothHandler!!.list()
+        var devicesRFID = listOf<String>()
+
+        if (devices != null) {
+            if (devices.size > 0) {
+
+                for (device in devices) {
+                    if (device.name.contains("RFD8500")) {
+                        devicesRFID += device.name
+                    }
+                }
+                if (devicesRFID.size > 1) {
+
+                    dialogSelectPairDevices = DialogSelectPairDevices(
+                        this@OptionsWriteFragment,
+                        devicesRFID
+                    )
+                    dialogSelectPairDevices.show()
+                } else {
+
+                    if (devicesRFID.isNotEmpty()) {
+
+                        deviceName = devicesRFID[0]
+                    } else {
+                        dialogErrorDeviceConnected.show()
+
+                    }
+                }
+
+            } else {
+                dialogErrorDeviceConnected.show()
+                // DIALOG TURN ON BLUETOOTH
+            }
+
+        }
+
+        dialogLoaderHandHeld = CustomDialogLoader(
+            this@OptionsWriteFragment,
+            TypeLoading.BLUETOOTH_DEVICE
+        )
     }
 
-    fun exitApp(){
-        if(doubleBackPressed){
+
+    fun exitApp() {
+        if (doubleBackPressed) {
             System.exit(0)
         }
-        doubleBackPressed=true
-        Toast.makeText(context, resources.getText(R.string.press_back_again), Toast.LENGTH_SHORT).show()
+        doubleBackPressed = true
+        Toast.makeText(context, resources.getText(R.string.press_back_again), Toast.LENGTH_SHORT)
+            .show()
 
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             doubleBackPressed = false

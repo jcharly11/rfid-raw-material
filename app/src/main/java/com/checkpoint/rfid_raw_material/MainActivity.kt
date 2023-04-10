@@ -1,6 +1,6 @@
 package com.checkpoint.rfid_raw_material
 
-import android.Manifest.permission.*
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
@@ -14,8 +14,10 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.navigation.fragment.NavHostFragment
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,19 +32,19 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
         when {
-            permissions.getOrDefault(ACCESS_FINE_LOCATION, false) -> {
+            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
              //   Log.d("ACCESS_FINE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_FINE_LOCATION)}")
             }
-            permissions.getOrDefault(ACCESS_COARSE_LOCATION, false) -> {
+            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
                 //    Log.d("ACCESS_COARSE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_COARSE_LOCATION)}")
             }
-            permissions.getOrDefault(BLUETOOTH_SCAN, false) -> {
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_SCAN, false) -> {
                 //    Log.d("BLUETOOTH_SCAN","${permissions.getValue(Manifest.permission.BLUETOOTH_SCAN)}")
             }
-            permissions.getOrDefault(BLUETOOTH_ADMIN, false) -> {
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_ADMIN, false) -> {
                 //    Log.d("BLUETOOTH_ADMIN","${permissions.getValue(Manifest.permission.BLUETOOTH_ADMIN)}")
             }
-            permissions.getOrDefault(BLUETOOTH_CONNECT, false) -> {
+            permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
                 //    Log.d("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
             }
             else -> {
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
 
      override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -67,26 +70,24 @@ class MainActivity : AppCompatActivity() {
         batteryView!!.visibility = View.GONE
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
+
+
          val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
+         val navController = navHostFragment.navController
 
+         appBarConfiguration = AppBarConfiguration(
+             setOf(R.id.optionsWriteFragment), drawerLayout
+         )
+         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.optionsWriteFragment
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
-        permissionRequest.launch(arrayOf(
-                ACCESS_FINE_LOCATION,
-                ACCESS_COARSE_LOCATION,
-                BLUETOOTH_SCAN,
-                BLUETOOTH_ADMIN,
-                BLUETOOTH_CONNECT
-            ))
+         permissionRequest.launch(arrayOf(
+             Manifest.permission.ACCESS_FINE_LOCATION,
+             Manifest.permission.ACCESS_COARSE_LOCATION,
+             Manifest.permission.BLUETOOTH_SCAN,
+             Manifest.permission.BLUETOOTH_ADMIN,
+             Manifest.permission.BLUETOOTH_CONNECT
+         ))
 
     }
 
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
 
 
 }
