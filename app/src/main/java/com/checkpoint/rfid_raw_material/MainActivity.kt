@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.navigation.fragment.NavHostFragment
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
+import com.checkpoint.rfid_raw_material.security.jwt.JWTDecoder
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
 
 
@@ -54,6 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjMwLCJkZXZpY2UiOiIzZTRhY2M0ZjVhOWI0YWRhIn0.DAB-TRIOEZy1YLqlI917TEBNQCtqMe0lPWzOzFd3Mew"
 
      override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +92,8 @@ class MainActivity : AppCompatActivity() {
              Manifest.permission.BLUETOOTH_CONNECT
          ))
 
+         val decoder = JWTDecoder(token)
+         var isTokenValid: Boolean = decoder.decode().isEmpty()
     }
 
 

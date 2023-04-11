@@ -5,15 +5,13 @@ import org.junit.Assert
 import org.junit.Test
 
 class SecurityTest {
-    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjNlNGFjYzRmNWE5YjRhZGEiLCJleHAiOjMwfQ.EcgnAVsEpah1TEeqbIjtZ6_JQ-bVjkrueC_PuG_FgLY"
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjMwLCJkZXZpY2UiOiIzZTRhY2M0ZjVhOWI0YWRhIn0.DAB-TRIOEZy1YLqlI917TEBNQCtqMe0lPWzOzFd3Mew"
 
     @Test
     fun isTokenValid(){
         val decoder = JWTDecoder(token)
-        var isTokenValid: Boolean
 
-
-        isTokenValid = decoder.decode().isEmpty()
+        var isTokenValid: Boolean = decoder.decode().isEmpty()
         Assert.assertEquals(true,isTokenValid)
 
     }
