@@ -19,6 +19,14 @@ import androidx.navigation.fragment.NavHostFragment
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.security.jwt.JWTDecoder
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
+import com.fondesa.kpermissions.coroutines.flow
+import com.fondesa.kpermissions.coroutines.sendSuspend
+import com.fondesa.kpermissions.extension.liveData
+import com.fondesa.kpermissions.extension.permissionsBuilder
+import com.fondesa.kpermissions.isDenied
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -30,32 +38,8 @@ class MainActivity : AppCompatActivity() {
     var batteryView: CustomBattery? = null
     var btnCreateLog: AppCompatImageView? = null
     var lyCreateLog: LinearLayout? = null
-     val permissionRequest = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-                 Log.e("ACCESS_FINE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_FINE_LOCATION)}")
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-                 Log.e("ACCESS_COARSE_LOCATION","${permissions.getValue(Manifest.permission.ACCESS_COARSE_LOCATION)}")
-            }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_SCAN, false) -> {
-                 Log.e("BLUETOOTH_SCAN","${permissions.getValue(Manifest.permission.BLUETOOTH_SCAN)}")
-            }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_ADMIN, false) -> {
-                Log.e("BLUETOOTH_ADMIN","${permissions.getValue(Manifest.permission.BLUETOOTH_ADMIN)}")
-            }
-            permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
-                Log.e("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
-            }
-            else -> {
-                finish()
-            }
-        }
-    }
 
-    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjMwLCJkZXZpY2UiOiIzZTRhY2M0ZjVhOWI0YWRhIn0.DAB-TRIOEZy1YLqlI917TEBNQCtqMe0lPWzOzFd3Mew"
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODEzMjk2MDQsImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.RvIacbVMV3R8ouKS2tQU4xnpKs4bjK7DaaNs7pz8PTk"
 
      override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,16 +68,10 @@ class MainActivity : AppCompatActivity() {
          )
          setupActionBarWithNavController(navController, appBarConfiguration)
 
-         permissionRequest.launch(arrayOf(
-             Manifest.permission.ACCESS_FINE_LOCATION,
-             Manifest.permission.ACCESS_COARSE_LOCATION,
-             Manifest.permission.BLUETOOTH_SCAN,
-             Manifest.permission.BLUETOOTH_ADMIN,
-             Manifest.permission.BLUETOOTH_CONNECT
-         ))
 
          val decoder = JWTDecoder(token)
-         var isTokenValid: Boolean = decoder.decode().isEmpty()
+         var data: String = decoder.decode()
+         Log.e("decoder.decode():",data)
     }
 
 

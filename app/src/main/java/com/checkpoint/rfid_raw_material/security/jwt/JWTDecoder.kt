@@ -9,9 +9,10 @@ class JWTDecoder(private val token: String) {
 
     fun decode(): String {
         return Jwts.parserBuilder()
-            .setSigningKey("c6kNFvjUCGDVetfV")
+            .setSigningKey("Y2Y2MTI3OTVjMTQxYmFhZTczNGJiMjgxZDcwMTM5NTUwMTZlNmYxZjE5MTY2NzkyZGU3YTAzYmQzNGNhOTUyZg==")
+            // TODO: Get from native opcode
             .build()
-            .parseClaimsJws(token).body["id"].toString()
+            .parseClaimsJws(token).body.toString()
     }
 
 }
