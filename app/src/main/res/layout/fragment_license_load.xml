@@ -50,8 +50,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="80"
-                        android:textSize="21sp"
-                        android:text="3e4acc4f5a9b4ada"/>
+                        android:textSize="21sp"/>
 
                     <ImageView
                         android:id="@+id/imgCopy"
@@ -66,8 +65,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:lines="20"
-                    android:gravity="center"
-                    android:hint="paste your license here"
+                    android:hint="Paste your license here"
+                    android:textColor="@color/gray"
+                    android:text="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE0MjM5MzgsImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.lMedh4h7FGzjhQRzxck2aKfw0g--FN2oh29j1SU7XFg"
                     />
 
 
@@ -78,14 +78,20 @@
                 android:layout_weight="15"
                 android:gravity="center">
 
-                <Button
-                    android:id="@+id/btnSelectDevice"
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnSetLicense"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:gravity="center"
-                    android:text="continue"
+                    android:layout_height="80dp"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginBottom="25dp"
+                    android:background="@drawable/button_icon_large"
+                    android:drawableStart="@drawable/ic_key"
+                    android:drawableTint="@color/white"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:text="@string/item_menu_inventory"
                     android:textColor="@color/white" />
             </RelativeLayout>
 

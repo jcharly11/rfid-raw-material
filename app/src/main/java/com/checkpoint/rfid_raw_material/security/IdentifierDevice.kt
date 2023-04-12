@@ -12,7 +12,7 @@ class IdentifierDevice(private val context: Context){
               Settings.Secure.getString(
                 context.contentResolver,
                 Settings.Secure.ANDROID_ID
-            ) + "."+ System.currentTimeMillis()
+            )
 
 
         } catch (ex: Exception) {
