@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/optionsWriteFragment">
+    app:startDestination="@+id/licenseLoadFragment">
 
     <fragment
         android:id="@+id/optionsWriteFragment"
@@ -67,6 +67,15 @@
         tools:layout="@layout/fragment_configuration" >
         <action
             android:id="@+id/action_configurationFragment_to_optionsWriteFragment"
+            app:destination="@id/optionsWriteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/licenseLoadFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.license.LicenseLoadFragment"
+        android:label="fragment_license_load"
+        tools:layout="@layout/fragment_license_load" >
+        <action
+            android:id="@+id/action_licenseLoadFragment_to_optionsWriteFragment"
             app:destination="@id/optionsWriteFragment" />
     </fragment>
 

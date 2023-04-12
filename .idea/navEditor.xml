@@ -74,13 +74,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="mainActivity">
+                  <entry key="licenseLoadFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="-212" />
-                            <option name="y" value="424" />
+                            <option name="x" value="-246" />
+                            <option name="y" value="412" />
                           </Point>
                         </option>
                       </LayoutPositions>

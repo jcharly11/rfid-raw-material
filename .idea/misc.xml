@@ -21,6 +21,7 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_barcode_reader_status.xml" value="0.15" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_device_connected.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_multiple_tags.xml" value="0.2" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_license_loader.xml" value="0.33" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_prepare_reading.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_prepare_trigger.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_select_pair_devices.xml" value="0.15" />
@@ -33,6 +34,7 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_inventory_list.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_inventory_pager.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_items_read.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_license_load.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_new_inventory.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_new_provider.xml" value="0.15" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_options_write.xml" value="0.2" />

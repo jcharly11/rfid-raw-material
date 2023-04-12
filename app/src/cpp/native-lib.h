@@ -1,0 +1,8 @@
+//
+// Created by hgallardo on 11/04/2023.
+//
+
+#ifndef RFID_RAW_MATERIAL_NATIVE_LIB_H
+#define RFID_RAW_MATERIAL_NATIVE_LIB_H
+
+#endif //RFID_RAW_MATERIAL_NATIVE_LIB_H
