@@ -119,10 +119,10 @@ class OptionsWriteFragment : Fragment(), SelectDeviceDialogInterface, Permission
             }
         }
 
-        if(res>= 4)
+        if(res>0)
             searchDevices()
-       // else
-           // Toast.makeText(context, R.string.accept_permissions, Toast.LENGTH_SHORT).show()
+        else
+           requireActivity().finish()
     }
 
 
