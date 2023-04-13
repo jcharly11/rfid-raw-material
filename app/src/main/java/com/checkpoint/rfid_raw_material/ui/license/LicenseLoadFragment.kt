@@ -34,9 +34,12 @@ class LicenseLoadFragment : Fragment() {
         binding.btnSetLicense.setOnClickListener {
             this.lifecycleScope.launch {
                 viewModel.validateLicense(binding.tvLicense.text.toString()).apply {
+
                     if (this){
                         findNavController().navigate(R.id.optionsWriteFragment)
                     }
+
+
                 }
             }
 

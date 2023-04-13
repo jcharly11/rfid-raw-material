@@ -46,7 +46,9 @@ class LicenseLoadViewModel(application: Application) : AndroidViewModel(applicat
             Log.e("decoder.decode():",data)
             val obj = JSONObject(data)
             Log.e("decoder.decode():",obj.getString("exp"))
+            Log.e("decoder.decode():",obj.getString("device"))
 
+            //TODO guardar a shared preferences el token
 
             true
         }catch (ex: Exception){
