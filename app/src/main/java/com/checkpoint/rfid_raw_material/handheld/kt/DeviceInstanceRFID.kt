@@ -4,6 +4,7 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 import android.util.Log
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
 import com.zebra.rfid.api3.*
 import kotlinx.coroutines.*
 
@@ -16,6 +17,7 @@ import kotlinx.coroutines.*
 
     private var responseHandlerInterface: ResponseHandlerInterface? = null
     private var batteryHandlerInterface: BatteryHandlerInterface? = null
+     private var writingTagInterface: WritingTagInterface? = null
 
 
     private suspend fun performTask(){
@@ -118,6 +120,13 @@ import kotlinx.coroutines.*
          this.responseHandlerInterface = responseHandlerInterface
 
      }
+     fun setHandlerWriteInterfacResponse(writingTagInterface: WritingTagInterface){
+         this.writingTagInterface = writingTagInterface
+
+     }
+
+
+
      fun setRfidModeRead(){
          triggerInfo.StartTrigger.triggerType =
              START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
@@ -169,6 +178,82 @@ import kotlinx.coroutines.*
              }
          }
 
+     }
+
+     fun battery() {
+             try {
+                 if (reader.Config != null) {
+                     reader.Config.getDeviceStatus(true, true, false)
+                 }
+             } catch (e: InvalidUsageException) {
+                 e.printStackTrace()
+             } catch (e: OperationFailureException) {
+                 e.printStackTrace()
+             }
+     }
+
+     fun writeTagMode(epc: String, tid: String) {
+         try {
+             Log.e("writeMode","stated")
+             reader.Config.setAccessOperationWaitTimeout(1000)
+             reader.Actions.Inventory.stop()
+             reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
+             write(tid,epc,"0")
+         } catch (e: InvalidUsageException) {
+             e.printStackTrace()
+         } catch (e: OperationFailureException) {
+             e.printStackTrace()
+         }
+     }
+     fun write( tid: String, epc: String,  password: String){
+         writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
+     }
+     @Synchronized
+     private fun writeTag(
+         sourceEPC: String,
+         Password: String,
+         memory_bank: MEMORY_BANK,
+         targetData: String,
+         offset: Int
+     ) {
+         Log.e("sourceEPC", "$sourceEPC")
+         Log.e("targetData", "$targetData")
+         Log.e("password", "$Password")
+
+
+         try {
+             val tagData: TagData? = null
+             val tagAccess = TagAccess()
+             val writeAccessParams = tagAccess.WriteAccessParams()
+             writeAccessParams.accessPassword = Password.toLong(16)
+             writeAccessParams.memoryBank = memory_bank
+             writeAccessParams.offset = offset
+             writeAccessParams.setWriteData(targetData)
+             writeAccessParams.writeRetries = 3
+             writeAccessParams.writeDataLength = targetData.length / 4
+             val useTIDfilter = memory_bank === MEMORY_BANK.MEMORY_BANK_EPC
+             reader!!.Actions.TagAccess.writeWait(
+                 sourceEPC,
+                 writeAccessParams,
+                 null,
+                 tagData,
+                 true,
+                 useTIDfilter
+             )
+             writingTagInterface!!.writingTagStatus(true)
+
+         } catch (e: InvalidUsageException) {
+             e.printStackTrace()
+             writingTagInterface!!.writingTagStatus(false)
+
+         } catch (e: OperationFailureException) {
+             e.printStackTrace()
+             writingTagInterface!!.writingTagStatus(false)
+
+             Log.e("EXCEPTION", e.vendorMessage.toString())
+             Log.e("RESULTS", e.results.toString())
+             Log.e("RESULTS", e.statusDescription.toString())
+         }
      }
 
  }

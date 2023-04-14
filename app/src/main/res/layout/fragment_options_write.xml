@@ -16,13 +16,15 @@
             android:layout_weight="30"
             android:gravity="center_horizontal|center_vertical">
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvDeviceSelected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/navy"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:gravity="center_vertical|center_horizontal"/>
+                android:textColor="@color/green"
+                android:textSize="18sp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:text="RFD8501234567890"
+                android:gravity="right"/>
         </LinearLayout>
 
         <RelativeLayout

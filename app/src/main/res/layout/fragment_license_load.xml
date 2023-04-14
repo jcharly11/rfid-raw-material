@@ -67,7 +67,7 @@
                     android:lines="20"
                     android:hint="Paste your license here"
                     android:textColor="@color/gray"
-                    android:text="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE0MjM5MzgsImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.lMedh4h7FGzjhQRzxck2aKfw0g--FN2oh29j1SU7XFg"
+                    android:text="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE3MjU2MDAsImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.bAyBeMxNVlTrSw0a7h8VgI-WcJVhQo8g1laebf9kq-k"
                     />
 
 

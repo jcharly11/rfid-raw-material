@@ -2,11 +2,9 @@ package com.checkpoint.rfid_raw_material.ui.write
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
-import com.checkpoint.rfid_raw_material.handheld.kt.HandHeldBarCodeReader
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
@@ -23,28 +21,13 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
 @SuppressLint("MissingPermission")
-class WriteTagViewModel (application: Application) : AndroidViewModel(application),
-    BarcodeHandHeldInterface {
+class WriteTagViewModel (application: Application) : AndroidViewModel(application){
     private var repository: DataRepository
-    private var handHeldBarCodeReader: HandHeldBarCodeReader? = null
-    private val _liveCode: MutableLiveData<String> = MutableLiveData()
-    var liveCode: LiveData<String> = _liveCode
-    private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData(false)
-    var deviceConnected: LiveData<Boolean> = _deviceConnected
-
-    private val _deviceDisConnected: MutableLiveData<Boolean> = MutableLiveData(false)
-    var deviceDisConnected: LiveData<Boolean> = _deviceDisConnected
-
-
-    @SuppressLint("StaticFieldLeak")
-    private var context = application.applicationContext
 
     init {
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
         )
-        handHeldBarCodeReader = HandHeldBarCodeReader()
-        handHeldBarCodeReader!!.setBarcodeResponseInterface(this)
 
 
     }
@@ -72,62 +55,9 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         listProviders
     }
 
-    override fun setDataBarCode(code: String){
-
-      _liveCode.value = code.filter {it in '0'..'9'}
-
-    }
-
-    override fun connected(status: Boolean) {
-        if(status){
-            _deviceConnected.postValue(true)
-        }else{
-            _deviceDisConnected.postValue(true)
-        }
 
 
-    }
 
-    suspend fun startHandHeldBarCode(deviceName: String){
-
-            handHeldBarCodeReader!!.instance(context, DeviceConfig(
-                0,
-                SESSION.SESSION_S1,
-                deviceName,
-                ENUM_TRIGGER_MODE.BARCODE_MODE,
-                ENUM_TRANSPORT.BLUETOOTH
-
-            )
-            )
-
-    }
-
-    suspend fun disconnectDevice(){
-        viewModelScope.launch {
-            handHeldBarCodeReader!!.disconnect()
-        }
-        }
-
-
-    suspend fun newTag(readNumber:Int,version: String,subversion:String,type:String,piece:String,
-    idProvider:Int,epc:String): Tags = withContext(Dispatchers.IO) {
-        val nowDate: OffsetDateTime = OffsetDateTime.now()
-        val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
-
-        repository.insertNewTag(
-            Tags(
-                0,
-                readNumber,
-                version,
-                subversion,
-                type,
-                piece,
-                idProvider,
-                epc,
-                formatter.format(nowDate)
-            )
-        )
-    }
 
     suspend fun getNewReadNumber():Int= withContext(Dispatchers.IO){
         repository.getReadNumber()

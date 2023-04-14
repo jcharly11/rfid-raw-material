@@ -82,4 +82,12 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
             1
     }
 
+    fun deleteTagsInInventory() {
+        localDataSource.tagsDao().deleteAllTags()
+    }
+
+    suspend fun countTags(): Int= withContext(Dispatchers.IO){
+        localDataSource.tagsDao().getTagsList().size
+    }
+
 }

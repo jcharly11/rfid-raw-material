@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".WriteTagActivity"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:id="@+id/fragmentHolder">
     <Button
         android:id="@+id/btnReadMode"
         android:layout_width="match_parent"

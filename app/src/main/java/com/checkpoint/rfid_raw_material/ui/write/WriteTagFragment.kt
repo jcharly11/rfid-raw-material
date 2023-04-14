@@ -77,39 +77,11 @@ class WriteTagFragment : Fragment(),
         }
 
         getProviderList()
-        viewModel.liveCode.observe(viewLifecycleOwner) {
+        activityMain!!.liveCode.observe(viewLifecycleOwner) {
             binding.tvIdentifier.setText(it.trim())
         }
 
 
-
-        /*
-        binding.tvIdentifier.setOnFocusChangeListener { _, b ->
-            Log.e("setOnFocusChangeListener", "$b")
-            if (b) {
-
-            }
-        }
-        */
-
-
-
-        viewModel.deviceConnected.observe(viewLifecycleOwner) {
-            if (it) {
-                dialogBarcodeReaderStatus.dismiss()
-            }
-
-
-        }
-        viewModel.deviceDisConnected.observe(viewLifecycleOwner){
-
-            if (it){
-
-                dialogBarcodeReaderStatus.dismiss()
-                dialogErrorDeviceConnected.show()
-                deviceStarted = false
-            }
-        }
 
         binding.btnWriteTag.setOnClickListener {
             try {
@@ -140,25 +112,13 @@ class WriteTagFragment : Fragment(),
                         }
 
 
-                        viewModel.newTag(
-                            readNumber!!,
-                            versionValue,
-                            subversionValue,
-                            typeValue,
-                            pieceValue,
-                            idProvider,
-                            hexValueEpc
-                        )
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
                             "readNumber" to readNumber,
                             "deviceName" to deviceName
                         )
-                        lifecycleScope.launch {
-                            viewModel.disconnectDevice()
-                        }
-
-                        findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
+                        activityMain!!.resetBarCode()
+                         findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
 
                     } else {
 
@@ -185,8 +145,7 @@ class WriteTagFragment : Fragment(),
         }
 
         binding.btnFinishWrite.setOnClickListener {
-            var a = readNumber
-            dialogWriteTag.show()
+             dialogWriteTag.show()
         }
 
 
@@ -224,12 +183,6 @@ class WriteTagFragment : Fragment(),
         }
     }
 
-    private fun insertProviders() {
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.insertInitialProviders()
-            getProviderList()
-        }
-    }
 
     override fun saveProvider() {
         val idProvider = dialogProvider.tvIdProvider!!.text.toString()
@@ -252,7 +205,7 @@ class WriteTagFragment : Fragment(),
 
     override fun finishWrite() {
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.disconnectDevice()
+
             dialogWriteTag.dismiss()
             findNavController().navigate(R.id.optionsWriteFragment)
         }
@@ -271,14 +224,7 @@ class WriteTagFragment : Fragment(),
     override fun onStart() {
         super.onStart()
         deviceStarted = true
-        dialogBarcodeReaderStatus.show()
-        lifecycleScope.launch {
-            if (deviceName!=null){
 
-                viewModel.startHandHeldBarCode(deviceName!!)
-            }
-
-        }
     }
 
 }

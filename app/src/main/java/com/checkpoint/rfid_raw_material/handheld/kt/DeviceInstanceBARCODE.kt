@@ -153,12 +153,14 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
 
 
     private val dataHandler: Handler = object : Handler() {
+
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 BARCODE_RECEIVED -> {
                     val code = msg.obj as String
-                    Log.e("BARCODE_RECEIVED: ","$code")
 
+                    Log.e("BARCODE_RECEIVED: ","$code")
+                    barcodeHandHeldInterface!!.setDataBarCode(code)
                 }
             }
         }

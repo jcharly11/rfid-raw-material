@@ -28,6 +28,9 @@ interface TagsDao {
     @Query("SELECT version,subversion,type,piece,idProvider AS provider,epc,timestamp FROM Tags WHERE readNumber=:readNumber")
     fun getTagsListForLogs(readNumber:Int):List<TagsLogs>
 
+    @Query("Delete from Tags")
+    fun deleteAllTags()
+
     @Insert
     fun  insertTag(tag: Tags)
 

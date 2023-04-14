@@ -78,5 +78,9 @@
             android:id="@+id/action_licenseLoadFragment_to_optionsWriteFragment"
             app:destination="@id/optionsWriteFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/pagerFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.inventory.PagerFragment"
+        android:label="PagerFragment" />
 
 </navigation>

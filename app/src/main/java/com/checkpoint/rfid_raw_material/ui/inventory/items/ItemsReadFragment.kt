@@ -35,7 +35,7 @@ class ItemsReadFragment : Fragment() {
 
 
         var readNumber= viewModel.getReadNumber()
-        viewModel?.getTagsList(readNumber)!!.observe(viewLifecycleOwner) {
+        viewModel.getTagsList(readNumber).observe(viewLifecycleOwner) {
                 lvTags.adapter = TagsListAdapter(it)
         }
 

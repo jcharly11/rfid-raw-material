@@ -2,19 +2,18 @@ package com.checkpoint.rfid_raw_material.ui.inventory.read
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentReadInventoryBinding
 import com.checkpoint.rfid_raw_material.enums.TypeInventory
-import com.checkpoint.rfid_raw_material.ui.inventory.InventoryPagerViewModel
 import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogInventory
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogInventoryInterface
@@ -27,7 +26,6 @@ private const val READ_NUMBER = "readNumber"
 class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
 
     private lateinit var viewModel: ReadInventoryViewModel
-    private lateinit var viewModel2: InventoryPagerViewModel
     private var _binding: FragmentReadInventoryBinding? = null
     private val binding get() = _binding!!
     private lateinit var dialog: CustomDialogInventory
@@ -42,12 +40,13 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         viewModel = ViewModelProvider(this)[ReadInventoryViewModel::class.java]
-        viewModel2 = ViewModelProvider(this)[InventoryPagerViewModel::class.java]
-        _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
+         _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
-        binding.tvTagsWrited.text = "0"
 
+       /* viewModel.getTagsListLive(readNumber!!).observe(viewLifecycleOwner){
+            binding.tvItemsScanned.text = it.size.toString()
+        }
+*/
 
         binding.btnStart.setOnClickListener {
             dialog =
@@ -88,10 +87,15 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             if(readNumber==0)
                 readNumber = viewModel.getNewReadNumber()
 
+
+            Log.e("CoroutineScope","$readNumber")
             viewModel?.getTagsListLive(readNumber!!)!!.observe(viewLifecycleOwner) {
                 binding.tvItemsScanned.text = "${it.size}"
             }
         }
+
+        binding.tvItemsScanned.text = "0"
+
         return binding.root
     }
 
@@ -121,18 +125,23 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
 
     override fun finishInventory() {
         closeDialog()
-        viewModel!!.saveReadNumber(0)
-        viewModel.disconnectDevice()
-        findNavController().navigate(R.id.optionsWriteFragment)
+        CoroutineScope(Dispatchers.Main).launch {
+            val dataEmpty = viewModel.deleteCapturedData()
+            if(dataEmpty){
+                viewModel!!.saveReadNumber(0)
+                activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
+                activityMain!!.batteryView!!.visibility = View.INVISIBLE
+                activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
+                findNavController().navigate(R.id.optionsWriteFragment)
+            }
+        }
+
     }
 
     override fun closeDialog() {
         dialog.dismiss()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.disconnectDevice()
-    }
+
 }
 
