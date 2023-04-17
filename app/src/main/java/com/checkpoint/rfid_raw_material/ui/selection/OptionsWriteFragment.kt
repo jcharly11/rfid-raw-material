@@ -14,34 +14,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
-import com.checkpoint.rfid_raw_material.enums.TypeLoading
-import com.checkpoint.rfid_raw_material.handheld.kt.Device
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.DeviceConnectStatusInterface
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogWaitForHandHeld
-import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
-import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.coroutines.flow
-import com.fondesa.kpermissions.coroutines.sendSuspend
-import com.fondesa.kpermissions.extension.permissionsBuilder
-import com.fondesa.kpermissions.isDenied
-import com.fondesa.kpermissions.isGranted
-import com.fondesa.kpermissions.request.PermissionRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
 
 class OptionsWriteFragment : Fragment(){
 
@@ -50,7 +31,9 @@ class OptionsWriteFragment : Fragment(){
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
     var doubleBackPressed = false
-   private var deviceName: String? = null
+    private var deviceName: String? = null
+    private var dialogLookingForDevice: DialogLookingForDevice? = null
+    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
 
 
 
@@ -65,7 +48,8 @@ class OptionsWriteFragment : Fragment(){
         viewModel = ViewModelProvider(this)[OptionsWriteViewModel::class.java]
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
-
+        dialogLookingForDevice  = DialogLookingForDevice(requireContext())
+        dialogErrorDeviceConnected =  DialogErrorDeviceConnected(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             exitApp()
@@ -73,26 +57,37 @@ class OptionsWriteFragment : Fragment(){
 
 
 
-        binding.tvDeviceSelected.text = activityMain!!.deviceName
+//
         binding.btnInventory.setOnClickListener {
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
 
 
-            activityMain!!.startRFIDReadInstance(false,"")
-
             findNavController().navigate(R.id.pagerFragment, bundle)
+
         }
         binding.btnWriteTag.setOnClickListener {
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
-            activityMain!!.startBarCodeReadInstance()
             findNavController().navigate(R.id.writeTagFragment, bundle)
         }
+        activityMain!!.deviceConnected.observe(viewLifecycleOwner) {
+            if(it){
 
+                dialogLookingForDevice!!.dismiss()
+                binding.tvDeviceSelected.text = activityMain!!.deviceName
 
+            }
+
+        }
+        activityMain!!.showErrorDeviceConnected.observe(viewLifecycleOwner){
+            if(dialogLookingForDevice!!.isShowing){
+                dialogLookingForDevice!!.dismiss()
+             }
+            dialogErrorDeviceConnected!!.show()
+        }
         return binding.root
     }
 
@@ -121,6 +116,10 @@ class OptionsWriteFragment : Fragment(){
     override fun onStart() {
         super.onStart()
         (activity as AppCompatActivity).supportActionBar!!.show()
+
+        dialogLookingForDevice!!.show()
+        activityMain!!.startDeviceConnection()
+
     }
 
 

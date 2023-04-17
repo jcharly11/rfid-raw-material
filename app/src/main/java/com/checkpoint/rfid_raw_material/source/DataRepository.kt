@@ -90,4 +90,8 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.tagsDao().getTagsList().size
     }
 
+    fun deleteProvider(idProvider:Int) {
+        localDataSource.providerDao().deleteProvider(idProvider)
+    }
+
 }

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.security.IdentifierDevice
 import com.checkpoint.rfid_raw_material.security.jwt.JWTDecoder
 import kotlinx.coroutines.Dispatchers
@@ -17,12 +18,10 @@ import org.json.JSONObject
 
 
 
-
-
 class LicenseLoadViewModel(application: Application) : AndroidViewModel(application) {
 
     var context = application.baseContext
-
+    private var localSharedPreferences: LocalPreferences = LocalPreferences(application)
     private val _idDevice: MutableLiveData<String> = MutableLiveData("")
     val idDevice: LiveData<String> = _idDevice
     init {
@@ -56,5 +55,12 @@ class LicenseLoadViewModel(application: Application) : AndroidViewModel(applicat
         }
      }
 
+    fun getTokenLicense():String{
+        return localSharedPreferences.getLicenseToken()
+    }
+
+    fun setTokenLicense(token: String){
+        return localSharedPreferences.setTokenLicense(token)
+    }
 
 }

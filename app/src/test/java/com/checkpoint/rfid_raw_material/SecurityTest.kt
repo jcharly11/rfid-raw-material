@@ -5,7 +5,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class SecurityTest {
-    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjMwLCJkZXZpY2UiOiIzZTRhY2M0ZjVhOWI0YWRhIn0.DAB-TRIOEZy1YLqlI917TEBNQCtqMe0lPWzOzFd3Mew"
+    val token = ""
 
     @Test
     fun isTokenValid(){

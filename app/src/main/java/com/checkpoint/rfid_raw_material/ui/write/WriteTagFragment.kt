@@ -1,5 +1,6 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
+import CustomDialogRemoveProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,16 +30,19 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogPro
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogWriteTag
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import com.checkpoint.rfid_raw_material.utils.LogCreator
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
 import kotlinx.coroutines.*
 
 class WriteTagFragment : Fragment(),
-    CustomDialogProviderInterface, CustomDialogWriteTagInterface {
+    CustomDialogProviderInterface, CustomDialogWriteTagInterface,
+    CustomDialogRemoveProviderInterface {
     private lateinit var viewModel: WriteTagViewModel
     private lateinit var dialogProvider: CustomDialogProvider
     private lateinit var dialogBarcodeReaderStatus: DialogBarcodeReaderStatus
     private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
     private lateinit var dialogErrorEmptyFields: DialogErrorEmptyFields
     private lateinit var dialogWriteTag: CustomDialogWriteTag
+    private lateinit var dialogRemoveProvider: CustomDialogRemoveProvider
 
     private var _binding: FragmentWriteTagBinding? = null
     private val binding get() = _binding!!
@@ -58,12 +62,17 @@ class WriteTagFragment : Fragment(),
         activityMain = requireActivity() as MainActivity
 
         dialogProvider = CustomDialogProvider(this@WriteTagFragment)
+
         dialogBarcodeReaderStatus = DialogBarcodeReaderStatus(this@WriteTagFragment)
-        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this@WriteTagFragment)
         dialogErrorEmptyFields = DialogErrorEmptyFields(this@WriteTagFragment)
         dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
+        dialogRemoveProvider =  CustomDialogRemoveProvider(this@WriteTagFragment)
 
         activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+        activityMain!!.startBarCodeReadInstance()
+
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
@@ -82,7 +91,9 @@ class WriteTagFragment : Fragment(),
         }
 
 
-
+        binding.btnRemoveProvider.setOnClickListener {
+            dialogRemoveProvider.show()
+        }
         binding.btnWriteTag.setOnClickListener {
             try {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -96,21 +107,11 @@ class WriteTagFragment : Fragment(),
                         typeValue.isNotEmpty() && pieceValue.isNotEmpty()
                     ) {
 
-                        val conversor = Conversor()
-                        var hexValueEpc = ""
-                        val version = conversor.toBinaryString(versionValue, 5, '0')
-                        val subVersion = conversor.toBinaryString(subversionValue, 5, '0')
-                        val type = conversor.toBinaryString(typeValue, 6, '0')
-                        val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
-                        val piece = conversor.toBinaryString(pieceValue, 80, '0')
-
-
-                        val binaryChain = "$version$type$subVersion$piece$supplier"
-                        val binaryGroup = binaryChain.chunked(4)
-                        binaryGroup.iterator().forEach {
-                            hexValueEpc += conversor.toHexadecimalString(it)
-                        }
-
+                      val hexValueEpc = viewModel.calculateEPC(versionValue,
+                          subversionValue,
+                          typeValue,
+                          idProvider.toString(),
+                          pieceValue)
 
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
@@ -118,7 +119,7 @@ class WriteTagFragment : Fragment(),
                             "deviceName" to deviceName
                         )
                         activityMain!!.resetBarCode()
-                         findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
+                        findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
 
                     } else {
 
@@ -225,6 +226,18 @@ class WriteTagFragment : Fragment(),
         super.onStart()
         deviceStarted = true
 
+    }
+
+    override fun closeDialogRemoveProvider() {
+        dialogRemoveProvider.dismiss()
+    }
+
+    override fun removeProvider() {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.deleteProvider(idProvider)
+            getProviderList()
+            dialogRemoveProvider.dismiss()
+        }
     }
 
 }

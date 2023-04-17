@@ -11,6 +11,7 @@ import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
+import com.checkpoint.rfid_raw_material.utils.Conversor
 import com.zebra.rfid.api3.ENUM_TRANSPORT
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.SESSION
@@ -55,7 +56,27 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         listProviders
     }
 
+    suspend fun calculateEPC(versionValue: String,
+                             subversionValue: String,
+                             typeValue: String,
+                             idProvider: String,pieceValue: String):String = withContext(Dispatchers.IO){
+        val conversor = Conversor()
+        var hexValueEpc = ""
+        val version = conversor.toBinaryString(versionValue, 5, '0')
+        val subVersion = conversor.toBinaryString(subversionValue, 5, '0')
+        val type = conversor.toBinaryString(typeValue, 6, '0')
+        val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
+        val piece = conversor.toBinaryString(pieceValue, 80, '0')
 
+
+        val binaryChain = "$version$type$subVersion$piece$supplier"
+        val binaryGroup = binaryChain.chunked(4)
+        binaryGroup.iterator().forEach {
+            hexValueEpc += conversor.toHexadecimalString(it)
+        }
+        hexValueEpc
+
+    }
 
 
 
@@ -67,7 +88,9 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         repository.getTagsListForLogs(readNumber)
     }
 
-
+    suspend fun deleteProvider(idProvider: Int) = withContext(Dispatchers.IO){
+        repository.deleteProvider(idProvider)
+    }
 
 
     suspend fun insertInitialProviders()= withContext(Dispatchers.IO){

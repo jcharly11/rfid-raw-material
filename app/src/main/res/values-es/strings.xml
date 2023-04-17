@@ -58,4 +58,15 @@
     <string name="error_log">No existen datos para guardar</string>
     <string name="press_back_again">Presiona nuevamente el boton atrás para salir</string>
     <string name="accept_permissions">Debes aceptar todos los permisos</string>
+    <string name="validate_license_text">Validar licencia</string>
+    <string name="blank_field">Campo Vacio</string>
+    <string name="validate_license">Valida la licencia</string>
+    <string name="invalidate_token">Token Invalido</string>
+    <string name="token_error">Comprueba que el token sea valido y no ha expirado</string>
+    <string name="validate">Validar</string>
+    <string name="license_send_code">Envíe el siguiente código a: support@checkpt.com para obtener una licencia válida</string>
+    <string name="paste_license">Pega tu código de licencia aqui</string>
+    <string name="id_copied">Id copiado al portapapeles</string>
+    <string name="remove_provider">Eliminar Proveedor</string>
+    <string name="remove_provider_question">¿Deseas eliminar al proveedor?</string>
 </resources>

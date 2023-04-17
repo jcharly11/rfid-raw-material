@@ -18,4 +18,7 @@ interface ProviderDao {
 
     @Query("DELETE FROM provider")
     fun deleteAll()
+
+    @Query("DELETE FROM Provider WHERE id=:idProvider")
+    fun deleteProvider(idProvider: Int)
 }

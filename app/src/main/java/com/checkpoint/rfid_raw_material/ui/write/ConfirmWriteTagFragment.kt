@@ -21,21 +21,15 @@ import kotlinx.coroutines.launch
 
 class ConfirmWriteTagFragment : Fragment() {
 
-    private lateinit var viewModel: ConfirmWriteTagViewModel
     private var _binding: FragmentConfirmWriteTagBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dialogWaitForHandHeld: DialogWaitForHandHeld
-    private lateinit var dialogWriteTagConfirmation: DialogWriteTagConfirmation
-    private lateinit var dialogPrepareTrigger: DialogPrepareTrigger
-    private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
-    private lateinit var dialogErrorMultipleTags: DialogErrorMultipleTags
-    private lateinit var dialogPrepareReading: DialogPrepareReading
     private var startDevice: Boolean = false
     private var readNumber: Int? = 0
     private var activityMain: MainActivity? = null
     private var tid: String? = null
     private var deviceName: String? = null
     private var epc: String? = null
+    private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,17 +40,10 @@ class ConfirmWriteTagFragment : Fragment() {
         deviceName = arguments?.getString("deviceName")
 
 
-        viewModel = ViewModelProvider(this)[ConfirmWriteTagViewModel::class.java]
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
-
-        activityMain!!.lyCreateLog!!.visibility = View.GONE
-        dialogWaitForHandHeld = DialogWaitForHandHeld(this@ConfirmWriteTagFragment)
-        dialogPrepareTrigger = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
-        dialogWriteTagConfirmation =  DialogWriteTagConfirmation(this@ConfirmWriteTagFragment,Pair("",""))
-        dialogErrorDeviceConnected= DialogErrorDeviceConnected(this@ConfirmWriteTagFragment)
         dialogErrorMultipleTags = DialogErrorMultipleTags(this@ConfirmWriteTagFragment)
-        dialogPrepareReading = DialogPrepareReading(this@ConfirmWriteTagFragment)
+        activityMain!!.lyCreateLog!!.visibility = View.GONE
 
         binding.edtTagEPC.setText(epc)
         binding.edtTagEPC.isEnabled = false
@@ -69,6 +56,11 @@ class ConfirmWriteTagFragment : Fragment() {
                 "readNumber" to readNumber
             )
             findNavController().navigate(R.id.writeTagFragment,bundle)
+        }
+        activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
+            if(it){
+                dialogErrorMultipleTags!!.show()
+            }
         }
         return binding.root
     }

@@ -19,12 +19,11 @@
                 android:id="@+id/tvDeviceSelected"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/green"
+                android:textColor="@color/navy"
                 android:textSize="18sp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:text="RFD8501234567890"
-                android:gravity="right"/>
+                android:gravity="center"/>
         </LinearLayout>
 
         <RelativeLayout

@@ -12,6 +12,7 @@ class LocalPreferences(application: Application) {
     private var flagPauseValue:String? = null
     private var selectedLanguageValue:String? = null
     private var readNumber:String? = null
+    private var tokenLicense:String? = null
 
     init{
         sharedPreferences = application.getSharedPreferences("config_device", Context.MODE_PRIVATE)
@@ -19,6 +20,7 @@ class LocalPreferences(application: Application) {
         flagPauseValue= "pause"
         selectedLanguageValue="language"
         readNumber="0"
+        tokenLicense=""
     }
 
     fun saveMaxToPreferences(maxPower : Int){
@@ -63,6 +65,18 @@ class LocalPreferences(application: Application) {
 
     fun getReadNumber():Int{
         return sharedPreferences.getInt(readNumber,0)
+    }
+
+    fun setTokenLicense(token: String){
+        return with (sharedPreferences.edit()) {
+            putString(tokenLicense, token)
+            apply()
+        }
+    }
+
+
+    fun getLicenseToken():String{
+        return sharedPreferences.getString(tokenLicense,"")!!
     }
 
 }

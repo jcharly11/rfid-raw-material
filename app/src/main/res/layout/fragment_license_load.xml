@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.license.LicenseLoadFragment">
 
     <LinearLayout
         android:id="@+id/lytLoaderView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_custom_dialog"
         android:orientation="vertical">
 
 
@@ -23,6 +23,19 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_weight="10"
+                android:gravity="center">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/validate_license"
+                    android:textColor="?android:textColorSecondary"
+                    android:textSize="30sp" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:layout_weight="20"
                 android:gravity="center"
                 android:padding="10dp">
@@ -30,68 +43,99 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Send the code below to: support@checkpt.com in order to get a valid license"
-                    android:textColor="@color/navy"
-                    android:textSize="21sp" />
+                    android:text="@string/license_send_code"
+                    android:textSize="18sp" />
             </RelativeLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="70"
+                android:layout_weight="60"
                 android:orientation="vertical"
                 android:gravity="center">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:layout_weight="1.5"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="15dp">
                     <TextView
                         android:id="@+id/tvIdDevice"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="80"
-                        android:textSize="21sp"/>
+                        android:layout_weight="70"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        android:text="342915ab6d0005b0"
+                        android:textColor="?android:textColorSecondary"
+                        android:layout_gravity="center_vertical"/>
 
-                    <ImageView
-                        android:id="@+id/imgCopy"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="20"
-                        android:src="@drawable/ic_content_copy_black_24dp"/>
+                        android:layout_height="match_parent"
+                        android:layout_weight="30"
+                        android:gravity="center_horizontal|center_vertical">
+                        <!-- <EditText
+                             android:id="@+id/imgCopy"
+                             android:layout_width="50dp"
+                             android:layout_height="50dp"
+                             android:layout_gravity="center_vertical|center_horizontal"
+                             android:backgroundTint="@color/red_ckp"
+                             android:background="@drawable/ic_content_copy_black_24dp"/>-->
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/imgCopy"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_content_copy_black_24dp"
+                            app:backgroundTint="@color/white"
+                            app:elevation="1dp"
+                            app:fabCustomSize="65dp"
+                            app:maxImageSize="35dp"
+                            app:tint="@color/red_ckp"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+                    </LinearLayout>
+
                 </LinearLayout>
+
 
                 <EditText
                     android:id="@+id/tvLicense"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="8.5"
                     android:lines="20"
-                    android:hint="Paste your license here"
+                    android:hint="@string/paste_license"
                     android:textColor="@color/gray"
-                    android:text="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE3MjU2MDAsImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.bAyBeMxNVlTrSw0a7h8VgI-WcJVhQo8g1laebf9kq-k"
-                    />
+                    android:text=""
+                    android:background="@drawable/bg_custom_entry"
+                    android:layout_margin="15dp"
+                    android:padding="5dp"/>
 
 
             </LinearLayout>
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="15"
+                android:layout_weight="10"
                 android:gravity="center">
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnSetLicense"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="50dp"
+                    android:layout_marginBottom="5dp"
                     android:background="@drawable/button_icon_large"
                     android:drawableStart="@drawable/ic_key"
                     android:drawableTint="@color/white"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
-                    android:text="@string/item_menu_inventory"
+                    android:text="@string/validate"
                     android:textColor="@color/white" />
             </RelativeLayout>
 
