@@ -71,7 +71,6 @@ class WriteTagFragment : Fragment(),
         activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
         activityMain!!.batteryView!!.visibility = View.VISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
-        activityMain!!.startBarCodeReadInstance()
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
@@ -152,7 +151,10 @@ class WriteTagFragment : Fragment(),
 
         return binding.root
     }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activityMain!!.startBarCodeReadInstance()
+    }
     private fun getProviderList() {
         CoroutineScope(Dispatchers.Main).launch {
             val providerList = viewModel.getProviderList()
@@ -226,7 +228,10 @@ class WriteTagFragment : Fragment(),
         super.onStart()
         deviceStarted = true
 
+
+
     }
+
 
     override fun closeDialogRemoveProvider() {
         dialogRemoveProvider.dismiss()
@@ -239,5 +244,7 @@ class WriteTagFragment : Fragment(),
             dialogRemoveProvider.dismiss()
         }
     }
+
+
 
 }

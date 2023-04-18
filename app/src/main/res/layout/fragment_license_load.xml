@@ -109,10 +109,11 @@
                     android:lines="20"
                     android:hint="@string/paste_license"
                     android:textColor="@color/gray"
-                    android:text=""
+                    android:text="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODE4MzgzMzksImRldmljZSI6IjNlNGFjYzRmNWE5YjRhZGEifQ.n53K1RvoLPuGa55-CyeTgK-4QC8LZv9v2t7WpqYGx8A"
                     android:background="@drawable/bg_custom_entry"
                     android:layout_margin="15dp"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:gravity="center"/>
 
 
             </LinearLayout>

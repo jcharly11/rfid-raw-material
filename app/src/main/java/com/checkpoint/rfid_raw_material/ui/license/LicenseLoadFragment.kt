@@ -37,9 +37,12 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
         viewModel = ViewModelProvider(this)[LicenseLoadViewModel::class.java]
         _binding = FragmentLicenseLoadBinding.inflate(inflater, container, false)
 
-        var tokenLicense= viewModel.getTokenLicense()
-        binding.tvLicense.setText(tokenLicense)
+        viewModel.getTokenLicense().let {
 
+                if(it.isNotEmpty()){
+                    binding.tvLicense.setText(it)
+                }
+        }
         validateLicense()
 
         binding.imgCopy.setOnClickListener {

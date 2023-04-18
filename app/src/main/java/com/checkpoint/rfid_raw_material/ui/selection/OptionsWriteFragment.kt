@@ -62,8 +62,6 @@ class OptionsWriteFragment : Fragment(){
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
-
-
             findNavController().navigate(R.id.pagerFragment, bundle)
 
         }
@@ -120,11 +118,18 @@ class OptionsWriteFragment : Fragment(){
         dialogLookingForDevice!!.show()
         activityMain!!.startDeviceConnection()
 
+
+        enableBarButtons()
     }
 
 
 
 
+    fun enableBarButtons(){
+        activityMain!!.batteryView!!.visibility = View.INVISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
+        activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
+    }
 
 
 

@@ -88,6 +88,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private val _showErrorNumberTagsDetected: MutableLiveData<Boolean> = MutableLiveData()
     var showErrorNumberTagsDetected: LiveData<Boolean> = _showErrorNumberTagsDetected
 
+    private val _showDialogWritingTag: MutableLiveData<Boolean> = MutableLiveData()
+    var showDialogWritingTag: LiveData<Boolean> = _showDialogWritingTag
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -200,9 +203,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
         readNumber= localSharedPreferences!!.getReadNumber()
-        val code = tagData?.get(0)?.tagID.toString()
 
-        Log.e("handleTagdata","$code")
         try {
 
             if( tagData?.size!! > 1){
@@ -210,7 +211,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 _showErrorNumberTagsDetected.postValue(true)
 
             }else{
+                val code = tagData?.get(0)?.tagID.toString()
                 if(this.writeEnable){
+
+                    _showDialogWritingTag.postValue(true)
+
                     deviceInstanceRFID!!.writeTagMode(this.epc!!,code)
                 }else{
                     tagData!!.iterator().forEachRemaining {
@@ -288,6 +293,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun writingTagStatus(status: Boolean) {
         Log.e("writingTagStatus", "${status}")
         this.writeEnable = false
+        _showDialogWritingTag.postValue(false)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         navController.navigate(R.id.optionsWriteFragment)

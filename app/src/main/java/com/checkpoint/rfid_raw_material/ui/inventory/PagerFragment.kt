@@ -54,16 +54,20 @@ class PagerFragment : Fragment() {
 
         }
 
-        lifecycleScope.launch{
-
-            activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
-            activityMain!!.batteryView!!.visibility = View.VISIBLE
-            activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
-            activityMain!!.startRFIDReadInstance(false,"")
-
-        }
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activityMain!!.startRFIDReadInstance(false,"")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+
+    }
 }

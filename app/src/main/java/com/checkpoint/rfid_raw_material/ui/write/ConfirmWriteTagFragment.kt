@@ -30,6 +30,7 @@ class ConfirmWriteTagFragment : Fragment() {
     private var deviceName: String? = null
     private var epc: String? = null
     private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
+    private var dialogWriteTag: CustomDialogWriteTag? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +44,7 @@ class ConfirmWriteTagFragment : Fragment() {
         _binding = FragmentConfirmWriteTagBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
         dialogErrorMultipleTags = DialogErrorMultipleTags(this@ConfirmWriteTagFragment)
+        dialogWriteTag = CustomDialogWriteTag(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
 
         binding.edtTagEPC.setText(epc)
@@ -62,6 +64,15 @@ class ConfirmWriteTagFragment : Fragment() {
                 dialogErrorMultipleTags!!.show()
             }
         }
+
+        activityMain!!.showDialogWritingTag.observe(viewLifecycleOwner){
+            if(it){
+                dialogWriteTag!!.show()
+            }else{
+                dialogWriteTag!!.dismiss()
+            }
+        }
+
         return binding.root
     }
 
