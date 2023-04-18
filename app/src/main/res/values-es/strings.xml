@@ -69,4 +69,6 @@
     <string name="id_copied">Id copiado al portapapeles</string>
     <string name="remove_provider">Eliminar Proveedor</string>
     <string name="remove_provider_question">¿Deseas eliminar al proveedor?</string>
+    <string name="epc_data">Datos de EPC</string>
+
 </resources>

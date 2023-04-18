@@ -32,7 +32,8 @@ import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.utils.CustomBattery
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.isDenied
@@ -55,7 +56,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     ResponseHandlerInterface,
     BatteryHandlerInterface,
     BarcodeHandHeldInterface ,
-    WritingTagInterface{
+    WritingTagInterface,
+    SelectDeviceDialogInterface{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     var btnHandHeldGun: AppCompatImageView? = null
@@ -319,12 +321,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 }
                 if (devicesRFID.size > 1) {
 
-                    /*
-                    dialogSelectPairDevices = DialogSelectPairDevices(
-                        this@OptionsWriteFragment,
-                        devicesRFID
-                    )
-                    dialogSelectPairDevices.show()*/
+
+                    dialogSelectPairDevices = DialogSelectPairDevices(devicesRFID,this)
+                    dialogSelectPairDevices!!.show()
                 } else {
 
                     if (devicesRFID.isNotEmpty()) {
@@ -357,6 +356,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
          device = Device(this,deviceName,this)
          device.connect()
+    }
+
+    override fun setDevice(device: String) {
+
+        deviceName = device
+
     }
 
 

@@ -10,13 +10,14 @@ import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 
 open class ActivityBase(): AppCompatActivity() {
     var context: Context ?= null
     var localSharedPreferences: LocalPreferences?= null
     var repository: DataRepository?= null
     var dialogErrorDeviceConnected: DialogErrorDeviceConnected?= null
-    var dialogLookingForDevice: DialogLookingForDevice? = null
+    var dialogSelectPairDevices: DialogSelectPairDevices? = null
     var bluetoothHandler: BluetoothHandler?= null
     var deviceInstanceRFID: DeviceInstanceRFID? = null
     var deviceInstanceBARCODE: DeviceInstanceBARCODE? = null

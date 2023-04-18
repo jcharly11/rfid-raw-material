@@ -69,5 +69,6 @@
     <string name="id_copied">Id copied to clipboard</string>
     <string name="remove_provider">Remove Provider</string>
     <string name="remove_provider_question">Do you want remove provider?</string>
+    <string name="epc_data">EPC Data</string>
 
 </resources>

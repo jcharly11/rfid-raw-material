@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="150dp"
         android:orientation="vertical"
         android:background="@drawable/custom_content">
         <LinearLayout
@@ -20,7 +20,7 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:text="@string/inventory_list"
+                android:text="@string/epc_data"
                 android:textSize="20dp"
                 android:gravity="center_vertical"
                 android:layout_weight="6"
@@ -40,7 +40,6 @@
                     android:textColor="@color/white"
                     android:gravity="center_vertical|right"></TextView>
             </LinearLayout>
-
         </LinearLayout>
 
         <RelativeLayout
@@ -50,10 +49,34 @@
             android:padding="15dp">
 
             <androidx.recyclerview.widget.RecyclerView
+                android:visibility="gone"
                 android:id="@+id/lvInventory"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal|center_vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/provider"
+                    android:gravity="center_vertical"
+                    android:textSize="22sp"
+                    android:textStyle="bold"></TextView>
+
+                <TextView
+                    android:id="@+id/tvProviderEPC"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text=""
+                    android:gravity="center_vertical"
+                    android:textSize="22sp"
+                    android:layout_marginLeft="10dp"></TextView>
+            </LinearLayout>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
