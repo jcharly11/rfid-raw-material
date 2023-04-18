@@ -16,10 +16,11 @@ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
+import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ConfirmWriteTagFragment : Fragment() {
+class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
 
     private var _binding: FragmentConfirmWriteTagBinding? = null
     private val binding get() = _binding!!
@@ -31,6 +32,7 @@ class ConfirmWriteTagFragment : Fragment() {
     private var epc: String? = null
     private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
     private var dialogWriteTag: CustomDialogWriteTag? = null
+    private var dialogLoadingWrite: DialogPrepareTrigger? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +47,7 @@ class ConfirmWriteTagFragment : Fragment() {
         activityMain = requireActivity() as MainActivity
         dialogErrorMultipleTags = DialogErrorMultipleTags(this@ConfirmWriteTagFragment)
         dialogWriteTag = CustomDialogWriteTag(this@ConfirmWriteTagFragment)
+        dialogLoadingWrite = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
 
         binding.edtTagEPC.setText(epc)
@@ -67,9 +70,9 @@ class ConfirmWriteTagFragment : Fragment() {
 
         activityMain!!.showDialogWritingTag.observe(viewLifecycleOwner){
             if(it){
-                dialogWriteTag!!.show()
+                dialogLoadingWrite!!.show()
             }else{
-                dialogWriteTag!!.dismiss()
+                dialogLoadingWrite!!.dismiss()
             }
         }
 
@@ -81,6 +84,14 @@ class ConfirmWriteTagFragment : Fragment() {
        activityMain!!.stopReadedBarCode()
         activityMain!!.startRFIDReadInstance(true,this.epc!!)
 
+    }
+
+    override fun finishWrite() {
+        TODO("Not yet implemented")
+    }
+
+    override fun closeDialogWrite() {
+        TODO("Not yet implemented")
     }
 
 }

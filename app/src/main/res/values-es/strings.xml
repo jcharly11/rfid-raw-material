@@ -70,5 +70,11 @@
     <string name="remove_provider">Eliminar Proveedor</string>
     <string name="remove_provider_question">¿Deseas eliminar al proveedor?</string>
     <string name="epc_data">Datos de EPC</string>
+    <string name="looking_device">Buscando dispositivo</string>
+    <string name="device_unavailable">Dispositivo no disponible</string>
+    <string name="empty_fields">No se permiten campos vacíos</string>
+    <string name="connecting">Conectando...</string>
+    <string name="error">Error</string>
+    <string name="warning">Adventencia</string>
 
 </resources>

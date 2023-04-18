@@ -17,6 +17,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
@@ -55,9 +56,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     Readers.RFIDReaderEventHandler,
     ResponseHandlerInterface,
     BatteryHandlerInterface,
-    BarcodeHandHeldInterface ,
+    BarcodeHandHeldInterface,
     WritingTagInterface,
-    SelectDeviceDialogInterface{
+    SelectDeviceDialogInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     var btnHandHeldGun: AppCompatImageView? = null
@@ -68,14 +69,16 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     var deviceName: String = String()
 
 
-     private var readNumber: Int = 0
-    private var  writeEnable = false
-    private var  epc: String?= null
+    private var readNumber: Int = 0
+    private var writeEnable = false
+    private var epc: String? = null
 
     private val requestPermissions by lazy {
-        permissionsBuilder(Manifest.permission.BLUETOOTH_CONNECT,Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION).build()
+        permissionsBuilder(
+            Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ).build()
     }
 
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
@@ -100,13 +103,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.appBarMain.toolbar)
-         repository = DataRepository.getInstance(
-             RawMaterialsDatabase.getDatabase(application.baseContext)
-         )
+        repository = DataRepository.getInstance(
+            RawMaterialsDatabase.getDatabase(application.baseContext)
+        )
 
         localSharedPreferences = LocalPreferences(application)
-        btnHandHeldGun= binding.appBarMain.imgHandHeldGun
-        btnCreateLog= binding.appBarMain.imgCreateLog
+        btnHandHeldGun = binding.appBarMain.imgHandHeldGun
+        btnCreateLog = binding.appBarMain.imgCreateLog
         batteryView = binding.appBarMain.batteryView
         lyCreateLog = binding.appBarMain.lyCreateLog
 
@@ -115,30 +118,28 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         lyCreateLog!!.visibility = View.GONE
 
 
-         val drawerLayout: DrawerLayout = binding.drawerLayout
-         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
-         val navController = navHostFragment.navController
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
+        val navController = navHostFragment.navController
 
-         appBarConfiguration = AppBarConfiguration(
-             setOf(R.id.optionsWriteFragment), drawerLayout
-         )
-         setupActionBarWithNavController(navController, appBarConfiguration)
-         requestPermissions.addListener(this)
-
-
-
+        appBarConfiguration = AppBarConfiguration(
+            setOf(R.id.optionsWriteFragment), drawerLayout
+        )
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        requestPermissions.addListener(this)
 
 
-     }
+    }
 
-    fun startRFIDReadInstance(writeEnable: Boolean,epc: String){
+    fun startRFIDReadInstance(writeEnable: Boolean, epc: String) {
         this.writeEnable = writeEnable
         this.epc = epc
-        if(deviceInstanceRFID != null){
+        if (deviceInstanceRFID != null) {
             deviceInstanceRFID!!.clean()
 
         }
-        deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice())
+        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice())
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
@@ -146,17 +147,20 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         deviceInstanceRFID!!.battery()
 
     }
-    fun startBarCodeReadInstance(){
-        deviceInstanceBARCODE= DeviceInstanceBARCODE(device.getReaderDevice(),applicationContext)
+
+    fun startBarCodeReadInstance() {
+        deviceInstanceBARCODE = DeviceInstanceBARCODE(device.getReaderDevice(), applicationContext)
         deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
     }
-    fun stopReadedBarCode(){
+
+    fun stopReadedBarCode() {
         deviceInstanceBARCODE!!.interruptBarCodeSession()
     }
-    fun startDeviceConnection(){
+
+    fun startDeviceConnection() {
 
         deviceName.isEmpty().apply {
-            if(this)
+            if (this)
                 requestPermissions.send()
 
         }
@@ -168,19 +172,18 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     override fun onPermissionsResult(result: List<PermissionStatus>) {
-        var res:Int= 0
+        var res: Int = 0
 
-        result.iterator().forEachRemaining{
-            if(it.isGranted()==true) {
-                Log.d(it.permission.toString(),"aceptado")
+        result.iterator().forEachRemaining {
+            if (it.isGranted() == true) {
+                Log.d(it.permission.toString(), "aceptado")
                 res++
-            }
-            else if(it.isDenied()) {
-                Log.d(it.permission.toString(),"denegado")
+            } else if (it.isDenied()) {
+                Log.d(it.permission.toString(), "denegado")
             }
         }
 
-        if(res>0)
+        if (res > 0)
             searchDevices()
         else
             finish()
@@ -204,33 +207,31 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        readNumber= localSharedPreferences!!.getReadNumber()
+        readNumber = localSharedPreferences!!.getReadNumber()
 
         try {
 
-            if( tagData?.size!! > 1){
+            if (tagData?.size!! > 1) {
 
                 _showErrorNumberTagsDetected.postValue(true)
 
-            }else{
+            } else {
                 val code = tagData?.get(0)?.tagID.toString()
-                if(this.writeEnable){
-
+                if (this.writeEnable) {
+                    var epc = this.epc!!
                     _showDialogWritingTag.postValue(true)
-
-                    deviceInstanceRFID!!.writeTagMode(this.epc!!,code)
-                }else{
+                    deviceInstanceRFID!!.writeTagMode(epc, code)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        newTag(epc, readNumber)
+                    }
+                } else {
                     tagData!!.iterator().forEachRemaining {
                         CoroutineScope(Dispatchers.IO).launch {
-                            newTag(it!!.tagID.toString(),readNumber)
+                            newTag(it!!.tagID.toString(), readNumber)
                         }
                     }
                 }
             }
-
-
-
-
 
 
         } catch (ex: Exception) {
@@ -239,7 +240,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     }
 
-    private suspend fun newTag(epc:String, readNumb:Int): Tags = withContext(Dispatchers.IO) {
+    private suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
@@ -262,9 +263,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         Log.e("handleTriggerPress", "${pressed}")
 
 
-        if(pressed){
+        if (pressed) {
             deviceInstanceRFID!!.perform()
-        }else{
+        } else {
             deviceInstanceRFID!!.stop()
         }
     }
@@ -285,7 +286,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     override fun setDataBarCode(code: String) {
-        _liveCode.value = code.filter {it in '0'..'9'}
+        _liveCode.value = code.filter { it in '0'..'9' }
     }
 
     override fun connected(status: Boolean) {
@@ -297,16 +298,19 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         this.writeEnable = false
         _showDialogWritingTag.postValue(false)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        navController.navigate(R.id.optionsWriteFragment)
-        _liveCode.value = ""
+        val bundle = bundleOf(
+            "readNumber" to readNumber
+        )
 
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        navController.navigate(R.id.writeTagFragment, bundle)
+        _liveCode.value = ""
     }
 
     @SuppressLint("MissingPermission")
-    private fun searchDevices(){
+    private fun searchDevices() {
 
-        Log.e("searchDevices()",".....")
+        Log.e("searchDevices()", ".....")
         bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
         var devicesRFID = listOf<String>()
@@ -322,7 +326,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 if (devicesRFID.size > 1) {
 
 
-                    dialogSelectPairDevices = DialogSelectPairDevices(devicesRFID,this)
+                    dialogSelectPairDevices = DialogSelectPairDevices(devicesRFID, this)
                     dialogSelectPairDevices!!.show()
                 } else {
 
@@ -332,13 +336,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                         createDeviceInstance(deviceName!!)
 
                     } else {
-                         dialogErrorDeviceConnected!!.show()
+                        dialogErrorDeviceConnected!!.show()
 
                     }
                 }
 
             } else {
-               dialogErrorDeviceConnected!!.show()
+                dialogErrorDeviceConnected!!.show()
                 // DIALOG TURN ON BLUETOOTH
             }
 
@@ -349,13 +353,15 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             TypeLoading.BLUETOOTH_DEVICE
         )*/
     }
-    fun resetBarCode(){
-        _liveCode.value=""
-    }
-    private fun createDeviceInstance(deviceName: String){
 
-         device = Device(this,deviceName,this)
-         device.connect()
+    fun resetBarCode() {
+        _liveCode.value = ""
+    }
+
+    private fun createDeviceInstance(deviceName: String) {
+
+        device = Device(this, deviceName, this)
+        device.connect()
     }
 
     override fun setDevice(device: String) {

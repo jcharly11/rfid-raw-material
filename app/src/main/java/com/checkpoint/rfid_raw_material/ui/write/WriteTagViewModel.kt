@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
+import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter
 @SuppressLint("MissingPermission")
 class WriteTagViewModel (application: Application) : AndroidViewModel(application){
     private var repository: DataRepository
+    private var localSharedPreferences: LocalPreferences = LocalPreferences(application)
 
     init {
         repository = DataRepository.getInstance(
@@ -81,7 +83,13 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
 
 
     suspend fun getNewReadNumber():Int= withContext(Dispatchers.IO){
-        repository.getReadNumber()
+        var readNumber= repository.getReadNumber()
+        saveReadNumber(readNumber)
+        readNumber
+    }
+
+    fun saveReadNumber(readNumber: Int){
+        localSharedPreferences.saveReadNumber(readNumber)
     }
 
     suspend fun getTagsForLog(readNumber: Int): List<TagsLogs> = withContext(Dispatchers.IO){

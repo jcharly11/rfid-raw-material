@@ -56,7 +56,7 @@
     <string name="progress_write">the progress will lost, and not will be save log</string>
     <string name="error_log">No data exists to save</string>
     <string name="press_back_again">Press again back button to exit</string>
-
+    <string name="validate_license_text">Validate license</string>
     <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your and press trigger again</string>
     <string name="accept_permissions">You need to accept all permissions</string>
     <string name="blank_field">Blank Field</string>
@@ -70,5 +70,11 @@
     <string name="remove_provider">Remove Provider</string>
     <string name="remove_provider_question">Do you want remove provider?</string>
     <string name="epc_data">EPC Data</string>
+    <string name="looking_device">Looking for device</string>
+    <string name="device_unavailable">Device unavailable</string>
+    <string name="empty_fields">No empty fields allowed</string>
+    <string name="connecting">Connecting...</string>
+    <string name="error">Error</string>
+    <string name="warning">Warning</string>
 
 </resources>

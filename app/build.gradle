@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.checkpoint.rfid_raw_material"
-        minSdk 29
+        minSdk 28
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -100,3 +100,4 @@ dependencies {
     implementation 'com.github.fondesa:kpermissions-coroutines:3.4.0'
 
 }
+

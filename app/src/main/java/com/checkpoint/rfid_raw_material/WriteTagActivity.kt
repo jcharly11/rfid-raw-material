@@ -172,11 +172,11 @@ class WriteTagActivity : AppCompatActivity(),
     }
 
     override fun setDataBarCode(code: String) {
-        TODO("Not yet implemented")
+
     }
 
     override fun connected(status: Boolean) {
-        TODO("Not yet implemented")
+
     }
 
 

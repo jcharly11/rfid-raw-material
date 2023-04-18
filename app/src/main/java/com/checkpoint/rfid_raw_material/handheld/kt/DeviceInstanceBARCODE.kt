@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
 import android.content.Context
 import android.os.Handler
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
@@ -10,8 +11,10 @@ import com.zebra.rfid.api3.RFIDReader
 import com.zebra.scannercontrol.*
 import kotlinx.coroutines.*
 
-class DeviceInstanceBARCODE(private val reader: RFIDReader,
-                            private val context: Context): IDcsSdkApiDelegate {
+class DeviceInstanceBARCODE(
+    private val reader: RFIDReader,
+    private val context: Context
+) : IDcsSdkApiDelegate {
     private var sdkHandler = SDKHandler(context)
     private var barcodeHandHeldInterface: BarcodeHandHeldInterface? = null
     var mScannerInfoList = ArrayList<DCSScannerInfo>()
@@ -19,7 +22,7 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
     var connectedScannerID = 0
     var delageteContext = this
 
-    init{
+    init {
 
         GlobalScope.launch {
 
@@ -27,8 +30,9 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
                 connectTask()
             }
             connected.await().let {
-                if(mScannerInfoList.size>0) {
+                if (mScannerInfoList.size > 0) {
 
+                    Log.e("model bluetooth","${mScannerInfoList[0].scannerModel}")
                     sdkHandler!!.dcssdkEstablishCommunicationSession(mScannerInfoList[0].scannerID)
 
                 }
@@ -41,7 +45,7 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
 
     }
 
-    private suspend fun connectTask(): Boolean{
+    private suspend fun connectTask(): Boolean {
         return withContext(Dispatchers.Default) {
             try {
 
@@ -55,7 +59,7 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
                             DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_APPEARANCE.value or
                                     DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SCANNER_DISAPPEARANCE.value)
 
-                notificationsMask =  notificationsMask or (
+                notificationsMask = notificationsMask or (
                         DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_ESTABLISHMENT.value or
                                 DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_TERMINATION.value)
                 notificationsMask = notificationsMask or
@@ -65,28 +69,31 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
                 sdkHandler.dcssdkEnableAvailableScannersDetection(true)
                 true
 
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
+                Log.e("BARCODE DESCONECTADO", "${ex.toString()}")
                 false
             }
         }
     }
-    private suspend fun disConnectTask(): Boolean{
+
+    private suspend fun disConnectTask(): Boolean {
         return withContext(Dispatchers.Default) {
             try {
                 sdkHandler.dcssdkTerminateCommunicationSession(mScannerInfoList[0].scannerID).let {
-                   true
+                    true
                 }
-            }catch (ex: Exception){
+            } catch (ex: Exception) {
                 false
 
-            }            }
+            }
         }
+    }
 
-    fun setBarCodeHandHeldInterface(barcodeHandHeldInterface: BarcodeHandHeldInterface){
+    fun setBarCodeHandHeldInterface(barcodeHandHeldInterface: BarcodeHandHeldInterface) {
         this.barcodeHandHeldInterface = barcodeHandHeldInterface
     }
 
-    fun interruptBarCodeSession(){
+    fun interruptBarCodeSession() {
         GlobalScope.launch {
             val disconnect = async {
                 disConnectTask()
@@ -98,20 +105,20 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
     }
 
     override fun dcssdkEventScannerAppeared(p0: DCSScannerInfo?) {
-        Log.e("dcssdkEventScannerAppeared","${p0!!.scannerID}")
+        Log.e("dcssdkEventScannerAppeared", "${p0!!.scannerID}")
         mScannerInfoList.add(p0!!)
 
     }
 
 
     override fun dcssdkEventScannerDisappeared(p0: Int) {
-        Log.e("SessionDisappeared(","${p0!!}")
+        Log.e("SessionDisappeared(", "${p0!!}")
 
 
     }
 
     override fun dcssdkEventCommunicationSessionEstablished(p0: DCSScannerInfo?) {
-        Log.e("dcssdkEventCommunicationSessionEstablished(","${p0!!}")
+        Log.e("dcssdkEventCommunicationSessionEstablished(", "${p0!!}")
 
         connectedScannerID = p0!!.scannerID
 
@@ -119,7 +126,7 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
     }
 
     override fun dcssdkEventCommunicationSessionTerminated(p0: Int) {
-        Log.e("SessionTerminated(","${p0!!}")
+        Log.e("SessionTerminated(", "${p0!!}")
     }
 
     override fun dcssdkEventBarcode(p0: ByteArray?, p1: Int, p2: Int) {
@@ -130,36 +137,36 @@ class DeviceInstanceBARCODE(private val reader: RFIDReader,
     }
 
     override fun dcssdkEventImage(p0: ByteArray?, p1: Int) {
-        Log.e("EventImage(","${p0!!.size}")
+        Log.e("EventImage(", "${p0!!.size}")
     }
 
     override fun dcssdkEventVideo(p0: ByteArray?, p1: Int) {
-        Log.e("EventVideo(","${p0!!.size}")
+        Log.e("EventVideo(", "${p0!!.size}")
     }
 
     override fun dcssdkEventBinaryData(p0: ByteArray?, p1: Int) {
-        Log.e("EventBinaryData(","${p0!!.size}")
+        Log.e("EventBinaryData(", "${p0!!.size}")
     }
 
     override fun dcssdkEventFirmwareUpdate(p0: FirmwareUpdateEvent?) {
-        Log.e("FirmwareUpdate(","${p0!!.status.value}")
+        Log.e("FirmwareUpdate(", "${p0!!.status.value}")
     }
 
     override fun dcssdkEventAuxScannerAppeared(p0: DCSScannerInfo?, p1: DCSScannerInfo?) {
-        Log.e("AuxScannerAppeared","${p0!!.scannerID}")
+        Log.e("AuxScannerAppeared", "${p0!!.scannerID}")
         sdkHandler!!.dcssdkEstablishCommunicationSession(p0!!.scannerID)
 
     }
 
 
-    private val dataHandler: Handler = object : Handler() {
+    private val dataHandler: Handler = object : Handler(Looper.myLooper()!!) {
 
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 BARCODE_RECEIVED -> {
                     val code = msg.obj as String
 
-                    Log.e("BARCODE_RECEIVED: ","$code")
+                    Log.e("BARCODE_RECEIVED: ", "$code")
                     barcodeHandHeldInterface!!.setDataBarCode(code)
                 }
             }

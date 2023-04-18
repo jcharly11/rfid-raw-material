@@ -69,6 +69,7 @@ class WriteTagFragment : Fragment(),
         dialogRemoveProvider =  CustomDialogRemoveProvider(this@WriteTagFragment)
 
         activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
         activityMain!!.batteryView!!.visibility = View.VISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
 
@@ -79,7 +80,7 @@ class WriteTagFragment : Fragment(),
         deviceName = arguments?.getString("deviceName")
 
         CoroutineScope(Dispatchers.Main).launch {
-            if (readNumber == null) {
+            if (readNumber == null || readNumber==0) {
                 readNumber = viewModel.getNewReadNumber()
             }
         }

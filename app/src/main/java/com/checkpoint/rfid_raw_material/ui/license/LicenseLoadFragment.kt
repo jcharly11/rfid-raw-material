@@ -25,7 +25,7 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
     private lateinit var viewModel: LicenseLoadViewModel
     private var _binding: FragmentLicenseLoadBinding? = null
     private lateinit var customDialogLicense: CustomDialogLicense
-
+    private lateinit var dialog: CustomDialogLicense
 
     private val binding get() = _binding!!
 
@@ -37,30 +37,29 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
         viewModel = ViewModelProvider(this)[LicenseLoadViewModel::class.java]
         _binding = FragmentLicenseLoadBinding.inflate(inflater, container, false)
 
-        viewModel.getTokenLicense().let {
+        /*viewModel.getTokenLicense().let {
+            if (it.isNotEmpty()) {
+                binding.tvLicense.setText(it)
+            }
+        }*/
+        var tokenLicense= viewModel.getTokenLicense()
+        binding.tvLicense.setText(tokenLicense)
 
-                if(it.isNotEmpty()){
-                    binding.tvLicense.setText(it)
-                }
-        }
         validateLicense()
 
         binding.imgCopy.setOnClickListener {
             viewModel.copyToClpBoard(binding.tvIdDevice.toString())
         }
         binding.btnSetLicense.setOnClickListener {
-            this.lifecycleScope.launch {
-                viewModel.validateLicense(binding.tvLicense.text.toString()).apply {
-
-                    if (this){
-                        findNavController().navigate(R.id.optionsWriteFragment)
-                    }
-
-                }
+            if(!binding.tvLicense.text.isNullOrEmpty()) {
+                validateLicense()
             }
-
+            else {
+                dialog = CustomDialogLicense(this@LicenseLoadFragment, TypeWarning.BLANK_FIELD)
+                dialog.show()
+            }
         }
-        viewModel.idDevice.observe(viewLifecycleOwner){
+        viewModel.idDevice.observe(viewLifecycleOwner) {
             binding.tvIdDevice.text = it
         }
 
@@ -73,16 +72,16 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
         (activity as AppCompatActivity).supportActionBar!!.hide()
 
     }
-    fun validateLicense(){
+
+    fun validateLicense() {
         this.lifecycleScope.launch {
-            var tvLicense= binding.tvLicense.text.toString()
+            var tvLicense = binding.tvLicense.text.toString()
             viewModel.validateLicense(tvLicense).apply {
-                if (this){
+                if (this) {
                     viewModel.setTokenLicense(tvLicense)
                     findNavController().navigate(R.id.optionsWriteFragment)
-                }
-                else {
-                    if(!tvLicense.isNullOrEmpty()) {
+                } else {
+                    if (!tvLicense.isNullOrEmpty()) {
                         customDialogLicense =
                             CustomDialogLicense(this@LicenseLoadFragment, TypeWarning.WRONG_TOKEN)
                         customDialogLicense.show()
