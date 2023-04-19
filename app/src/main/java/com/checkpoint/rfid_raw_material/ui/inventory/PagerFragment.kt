@@ -1,13 +1,11 @@
 package com.checkpoint.rfid_raw_material.ui.inventory
 
-import androidx.lifecycle.ViewModelProvider
-import android.os.Bundle
+ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
@@ -18,8 +16,7 @@ import kotlinx.coroutines.launch
 
 class PagerFragment : Fragment() {
 
-    private lateinit var viewModel: PagerViewModel
-    private lateinit var dialogConfiguringModeHandHeld: DialogConfiguringModeHandHeld
+     private lateinit var dialogConfiguringModeHandHeld: DialogConfiguringModeHandHeld
     private var _binding: FragmentInventoryPagerBinding? = null
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
@@ -29,8 +26,7 @@ class PagerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[PagerViewModel::class.java]
-        _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
+         _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 

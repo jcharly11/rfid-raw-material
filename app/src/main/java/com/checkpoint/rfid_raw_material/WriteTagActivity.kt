@@ -105,7 +105,7 @@ class WriteTagActivity : AppCompatActivity(),
                 deviceInstanceRFID!!.clean()
 
             }
-            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(), maxPower, session)
+            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(), 150, "SESSION_1")
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
             deviceInstanceRFID!!.setRfidModeRead()
