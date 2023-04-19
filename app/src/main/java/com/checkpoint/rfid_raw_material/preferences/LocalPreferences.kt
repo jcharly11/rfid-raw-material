@@ -10,6 +10,8 @@ class LocalPreferences(application: Application) {
     private var sharedPreferences: SharedPreferences
     private var flagPowerValue:String? = null
     private var flagPauseValue:String? = null
+    private var flagSessionValue:String? = null
+
     private var selectedLanguageValue:String? = null
     private var readNumber:String? = null
     private var tokenLicense:String? = null
@@ -18,6 +20,8 @@ class LocalPreferences(application: Application) {
         sharedPreferences = application.getSharedPreferences("config_device", Context.MODE_PRIVATE)
         flagPowerValue= application.resources.getString(R.string.power_config_settings)
         flagPauseValue= "pause"
+        flagSessionValue= "session"
+
         selectedLanguageValue="language"
         readNumber="0"
         tokenLicense=""
@@ -34,6 +38,16 @@ class LocalPreferences(application: Application) {
         return sharedPreferences.getInt(flagPowerValue,10)
     }
 
+    fun saveSessionToPreferences(session : String){
+        return with (sharedPreferences.edit()) {
+            putString(flagPowerValue, session)
+            apply()
+        }
+    }
+
+    fun getSessionFromPreferences():String{
+        return sharedPreferences.getString(flagSessionValue,"")!!
+    }
     fun setPauseStatus(status: Boolean){
         return with (sharedPreferences.edit()) {
             putBoolean(flagPauseValue, status)

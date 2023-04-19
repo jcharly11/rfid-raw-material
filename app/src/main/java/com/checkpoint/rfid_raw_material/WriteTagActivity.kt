@@ -16,7 +16,6 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInt
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.DeviceConnectStatusInterface
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.zebra.rfid.api3.*
 
 
@@ -106,7 +105,7 @@ class WriteTagActivity : AppCompatActivity(),
                 deviceInstanceRFID!!.clean()
 
             }
-            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice())
+            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(), maxPower, session)
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
             deviceInstanceRFID!!.setRfidModeRead()

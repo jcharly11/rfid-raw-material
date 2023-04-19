@@ -9,14 +9,15 @@ import com.zebra.rfid.api3.*
 import kotlinx.coroutines.*
 
 
- class  DeviceInstanceRFID (private val reader: RFIDReader){
+ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
+                           private  val session: String){
 
 
-    private var eventHandler: EventHandler? = null
-    private val triggerInfo = TriggerInfo()
+     private var eventHandler: EventHandler? = null
+     private val triggerInfo = TriggerInfo()
 
-    private var responseHandlerInterface: ResponseHandlerInterface? = null
-    private var batteryHandlerInterface: BatteryHandlerInterface? = null
+     private var responseHandlerInterface: ResponseHandlerInterface? = null
+     private var batteryHandlerInterface: BatteryHandlerInterface? = null
      private var writingTagInterface: WritingTagInterface? = null
 
 
@@ -141,13 +142,21 @@ import kotlinx.coroutines.*
          reader.Config.startTrigger = triggerInfo.StartTrigger
          reader.Config.stopTrigger = triggerInfo.StopTrigger
          val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
-         antennaConfig.transmitPowerIndex = 150
+         antennaConfig.transmitPowerIndex = maxPower
          antennaConfig.setrfModeTableIndex(0)
          antennaConfig.tari = 0
          reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
 
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
-         singulationControl.session = SESSION.SESSION_S1
+         singulationControl.session = when{
+
+             session.equals("SESSION_S0")->{
+                 SESSION.SESSION_S0
+             }
+             else -> {
+                 SESSION.SESSION_S1
+             }
+         }
 
          singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
          singulationControl.Action.slFlag = SL_FLAG.SL_ALL

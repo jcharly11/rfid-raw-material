@@ -6,24 +6,18 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
-import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
-import com.checkpoint.rfid_raw_material.enums.TypeLoading
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
@@ -42,6 +36,7 @@ import com.fondesa.kpermissions.isGranted
 import com.fondesa.kpermissions.request.PermissionRequest
 import com.zebra.rfid.api3.ReaderDevice
 import com.zebra.rfid.api3.Readers
+import com.zebra.rfid.api3.SESSION
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -139,7 +134,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             deviceInstanceRFID!!.clean()
 
         }
-        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice())
+
+        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice(),
+            localSharedPreferences!!.getMaxFromPreferences(),
+            localSharedPreferences!!.getSessionFromPreferences())
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)

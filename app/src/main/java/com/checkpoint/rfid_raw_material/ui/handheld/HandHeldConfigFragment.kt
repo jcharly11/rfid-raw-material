@@ -13,13 +13,16 @@ import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBinding
+import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
 
 class HandHeldConfigFragment : Fragment() {
 
     private lateinit var viewModel: HandHeldConfigViewModel
     private var _binding: FragmentHandHeldConfigBinding? = null
+    private var activityMain: MainActivity? = null
 
     private val binding get() = _binding!!
     private var maxPower: Int = 0
@@ -39,6 +42,7 @@ class HandHeldConfigFragment : Fragment() {
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
+        activityMain = requireActivity() as MainActivity
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             val bundle = bundleOf(
                 "readNumber" to readNumber
@@ -80,15 +84,13 @@ class HandHeldConfigFragment : Fragment() {
             Log.e("----->", "" + sessionSelected)
         }
         binding.btnSetPower.setOnClickListener {
-            val bundle = bundleOf(
-                "inventoryId" to inventoryId,
-                "needTag" to true,
-                "maxPower" to maxPower,
-                "session" to sessionSelected,
-                "readNumber" to readNumber,
-                "deviceName" to deviceName
-            )
-            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
+
+
+            viewModel.seveConfigToPreferences(sessionSelected,maxPower).apply {
+
+                findNavController().navigate(R.id.inventoryPagerFragment)
+            }
+
         }
         return binding.root
     }
