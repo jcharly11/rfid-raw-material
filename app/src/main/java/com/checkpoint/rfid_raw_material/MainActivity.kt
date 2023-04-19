@@ -219,11 +219,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 val code = tagData?.get(0)?.tagID.toString()
                 if (this.writeEnable) {
                     var epc = this.epc!!
-                    _showDialogWritingTag.postValue(true)
-                    deviceInstanceRFID!!.writeTagMode(epc, code)
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(epc, readNumber)
                     }
+                    _showDialogWritingTag.postValue(true)
+                    deviceInstanceRFID!!.writeTagMode(epc, code)
+
                 } else {
                     tagData!!.iterator().forEachRemaining {
                         CoroutineScope(Dispatchers.IO).launch {
