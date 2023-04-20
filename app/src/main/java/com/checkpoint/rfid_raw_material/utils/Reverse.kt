@@ -125,23 +125,22 @@ class Reverse(application: Application) {
     suspend fun checkValidTag(epc: String): Boolean = withContext(Dispatchers.IO) {
         try {
             var hexValue = hexadecimalToBinaryString(epc)
-            var supplier:Int = getSupplier().toInt()
-            if(supplier.toString().isNullOrEmpty())
-                supplier=0
+            var supplier: Int = getSupplier().toInt()
+            if (supplier.toString().isNullOrEmpty())
+                supplier = 0
 
-            var validSupplier=0
+            var validSupplier = 0
             CoroutineScope(Dispatchers.Main).launch {
-                validSupplier= repository!!.getProvider(supplier)
-                Log.e("epc","${epc.toString()}")
-                Log.e("proveedor","${supplier.toString()}")
-                Log.e("valido proveedor","${validSupplier.toString()}")
+                validSupplier = repository!!.getProvider(supplier)
+                Log.e("epc", "${epc.toString()}")
+                Log.e("proveedor", "${supplier.toString()}")
+                Log.e("valido proveedor", "${validSupplier.toString()}")
             }
-            if(validSupplier>=1) {
-                Log.e("valido","")
+            if (validSupplier >= 1) {
+                Log.e("valido", "")
                 true
-            }
-            else{
-                Log.e("invalido","")
+            } else {
+                Log.e("invalido", "")
                 false
             }
 
@@ -150,4 +149,19 @@ class Reverse(application: Application) {
             false
         }
     }
+
+    fun getProvider(epc: String): Int {
+        try {
+            var hexValue = hexadecimalToBinaryString(epc)
+            var supplier: Int = getSupplier().toInt()
+            if (supplier.toString().isNullOrEmpty())
+                supplier = 0
+
+            return supplier
+        }
+        catch (ex: Exception) {
+            return 0
+        }
+    }
+
 }

@@ -12,6 +12,7 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerIn
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +24,18 @@ import java.time.format.DateTimeFormatter
 
 class PagerViewModel(application: Application) : AndroidViewModel(application)  {
 
+    private var repository: DataRepository
 
+    init {
+        repository = DataRepository.getInstance(
+            RawMaterialsDatabase.getDatabase(application.baseContext)
+        )
+    }
+
+
+    suspend fun getProvidersList():List<Provider> =  withContext(Dispatchers.IO) {
+        repository.getProviders()
+    }
 
 
 }
