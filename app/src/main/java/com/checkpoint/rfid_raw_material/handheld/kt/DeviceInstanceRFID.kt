@@ -3,6 +3,7 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
 import android.util.Log
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.LevelPowerListHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
 import com.zebra.rfid.api3.*
@@ -10,7 +11,7 @@ import kotlinx.coroutines.*
 
 
  class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
-                           private  val session: String){
+                           private  val session_region: String){
 
 
      private var eventHandler: EventHandler? = null
@@ -19,6 +20,7 @@ import kotlinx.coroutines.*
      private var responseHandlerInterface: ResponseHandlerInterface? = null
      private var batteryHandlerInterface: BatteryHandlerInterface? = null
      private var writingTagInterface: WritingTagInterface? = null
+     private var levelPowerListHandlerInterface: LevelPowerListHandlerInterface? = null
 
 
     private suspend fun performTask(){
@@ -127,6 +129,9 @@ import kotlinx.coroutines.*
      }
 
 
+     fun setHandlerLevelTransmisioPowerInterfacResponse(levelPowerListHandlerInterface: LevelPowerListHandlerInterface){
+         this.levelPowerListHandlerInterface=levelPowerListHandlerInterface
+     }
 
      fun setRfidModeRead(){
          triggerInfo.StartTrigger.triggerType =
@@ -148,9 +153,10 @@ import kotlinx.coroutines.*
          reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
 
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
-         singulationControl.session = when{
 
-             session.equals("SESSION_S0")->{
+         val sessionx= when{
+
+             session_region == "SESSION_S0" ->{
                  SESSION.SESSION_S0
              }
              else -> {
@@ -158,7 +164,10 @@ import kotlinx.coroutines.*
              }
          }
 
-         singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+
+         singulationControl.session = sessionx
+
+             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
          singulationControl.Action.slFlag = SL_FLAG.SL_ALL
          reader.Config.Antennas.setSingulationControl(1, singulationControl)
          reader.Actions.PreFilters.deleteAll()
@@ -201,6 +210,9 @@ import kotlinx.coroutines.*
              }
      }
 
+     fun transmitPowerLevels(){
+         levelPowerListHandlerInterface!!.transmitPowerLevelValues(reader.ReaderCapabilities.transmitPowerLevelValues)
+     }
      fun writeTagMode(epc: String, tid: String) {
          try {
              Log.e("writeMode","stated")

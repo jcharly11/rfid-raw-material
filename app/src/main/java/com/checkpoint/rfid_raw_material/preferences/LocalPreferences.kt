@@ -35,18 +35,26 @@ class LocalPreferences(application: Application) {
     }
 
     fun getMaxFromPreferences():Int{
-        return sharedPreferences.getInt(flagPowerValue,10)
+        val mp  = sharedPreferences.getInt(flagPowerValue,150)
+        Log.e("---getMaxFromPreferences-->",""+mp)
+
+         return mp
     }
 
     fun saveSessionToPreferences(session : String){
         return with (sharedPreferences.edit()) {
-            putString(flagPowerValue, session)
+            putString(flagSessionValue, session)
             apply()
         }
     }
 
     fun getSessionFromPreferences():String{
-        return sharedPreferences.getString(flagSessionValue,"")!!
+       val ss  = sharedPreferences.getString(flagSessionValue,"SESSION_0")!!
+        if (ss.isEmpty()){}
+
+        Log.e("---getSessionFromPreferences-->",""+ss)
+
+        return ss
     }
     fun setPauseStatus(status: Boolean){
         return with (sharedPreferences.edit()) {

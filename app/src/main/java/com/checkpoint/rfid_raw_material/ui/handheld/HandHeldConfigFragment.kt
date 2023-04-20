@@ -25,19 +25,14 @@ class HandHeldConfigFragment : Fragment() {
     private var activityMain: MainActivity? = null
 
     private val binding get() = _binding!!
-    private var maxPower: Int = 0
-    private var sessionSelected: String = ""
+     private var sessionSelected = 0
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val inventoryId = arguments?.getInt("inventoryId")
-        val batteryPercent = arguments?.getInt("batteryLevel")
-         val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
-        val readNumber = arguments?.getInt("readNumber")
-        val deviceName = arguments?.getString("deviceName")
+         val readNumber = arguments?.getInt("readNumber")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
@@ -52,26 +47,39 @@ class HandHeldConfigFragment : Fragment() {
         var config = viewModel.getConfigFromPreferences()
         val currentPower= config.first!!
         val session = config.second
-        binding.imgBattery.setPercent(batteryPercent!!)
-        val valueBattery = "${batteryPercent}%"
 
-        binding.txtPercent.text = valueBattery
-        if (powerLevelList != null) {
-            binding.seekBarPower.max = powerLevelList.size
-            binding.seekBarPower.progress = currentPower!!
-            binding.txtPower.text = currentPower.toString()
+
+          activityMain!!.batteryLevel.observe(viewLifecycleOwner){
+            binding.imgBattery.setPercent(it!!)
+            binding.txtPercent.text = it.toString()
+
         }
+
+        binding.txtPower.text = currentPower.toString()
+
+        activityMain!!.maxPowerList.observe(viewLifecycleOwner) {
+            binding.seekBarPower.max = it.size
+
+        }
+        binding.seekBarPower.progress = currentPower!!
+
 
 
 
         binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            var startTrackeing= false
             @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                maxPower = progress
-                binding.txtPower.text = "$maxPower dbm"
+                if(startTrackeing){
+                    binding.txtPower.text = "$progress dbm"
+                    binding.seekBarPower.progress = progress
+                }
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
+                startTrackeing = true
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
@@ -81,26 +89,24 @@ class HandHeldConfigFragment : Fragment() {
         regionList += "SESSION_0"
         regionList += "SESSION_1"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
-        binding.listRegions.setAdapter(adapter)
+
         when(session){
             "SESSION_0"->{
-                binding.listRegions.setSelection(0)
+                binding.listRegions.setText("SESSION_0")
 
             }
             "SESSION_1"->{
-                binding.listRegions.setSelection(1)
+                binding.listRegions.setText("SESSION_1")
 
             }
 
         }
-        binding.listRegions.setOnItemClickListener { adapterView, _, i, _ ->
-            sessionSelected = adapterView.getItemAtPosition(i).toString()
-            Log.e("----->", "" + sessionSelected)
-        }
+        binding.listRegions.setAdapter(adapter)
+
         binding.btnSetPower.setOnClickListener {
 
-            viewModel.saveConfigToPreferences(sessionSelected,maxPower).apply {
-
+             viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
+                 binding.seekBarPower.progress ).apply {
                 findNavController().navigate(R.id.pagerFragment)
             }
 

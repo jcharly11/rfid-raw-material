@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import com.checkpoint.rfid_raw_material.MainActivity
+ import androidx.core.os.bundleOf
+ import androidx.navigation.fragment.findNavController
+ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -19,6 +21,7 @@ class PagerFragment : Fragment() {
     private var _binding: FragmentInventoryPagerBinding? = null
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
+
 
 
     override fun onCreateView(
@@ -44,8 +47,10 @@ class PagerFragment : Fragment() {
 
 
         activityMain!!.btnHandHeldGun!!.setOnClickListener {
-        //    val readNumber= viewModel.getReadNumber()
-            //todo implemnet config
+            val bundle = bundleOf(
+                "batteryLevel" to 0
+            )
+            findNavController().navigate(R.id.handHeldConfigFragment)
 
         }
 
@@ -55,7 +60,7 @@ class PagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //activityMain!!.startRFIDReadInstance(false,"")
+        activityMain!!.startRFIDReadInstance(false,"")
     }
 
     override fun onStart() {

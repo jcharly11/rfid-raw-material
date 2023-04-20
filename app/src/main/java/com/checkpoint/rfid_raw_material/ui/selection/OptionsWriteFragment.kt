@@ -84,7 +84,12 @@ class OptionsWriteFragment : Fragment(){
             if(dialogLookingForDevice!!.isShowing){
                 dialogLookingForDevice!!.dismiss()
              }
+
+            binding.btnInventory.isEnabled = false
+            binding.btnWriteTag.isEnabled = false
             dialogErrorDeviceConnected!!.show()
+
+
         }
         return binding.root
     }

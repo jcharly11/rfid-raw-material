@@ -53,7 +53,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     BatteryHandlerInterface,
     BarcodeHandHeldInterface,
     WritingTagInterface,
-    SelectDeviceDialogInterface {
+    SelectDeviceDialogInterface,
+    LevelPowerListHandlerInterface{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     var btnHandHeldGun: AppCompatImageView? = null
@@ -78,6 +79,15 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
+
+    private val _batteryLevel: MutableLiveData<Int> = MutableLiveData()
+    var batteryLevel: LiveData<Int> = _batteryLevel
+
+    private val _maxPowerList: MutableLiveData<IntArray> = MutableLiveData()
+    var maxPowerList: LiveData<IntArray> = _maxPowerList
+
+
+
 
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData()
     var deviceConnected: LiveData<Boolean> = _deviceConnected
@@ -104,6 +114,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         localSharedPreferences = LocalPreferences(application)
         btnHandHeldGun = binding.appBarMain.imgHandHeldGun
+
         btnCreateLog = binding.appBarMain.imgCreateLog
         batteryView = binding.appBarMain.batteryView
         lyCreateLog = binding.appBarMain.lyCreateLog
@@ -111,6 +122,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         batteryView!!.visibility = View.GONE
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
+
 
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -135,14 +147,21 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         }
 
-        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice(),
-            localSharedPreferences!!.getMaxFromPreferences(),
-            localSharedPreferences!!.getSessionFromPreferences())
+        val mp = localSharedPreferences!!.getMaxFromPreferences()
+        val sess = localSharedPreferences!!.getSessionFromPreferences()
+        Log.e("SESSION FROM PREFERENCES",sess)
+        Log.e("POWER FROM PREFERENCES","$mp")
+
+        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice(),mp,sess)
+
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
+        deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
+
         deviceInstanceRFID!!.setRfidModeRead()
         deviceInstanceRFID!!.battery()
+        deviceInstanceRFID!!.transmitPowerLevels()
 
     }
 
@@ -191,9 +210,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         Log.e("DEVICE SELECTED:", "$deviceName")
         Log.e("DEVICE STATUS:", "$b")
-
         if (b) {
             _deviceConnected.postValue(b)
+            localSharedPreferences!!.getSessionFromPreferences().apply {
+                if (this.isEmpty()){
+                    localSharedPreferences!!.saveSessionToPreferences("SESSION_0")
+                }
+            }
         } else {
             _showErrorDeviceConnected.postValue(true)
         }
@@ -281,8 +304,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     override fun batteryLevel(level: Int) {
-        Log.e("BatteryLevel", "${level}")
+        Log.e("BatteryLevel current", "${level}")
+        _batteryLevel.postValue(level)
     }
+
 
     override fun setDataBarCode(code: String) {
         _liveCode.value = code.filter { it in '0'..'9' }
@@ -367,6 +392,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         deviceName = device
 
+    }
+
+    override fun transmitPowerLevelValues(level: IntArray) {
+        _maxPowerList.postValue(level)
     }
 
 
