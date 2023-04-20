@@ -35,8 +35,7 @@ class HandHeldConfigFragment : Fragment() {
     ): View {
         val inventoryId = arguments?.getInt("inventoryId")
         val batteryPercent = arguments?.getInt("batteryLevel")
-        val currentPower = arguments?.getInt("currentPower")
-        val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
+         val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
         val readNumber = arguments?.getInt("readNumber")
         val deviceName = arguments?.getString("deviceName")
 
@@ -47,9 +46,12 @@ class HandHeldConfigFragment : Fragment() {
             val bundle = bundleOf(
                 "readNumber" to readNumber
             )
-            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
+            findNavController().navigate(R.id.pagerFragment, bundle)
         }
 
+        var config = viewModel.getConfigFromPreferences()
+        val currentPower= config.first!!
+        val session = config.second
         binding.imgBattery.setPercent(batteryPercent!!)
         val valueBattery = "${batteryPercent}%"
 
@@ -59,6 +61,8 @@ class HandHeldConfigFragment : Fragment() {
             binding.seekBarPower.progress = currentPower!!
             binding.txtPower.text = currentPower.toString()
         }
+
+
 
         binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             @SuppressLint("SetTextI18n")
@@ -78,17 +82,26 @@ class HandHeldConfigFragment : Fragment() {
         regionList += "SESSION_1"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
         binding.listRegions.setAdapter(adapter)
-        binding.listRegions.setSelection(0)
+        when(session){
+            "SESSION_0"->{
+                binding.listRegions.setSelection(0)
+
+            }
+            "SESSION_1"->{
+                binding.listRegions.setSelection(1)
+
+            }
+
+        }
         binding.listRegions.setOnItemClickListener { adapterView, _, i, _ ->
             sessionSelected = adapterView.getItemAtPosition(i).toString()
             Log.e("----->", "" + sessionSelected)
         }
         binding.btnSetPower.setOnClickListener {
 
+            viewModel.saveConfigToPreferences(sessionSelected,maxPower).apply {
 
-            viewModel.seveConfigToPreferences(sessionSelected,maxPower).apply {
-
-                findNavController().navigate(R.id.inventoryPagerFragment)
+                findNavController().navigate(R.id.pagerFragment)
             }
 
         }

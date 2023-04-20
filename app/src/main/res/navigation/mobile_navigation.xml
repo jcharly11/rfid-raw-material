@@ -14,10 +14,6 @@
         <action
             android:id="@+id/action_optionsWriteFragment_to_writeTagFragment"
             app:destination="@id/writeTagFragment" />
-        <action
-            android:id="@+id/action_optionsWriteFragment_to_inventoryPagerFragment"
-            app:destination="@id/inventoryPagerFragment" />
-
 
     </fragment>
 
@@ -41,11 +37,6 @@
         android:label="fragment_new_provider"
         tools:layout="@layout/fragment_new_provider" />
 
-    <fragment
-        android:id="@+id/inventoryPagerFragment"
-        android:name="com.checkpoint.rfid_raw_material.ui.inventory.InventoryPagerFragment"
-        android:label="fragment_inventory_pager"
-        tools:layout="@layout/fragment_inventory_pager" />
     <fragment
         android:id="@+id/handHeldConfigFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment"

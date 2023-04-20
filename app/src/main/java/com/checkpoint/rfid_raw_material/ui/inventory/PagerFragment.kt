@@ -12,7 +12,6 @@ import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBindin
 import com.google.android.material.tabs.TabLayoutMediator
 import com.checkpoint.rfid_raw_material.utils.PagerAdapter
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogConfiguringModeHandHeld
-import kotlinx.coroutines.launch
 
 class PagerFragment : Fragment() {
 
