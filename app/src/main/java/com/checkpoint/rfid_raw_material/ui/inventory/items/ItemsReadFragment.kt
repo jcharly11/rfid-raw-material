@@ -44,14 +44,15 @@ class ItemsReadFragment : Fragment() {
 
         var readNumber= viewModel.getReadNumber()
         viewModel?.getTagsList(readNumber)!!.observe(viewLifecycleOwner) {
-             lvTags.adapter = TagsListAdapter(it,TagsListAdapter.OnClickListener {
+            
+             lvTags.adapter = TagsListAdapter(it,activityMain!!, TagsListAdapter.OnClickListener {
                 if(!expandableProvider.isExpanded) {
                     expandableProvider.toggleLayout()
                 }
-                var reverse= Reverse()
+                /*var reverse= Reverse()
                 var hexValue= reverse.hexadecimalToBinaryString(it.epc)
                 var supplier= reverse.getSupplier()
-                tvProviderEPC.text= supplier
+                tvProviderEPC.text= supplier*/
             })
         }
 

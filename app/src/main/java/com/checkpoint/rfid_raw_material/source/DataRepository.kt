@@ -94,4 +94,9 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
         localDataSource.providerDao().deleteProvider(idProvider)
     }
 
+    suspend fun getProvider(idProvider:Int):Int= withContext(Dispatchers.IO) {
+        var provider= localDataSource.providerDao().getProvider(idProvider)
+        provider.size
+    }
+
 }

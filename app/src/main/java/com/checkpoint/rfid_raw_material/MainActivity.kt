@@ -209,9 +209,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         try {
 
-            if (tagData?.size!! > 1) {
 
-                _showErrorNumberTagsDetected.postValue(true)
+            _showErrorNumberTagsDetected.postValue(true)
+            if (tagData?.size!! > 1) {
 
             } else {
                 val code = tagData?.get(0)?.tagID.toString()
@@ -234,12 +234,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
         } catch (ex: Exception) {
-
+            Log.e("insertar tag","${ex.toString()}")
         }
 
     }
 
-    private suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
+    public suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
