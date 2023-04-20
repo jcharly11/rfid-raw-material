@@ -211,19 +211,20 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         try {
 
-            if (tagData?.size!! > 1) {
 
-                _showErrorNumberTagsDetected.postValue(true)
+            _showErrorNumberTagsDetected.postValue(true)
+            if (tagData?.size!! > 1) {
 
             } else {
                 val code = tagData?.get(0)?.tagID.toString()
                 if (this.writeEnable) {
                     var epc = this.epc!!
-                    _showDialogWritingTag.postValue(true)
-                    deviceInstanceRFID!!.writeTagMode(epc, code)
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(epc, readNumber)
                     }
+                    _showDialogWritingTag.postValue(true)
+                    deviceInstanceRFID!!.writeTagMode(epc, code)
+
                 } else {
                     tagData!!.iterator().forEachRemaining {
                         CoroutineScope(Dispatchers.IO).launch {
@@ -235,12 +236,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
         } catch (ex: Exception) {
-
+            Log.e("insertar tag","${ex.toString()}")
         }
 
     }
 
-    private suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
+    public suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
