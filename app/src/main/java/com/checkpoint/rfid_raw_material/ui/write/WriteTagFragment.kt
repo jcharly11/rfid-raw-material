@@ -69,10 +69,11 @@ class WriteTagFragment : Fragment(),
         dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
         dialogRemoveProvider =  CustomDialogRemoveProvider(this@WriteTagFragment)
 
-        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
         activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
         activityMain!!.batteryView!!.visibility = View.VISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
@@ -89,6 +90,7 @@ class WriteTagFragment : Fragment(),
          activityMain!!.liveCode.observe(viewLifecycleOwner) {
             binding.tvIdentifier.setText(it.trim())
         }
+
 
         viewModel.getProvidersList().observe(viewLifecycleOwner){
             var listProviders:MutableList<ProviderModel> = mutableListOf()

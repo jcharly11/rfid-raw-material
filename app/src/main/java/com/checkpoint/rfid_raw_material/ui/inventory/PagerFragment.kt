@@ -54,16 +54,10 @@ class PagerFragment : Fragment() {
 
 
 
-
-        activityMain!!.btnHandHeldGun!!.setOnClickListener {
-
-            val bundle = bundleOf(
-                "batteryLevel" to 0
-            )
-            findNavController().navigate(R.id.handHeldConfigFragment)
-
-
-        }
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
 
 
         return binding.root
@@ -75,11 +69,5 @@ class PagerFragment : Fragment() {
         activityMain!!.startRFIDReadInstance(false,"")
     }
 
-    override fun onStart() {
-        super.onStart()
-        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
-        activityMain!!.batteryView!!.visibility = View.VISIBLE
-        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
 
-    }
 }

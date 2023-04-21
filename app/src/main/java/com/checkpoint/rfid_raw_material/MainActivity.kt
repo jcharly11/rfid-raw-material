@@ -16,6 +16,7 @@ import androidx.core.os.bundleOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -124,7 +125,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
 
+      btnHandHeldGun!!.setOnClickListener {
 
+          val navController = findNavController(R.id.nav_host_fragment_content_main)
+          navController.navigate(R.id.handHeldConfigFragment)
+
+
+        }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navHostFragment =
@@ -150,9 +157,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         val mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
-        Log.e("SESSION FROM PREFERENCES",sess)
-        Log.e("POWER FROM PREFERENCES","$mp")
-
         deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice(),mp,sess)
 
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
@@ -233,10 +237,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         try {
 
+            Log.e("TAG NUMBER DETECTED","${tagData?.size}")
 
-            _showErrorNumberTagsDetected.postValue(true)
+
             if (tagData?.size!! > 1) {
-
+                _showErrorNumberTagsDetected.postValue(true)
             } else {
                 val code = tagData?.get(0)?.tagID.toString()
                 if (this.writeEnable) {
@@ -331,6 +336,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         navController.navigate(R.id.writeTagFragment, bundle)
         _liveCode.value = ""
     }
+
+
 
     @SuppressLint("MissingPermission")
     private fun searchDevices() {

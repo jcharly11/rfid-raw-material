@@ -57,7 +57,8 @@ class OptionsWriteFragment : Fragment(){
 
 
 
-//
+
+
         binding.btnInventory.setOnClickListener {
             val bundle = bundleOf(
                 "deviceName" to deviceName
@@ -91,6 +92,7 @@ class OptionsWriteFragment : Fragment(){
 
 
         }
+
         return binding.root
     }
 
@@ -134,6 +136,7 @@ class OptionsWriteFragment : Fragment(){
         activityMain!!.batteryView!!.visibility = View.INVISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
         activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
     }
 
 
