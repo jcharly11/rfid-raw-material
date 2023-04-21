@@ -85,12 +85,41 @@ class WriteTagFragment : Fragment(),
             }
         }
 
-        getProviderList()
-        activityMain!!.liveCode.observe(viewLifecycleOwner) {
+         activityMain!!.liveCode.observe(viewLifecycleOwner) {
             binding.tvIdentifier.setText(it.trim())
         }
 
+        viewModel.getProvidersList().observe(viewLifecycleOwner){
+            var listProviders:MutableList<ProviderModel> = mutableListOf()
 
+            it.iterator().forEachRemaining {
+                listProviders.add(ProviderModel(it.idProvider,it.name))
+            }
+
+            val adapter: ArrayAdapter<ProviderModel> =
+                ArrayAdapter<ProviderModel>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    listProviders
+                )
+
+            binding.spProviderList.adapter = adapter
+            binding.spProviderList.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        idProvider = listProviders[position].id
+
+                    }
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                    }
+                }
+        }
         binding.btnRemoveProvider.setOnClickListener {
             dialogRemoveProvider.show()
         }
@@ -156,36 +185,6 @@ class WriteTagFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         activityMain!!.startBarCodeReadInstance()
     }
-    private fun getProviderList() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val providerList = viewModel.getProviderList()
-            val adapter: ArrayAdapter<ProviderModel> =
-                ArrayAdapter<ProviderModel>(
-                    requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item,
-                    providerList
-                )
-            binding.spProviderList.adapter = adapter
-
-
-            binding.spProviderList.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        idProvider = providerList[position].id
-
-                    }
-
-                    override fun onNothingSelected(p0: AdapterView<*>?) {
-                    }
-                }
-            closeDialog()
-        }
-    }
 
 
     override fun saveProvider() {
@@ -197,9 +196,7 @@ class WriteTagFragment : Fragment(),
             CoroutineScope(Dispatchers.Main).launch {
                 viewModel.newProvider(idProvider.toInt(), idASProvider, nameProvider)
             }
-            Thread.sleep(1000)
-            getProviderList()
-            binding.spProviderList.refreshDrawableState()
+            closeDialog()
         } else
             Toast.makeText(
                 context,
@@ -241,8 +238,7 @@ class WriteTagFragment : Fragment(),
     override fun removeProvider() {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.deleteProvider(idProvider)
-            getProviderList()
-            dialogRemoveProvider.dismiss()
+             dialogRemoveProvider.dismiss()
         }
     }
 

@@ -46,16 +46,9 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    suspend fun getProviderList():MutableList<ProviderModel> = withContext(Dispatchers.IO){
-        val list= repository.getProviders()
-        var listProviders:MutableList<ProviderModel> = mutableListOf()
 
-        /*list.iterator().forEachRemaining {
-            var itemProvider= ProviderModel(id = it.id,it.name)
-            listProviders!!.add(itemProvider)
-        }*/
-        listProviders= listProviders!!.toMutableList()
-        listProviders
+    fun getProvidersList():LiveData<List<Provider>> {
+        return repository.getProviders()
     }
 
     suspend fun calculateEPC(versionValue: String,
