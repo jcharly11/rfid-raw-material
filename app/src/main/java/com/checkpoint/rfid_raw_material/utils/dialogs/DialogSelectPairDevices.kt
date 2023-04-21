@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.adapter.DevicesListAdapter
-import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 
 class DialogSelectPairDevices(val devices: List<String>,context: Context) : Dialog(context) {

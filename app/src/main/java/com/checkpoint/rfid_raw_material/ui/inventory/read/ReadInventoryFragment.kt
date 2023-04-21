@@ -36,17 +36,14 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var readNumber = arguments?.getInt("readNumber")
+          readNumber = arguments?.getInt("readNumber")
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         viewModel = ViewModelProvider(this)[ReadInventoryViewModel::class.java]
          _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
 
-       /* viewModel.getTagsListLive(readNumber!!).observe(viewLifecycleOwner){
-            binding.tvItemsScanned.text = it.size.toString()
-        }
-*/
+
 
         binding.btnStart.setOnClickListener {
             dialog =
@@ -100,7 +97,6 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             }
         }
 
-        binding.tvItemsScanned.text = "0"
 
         return binding.root
     }

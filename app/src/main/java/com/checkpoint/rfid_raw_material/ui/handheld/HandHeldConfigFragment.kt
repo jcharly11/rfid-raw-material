@@ -107,7 +107,7 @@ class HandHeldConfigFragment : Fragment() {
 
              viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
                  binding.seekBarPower.progress ).apply {
-                findNavController().navigate(R.id.pagerFragment)
+                findNavController().popBackStack()
             }
 
         }

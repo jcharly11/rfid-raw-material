@@ -2,21 +2,23 @@ package com.checkpoint.rfid_raw_material
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.PermissionChecker
+import androidx.core.os.bundleOf
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.os.bundleOf
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -35,9 +37,9 @@ import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.isDenied
 import com.fondesa.kpermissions.isGranted
 import com.fondesa.kpermissions.request.PermissionRequest
+
 import com.zebra.rfid.api3.ReaderDevice
 import com.zebra.rfid.api3.Readers
-import com.zebra.rfid.api3.SESSION
 import com.zebra.rfid.api3.TagData
 import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
@@ -68,13 +70,23 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
     private var readNumber: Int = 0
+    private var tagsDetected: Int = 0
+    private var singleTag = String()
     private var writeEnable = false
     private var epc: String? = null
 
-    private val requestPermissions by lazy {
+
+
+    private val requestPermissions12 by lazy {
         permissionsBuilder(
             Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_ADVERTISE
+        ).build()
+    }
+    private val requestPermissions11 by lazy {
+        permissionsBuilder(
+            Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION
         ).build()
     }
@@ -142,7 +154,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             setOf(R.id.optionsWriteFragment), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
-        requestPermissions.addListener(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
+            // Android 12 or Android 12 Beta
+            requestPermissions12.addListener(this)
+        }
+        else
+            requestPermissions11.addListener(this)
+
 
 
     }
@@ -183,7 +201,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         deviceName.isEmpty().apply {
             if (this)
-                requestPermissions.send()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME))
+                    requestPermissions12.send()
+            else
+                    requestPermissions11.send()
 
         }
     }
@@ -235,40 +256,55 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun handleTagdata(tagData: Array<TagData?>?) {
         readNumber = localSharedPreferences!!.getReadNumber()
 
-        try {
+        if(this.writeEnable){
+            tagsDetected ++
+            singleTag = tagData?.get(0)?.tagID.toString()
 
-            Log.e("TAG NUMBER DETECTED","${tagData?.size}")
 
 
-            if (tagData?.size!! > 1) {
-                _showErrorNumberTagsDetected.postValue(true)
-            } else {
-                val code = tagData?.get(0)?.tagID.toString()
-                if (this.writeEnable) {
-                    var epc = this.epc!!
-                    CoroutineScope(Dispatchers.IO).launch {
-                        newTag(epc, readNumber)
-                    }
-                    _showDialogWritingTag.postValue(true)
-                    deviceInstanceRFID!!.writeTagMode(epc, code)
+        }else{
+            tagData!!.iterator().forEachRemaining {
+                Log.e("TAG DATA","${it!!.tagID.toString()}")
 
-                } else {
-                    tagData!!.iterator().forEachRemaining {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            newTag(it!!.tagID.toString(), readNumber)
-                        }
-                    }
+                CoroutineScope(Dispatchers.IO).launch {
+                    newTag(it!!.tagID.toString(), readNumber)
                 }
             }
-
-
-        } catch (ex: Exception) {
-             Sentry.captureMessage("${ex.message}")
         }
 
     }
 
-    public suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
+
+    override fun handleTriggerPress(pressed: Boolean) {
+        Log.e("handleTriggerPress", "${pressed}")
+
+
+        if (pressed) {
+            tagsDetected=0
+            deviceInstanceRFID!!.perform()
+
+        } else {
+            Log.e("TAG NUMBER DETECTED","${tagsDetected}")
+            deviceInstanceRFID!!.stop()
+            if (this.writeEnable) {
+                if(tagsDetected > 1){
+                    _showErrorNumberTagsDetected.postValue(true)
+
+                }else{
+                    _showErrorNumberTagsDetected.postValue(false)
+                    _showDialogWritingTag.postValue(true)
+                    var epc = this.epc!!
+                    CoroutineScope(Dispatchers.IO).launch {
+                        newTag(epc, readNumber)
+                    }
+                    deviceInstanceRFID!!.writeTagMode(epc, singleTag)
+
+                }
+            }
+
+        }
+    }
+     suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
@@ -285,17 +321,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 formatter.format(nowDate)
             )
         )
-    }
-
-    override fun handleTriggerPress(pressed: Boolean) {
-        Log.e("handleTriggerPress", "${pressed}")
-
-
-        if (pressed) {
-            deviceInstanceRFID!!.perform()
-        } else {
-            deviceInstanceRFID!!.stop()
-        }
     }
 
     override fun handleStartConnect(connected: Boolean) {
@@ -410,6 +435,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun transmitPowerLevelValues(level: IntArray) {
         _maxPowerList.postValue(level)
     }
+
 
 
 }

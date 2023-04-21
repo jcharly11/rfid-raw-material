@@ -17,7 +17,7 @@ class ReverseTest {
 
 
 
-        var reverse =  Reverse()
+        var reverse =  Reverse(null!!)
         reverse.hexadecimalToBinaryString("90801A249B1F10A06C96AFF20001E240")
 
         supplier = reverse.getSupplier()

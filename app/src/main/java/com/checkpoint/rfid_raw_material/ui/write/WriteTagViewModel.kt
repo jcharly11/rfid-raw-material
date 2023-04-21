@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.ui.write
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
@@ -10,7 +11,6 @@ import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
-import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import com.checkpoint.rfid_raw_material.utils.Conversor
 import com.zebra.rfid.api3.ENUM_TRANSPORT
@@ -55,6 +55,8 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
                              subversionValue: String,
                              typeValue: String,
                              idProvider: String,pieceValue: String):String = withContext(Dispatchers.IO){
+        Log.e("calculateEPC supplier","$idProvider")
+
         val conversor = Conversor()
         var hexValueEpc = ""
         val version = conversor.toBinaryString(versionValue, 5, '0')
@@ -63,6 +65,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
         val piece = conversor.toBinaryString(pieceValue, 80, '0')
 
+        Log.e("calculateEPC supplier","$supplier")
 
         val binaryChain = "$version$type$subVersion$piece$supplier"
         val binaryGroup = binaryChain.chunked(4)

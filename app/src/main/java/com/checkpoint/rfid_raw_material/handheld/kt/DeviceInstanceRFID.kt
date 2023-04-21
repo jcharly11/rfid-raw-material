@@ -237,10 +237,9 @@ import kotlinx.coroutines.*
          targetData: String,
          offset: Int
      ) {
-         Log.e("sourceEPC", "$sourceEPC")
+         Log.e("sourceEPC ", "$sourceEPC")
          Log.e("targetData", "$targetData")
          Log.e("password", "$Password")
-
 
          try {
              val tagData: TagData? = null
@@ -275,6 +274,7 @@ import kotlinx.coroutines.*
              Log.e("RESULTS", e.results.toString())
              Log.e("RESULTS", e.statusDescription.toString())
          }
+
      }
 
  }

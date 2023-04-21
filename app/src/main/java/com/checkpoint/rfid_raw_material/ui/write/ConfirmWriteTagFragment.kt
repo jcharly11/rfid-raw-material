@@ -39,6 +39,8 @@ class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
         savedInstanceState: Bundle?
     ): View {
         epc = arguments?.getString("epc")
+
+        Log.e("GENERATED EPC","$epc")
         readNumber = arguments?.getInt("readNumber")
         deviceName = arguments?.getString("deviceName")
 

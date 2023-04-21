@@ -49,6 +49,9 @@ class WriteTagFragment : Fragment(),
     private val binding get() = _binding!!
 
     var idProvider: Int = 0
+    var idSupplier=  String()
+
+
     private var deviceStarted = false
     private var activityMain: MainActivity? = null
     private var readNumber: Int? = 0
@@ -96,7 +99,7 @@ class WriteTagFragment : Fragment(),
             var listProviders:MutableList<ProviderModel> = mutableListOf()
 
             it.iterator().forEachRemaining {
-                listProviders.add(ProviderModel(it.idProvider,it.name))
+                listProviders.add(ProviderModel(it.id,it.idAS,it.name))
             }
 
             val adapter: ArrayAdapter<ProviderModel> =
@@ -116,6 +119,7 @@ class WriteTagFragment : Fragment(),
                         id: Long
                     ) {
                         idProvider = listProviders[position].id
+                        idSupplier= listProviders[position].idAS!!
 
                     }
 
@@ -142,7 +146,7 @@ class WriteTagFragment : Fragment(),
                       val hexValueEpc = viewModel.calculateEPC(versionValue,
                           subversionValue,
                           typeValue,
-                          idProvider.toString(),
+                          idSupplier,
                           pieceValue)
 
                         val bundle = bundleOf(

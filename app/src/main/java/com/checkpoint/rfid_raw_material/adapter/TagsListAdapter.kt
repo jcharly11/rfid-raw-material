@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.adapter
 import android.app.Application
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,10 +50,15 @@ class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: 
 
     override fun onBindViewHolder(holder: TagsListAdapter.ViewHolder, position: Int) {
         activityMain = activityMain as MainActivity
+        Log.e("listProvider","${dataSet[position].epc}")
 
+        reverse.hexToBinary(dataSet[position].epc)
         val idProvider= reverse.getProvider(dataSet[position].epc)
         var validTag= false
         listProvider.iterator().forEachRemaining {
+            Log.e("listProvider","${it.id}")
+            Log.e("listProvider","${idProvider}")
+
             if(it.id==idProvider){
                 validTag=true
             }
