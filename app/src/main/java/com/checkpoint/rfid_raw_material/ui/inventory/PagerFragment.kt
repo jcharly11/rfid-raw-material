@@ -1,26 +1,29 @@
 package com.checkpoint.rfid_raw_material.ui.inventory
 
  import android.os.Bundle
-import androidx.fragment.app.Fragment
+ import android.util.Log
+ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
- import androidx.core.os.bundleOf
- import androidx.navigation.fragment.findNavController
- import com.checkpoint.rfid_raw_material.MainActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.checkpoint.rfid_raw_material.utils.PagerAdapter
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogConfiguringModeHandHeld
 
+
 class PagerFragment : Fragment() {
 
      private lateinit var dialogConfiguringModeHandHeld: DialogConfiguringModeHandHeld
-    private var _binding: FragmentInventoryPagerBinding? = null
-    private val binding get() = _binding!!
-    private var activityMain: MainActivity? = null
+     private var _binding: FragmentInventoryPagerBinding? = null
+     private val binding get() = _binding!!
+     private var activityMain: MainActivity? = null
+
 
 
 
@@ -29,8 +32,10 @@ class PagerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
          _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
+
         activityMain = requireActivity() as MainActivity
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
 
         val viewPager = binding.pager
         val tabLayout = binding.tabLayout
@@ -38,25 +43,32 @@ class PagerFragment : Fragment() {
             resources.getString(R.string.tab_tittle_inventory),
             resources.getString(R.string.tab_tittle_read)
         )
-        viewPager.adapter = PagerAdapter(this@PagerFragment,0)
-        dialogConfiguringModeHandHeld= DialogConfiguringModeHandHeld(this@PagerFragment)
+
+
+
+        viewPager.adapter = PagerAdapter(this@PagerFragment, 0)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = itemsTitle[position]
         }.attach()
+        dialogConfiguringModeHandHeld = DialogConfiguringModeHandHeld(this@PagerFragment)
+
 
 
 
         activityMain!!.btnHandHeldGun!!.setOnClickListener {
+
             val bundle = bundleOf(
                 "batteryLevel" to 0
             )
             findNavController().navigate(R.id.handHeldConfigFragment)
+
 
         }
 
 
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

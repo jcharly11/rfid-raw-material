@@ -50,10 +50,10 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         val list= repository.getProviders()
         var listProviders:MutableList<ProviderModel> = mutableListOf()
 
-        list.iterator().forEachRemaining {
+        /*list.iterator().forEachRemaining {
             var itemProvider= ProviderModel(id = it.id,it.name)
             listProviders!!.add(itemProvider)
-        }
+        }*/
         listProviders= listProviders!!.toMutableList()
         listProviders
     }

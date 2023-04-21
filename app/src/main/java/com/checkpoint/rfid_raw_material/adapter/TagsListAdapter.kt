@@ -12,13 +12,16 @@ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.utils.Reverse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: MainActivity, private val onClickListener: OnClickListener):
+class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: MainActivity,
+                      private val listProvider: List<Provider>,
+                      private val onClickListener: OnClickListener):
     RecyclerView.Adapter<TagsListAdapter.ViewHolder>(){
 
     private var activityMain: MainActivity? = mainActivity
@@ -47,12 +50,24 @@ class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: 
     override fun onBindViewHolder(holder: TagsListAdapter.ViewHolder, position: Int) {
         activityMain = activityMain as MainActivity
 
-        CoroutineScope(Dispatchers.Main).launch {
-            if (reverse.checkValidTag(dataSet[position].epc))
+        val idProvider= reverse.getProvider(dataSet[position].epc)
+        var validTag= false
+        listProvider.iterator().forEachRemaining {
+            if(it.id==idProvider){
+                validTag=true
+            }
+        }.let {
+            if (validTag)
                 holder.lyTagIndicator.setBackgroundColor(Color.GREEN)
             else
                 holder.lyTagIndicator.setBackgroundColor(Color.RED)
         }
+        /*CoroutineScope(Dispatchers.Main).launch {
+            if (reverse.checkValidTag(dataSet[position].epc))
+                holder.lyTagIndicator.setBackgroundColor(Color.GREEN)
+            else
+                holder.lyTagIndicator.setBackgroundColor(Color.RED)
+        }*/
 
         holder.textTagItem.text = dataSet[position].epc
         holder.itemView.setOnClickListener {

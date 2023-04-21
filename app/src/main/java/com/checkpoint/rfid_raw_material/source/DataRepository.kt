@@ -32,8 +32,8 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
     }
 
 
-    suspend fun getProviders():List<Provider> = withContext(Dispatchers.IO) {
-        localDataSource.providerDao().getProviders()
+    fun getProviders():LiveData<List<Provider>> {
+        return localDataSource.providerDao().getProviders()
     }
 
     suspend fun insertNewProvider(provider: Provider):Provider = withContext(Dispatchers.IO) {

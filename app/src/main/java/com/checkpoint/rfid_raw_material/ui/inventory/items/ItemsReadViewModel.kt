@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,6 +33,13 @@ class ItemsReadViewModel(application: Application) : AndroidViewModel(applicatio
     fun getReadNumber():Int{
         return localSharedPreferences.getReadNumber()
     }
+
+    fun getProvidersList():LiveData<List<Provider>> {
+       return repository.getProviders()
+    }
+
+
+
 
 
 
