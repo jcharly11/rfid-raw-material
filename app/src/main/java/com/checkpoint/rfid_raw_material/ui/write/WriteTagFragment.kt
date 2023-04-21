@@ -31,6 +31,7 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogWriteTag
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 
 class WriteTagFragment : Fragment(),
@@ -158,6 +159,7 @@ class WriteTagFragment : Fragment(),
                 }
 
             } catch (ex: Exception) {
+                Sentry.captureMessage("${ex.message}")
                 Log.e("logError", ex.toString())
             }
         }

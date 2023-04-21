@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.security.IdentifierDevice
 import com.checkpoint.rfid_raw_material.security.jwt.JWTDecoder
+import io.sentry.Sentry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -51,6 +52,7 @@ class LicenseLoadViewModel(application: Application) : AndroidViewModel(applicat
 
             true
         }catch (ex: Exception){
+            Sentry.captureMessage("${ex.message}")
             false
         }
      }

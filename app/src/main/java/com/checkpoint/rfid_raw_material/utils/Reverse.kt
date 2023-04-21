@@ -5,7 +5,7 @@ import android.util.Log
 import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import com.checkpoint.rfid_raw_material.ui.inventory.items.ItemsReadViewModel
+import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -145,6 +145,7 @@ class Reverse(application: Application) {
             }
 
         } catch (ex: Exception) {
+            Sentry.captureMessage("${ex.message}")
             Log.e("error listas", "${ex.toString()}")
             false
         }
@@ -160,6 +161,7 @@ class Reverse(application: Application) {
             return supplier
         }
         catch (ex: Exception) {
+            Sentry.captureMessage("${ex.message}")
             return 0
         }
     }

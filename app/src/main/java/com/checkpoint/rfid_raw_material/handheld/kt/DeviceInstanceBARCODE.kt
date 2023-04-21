@@ -9,6 +9,7 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldIn
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.RFIDReader
 import com.zebra.scannercontrol.*
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 
 class DeviceInstanceBARCODE(
@@ -70,6 +71,7 @@ class DeviceInstanceBARCODE(
                 true
 
             } catch (ex: Exception) {
+                Sentry.captureMessage("${ex.message}")
                 Log.e("BARCODE DESCONECTADO", "${ex.toString()}")
                 false
             }
@@ -83,6 +85,7 @@ class DeviceInstanceBARCODE(
                     true
                 }
             } catch (ex: Exception) {
+                Sentry.captureMessage("${ex.message}")
                 false
 
             }

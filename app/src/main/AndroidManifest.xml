@@ -34,7 +34,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rfid_raw_material"
         tools:targetApi="31">
-
+        <meta-data android:name="io.sentry.dsn" android:value="https://2b7f30b9ef6c4032aba4d8066d6a5453@o1336736.ingest.sentry.io/4505053089300480" />
+        <meta-data android:name="io.sentry.traces.user-interaction.enable" android:value="true" />
+        <meta-data android:name="io.sentry.attach-screenshot" android:value="true" />
+        <meta-data android:name="io.sentry.attach-view-hierarchy" android:value="true" />
+        <meta-data android:name="io.sentry.traces.sample-rate" android:value="1.0" />
+        <meta-data android:name="io.sentry.traces.profiling.sample-rate" android:value="1.0" />
         <activity
             android:name=".WriteTagActivity"
             android:exported="true">

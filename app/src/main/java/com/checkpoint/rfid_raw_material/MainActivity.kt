@@ -38,6 +38,7 @@ import com.zebra.rfid.api3.ReaderDevice
 import com.zebra.rfid.api3.Readers
 import com.zebra.rfid.api3.SESSION
 import com.zebra.rfid.api3.TagData
+import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -257,7 +258,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
         } catch (ex: Exception) {
-            Log.e("insertar tag","${ex.toString()}")
+             Sentry.captureMessage("${ex.message}")
         }
 
     }
@@ -334,48 +335,53 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     @SuppressLint("MissingPermission")
     private fun searchDevices() {
 
-        Log.e("searchDevices()", ".....")
-        bluetoothHandler = BluetoothHandler(this)
-        val devices = bluetoothHandler!!.list()
-        var devicesRFID = listOf<String>()
+        try{
+            Log.e("searchDevices()", ".....")
+            bluetoothHandler = BluetoothHandler(this)
+            val devices = bluetoothHandler!!.list()
+            var devicesRFID = listOf<String>()
 
-        if (devices != null) {
-            if (devices.size > 0) {
+            if (devices != null) {
+                if (devices.size > 0) {
 
-                for (device in devices) {
-                    if (device.name.contains("RFD8500")) {
-                        devicesRFID += device.name
+                    for (device in devices) {
+                        if (device.name.contains("RFD8500")) {
+                            devicesRFID += device.name
+                        }
                     }
-                }
-                if (devicesRFID.size > 1) {
+                    if (devicesRFID.size > 1) {
 
 
-                    dialogSelectPairDevices = DialogSelectPairDevices(devicesRFID, this)
-                    dialogSelectPairDevices!!.show()
-                } else {
-
-                    if (devicesRFID.isNotEmpty()) {
-
-                        deviceName = devicesRFID[0]
-                        createDeviceInstance(deviceName!!)
-
+                        dialogSelectPairDevices = DialogSelectPairDevices(devicesRFID, this)
+                        dialogSelectPairDevices!!.show()
                     } else {
-                        dialogErrorDeviceConnected!!.show()
 
+                        if (devicesRFID.isNotEmpty()) {
+
+                            deviceName = devicesRFID[0]
+                            createDeviceInstance(deviceName!!)
+
+                        } else {
+                            dialogErrorDeviceConnected!!.show()
+
+                        }
                     }
+
+                } else {
+                    dialogErrorDeviceConnected!!.show()
+                    // DIALOG TURN ON BLUETOOTH
                 }
 
-            } else {
-                dialogErrorDeviceConnected!!.show()
-                // DIALOG TURN ON BLUETOOTH
             }
+        }catch (ex: Exception){
+            Log.e("Exception search devices","${ex.message}")
+            Sentry.captureMessage("${ex.message}")
+            _deviceConnected.postValue(false)
+            _showErrorDeviceConnected.postValue(true)
 
         }
-/*
-        dialogLoaderHandHeld = CustomDialogLoader(
-            this@OptionsWriteFragment,
-            TypeLoading.BLUETOOTH_DEVICE
-        )*/
+
+
     }
 
     fun resetBarCode() {
