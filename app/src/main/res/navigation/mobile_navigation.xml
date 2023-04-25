@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/optionsWriteFragment">
+<!--    app:startDestination="@+id/licenseLoadFragment">-->
 
     <fragment
         android:id="@+id/optionsWriteFragment"
@@ -13,10 +14,6 @@
         <action
             android:id="@+id/action_optionsWriteFragment_to_writeTagFragment"
             app:destination="@id/writeTagFragment" />
-        <action
-            android:id="@+id/action_optionsWriteFragment_to_inventoryPagerFragment"
-            app:destination="@id/inventoryPagerFragment" />
-
 
     </fragment>
 
@@ -41,11 +38,6 @@
         tools:layout="@layout/fragment_new_provider" />
 
     <fragment
-        android:id="@+id/inventoryPagerFragment"
-        android:name="com.checkpoint.rfid_raw_material.ui.inventory.InventoryPagerFragment"
-        android:label="fragment_inventory_pager"
-        tools:layout="@layout/fragment_inventory_pager" />
-    <fragment
         android:id="@+id/handHeldConfigFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment"
         android:label="fragment_hand_held_config"
@@ -69,5 +61,18 @@
             android:id="@+id/action_configurationFragment_to_optionsWriteFragment"
             app:destination="@id/optionsWriteFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/licenseLoadFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.license.LicenseLoadFragment"
+        android:label="fragment_license_load"
+        tools:layout="@layout/fragment_license_load" >
+        <action
+            android:id="@+id/action_licenseLoadFragment_to_optionsWriteFragment"
+            app:destination="@id/optionsWriteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pagerFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.inventory.PagerFragment"
+        android:label="PagerFragment" />
 
 </navigation>

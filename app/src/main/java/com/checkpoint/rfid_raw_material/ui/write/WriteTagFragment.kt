@@ -1,5 +1,6 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
+import CustomDialogRemoveProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,22 +30,28 @@ import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogPro
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogWriteTag
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import com.checkpoint.rfid_raw_material.utils.LogCreator
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
+import io.sentry.Sentry
 import kotlinx.coroutines.*
 
 class WriteTagFragment : Fragment(),
-    CustomDialogProviderInterface, CustomDialogWriteTagInterface {
+    CustomDialogProviderInterface, CustomDialogWriteTagInterface,
+    CustomDialogRemoveProviderInterface {
     private lateinit var viewModel: WriteTagViewModel
     private lateinit var dialogProvider: CustomDialogProvider
     private lateinit var dialogBarcodeReaderStatus: DialogBarcodeReaderStatus
     private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
     private lateinit var dialogErrorEmptyFields: DialogErrorEmptyFields
     private lateinit var dialogWriteTag: CustomDialogWriteTag
+    private lateinit var dialogRemoveProvider: CustomDialogRemoveProvider
 
     private var _binding: FragmentWriteTagBinding? = null
     private val binding get() = _binding!!
 
     var idProvider: Int = 0
-    private var deviceStarted = false
+    var idSupplier=  String()
+
+
     private var activityMain: MainActivity? = null
     private var readNumber: Int? = 0
     private var deviceName: String? = null
@@ -58,12 +65,18 @@ class WriteTagFragment : Fragment(),
         activityMain = requireActivity() as MainActivity
 
         dialogProvider = CustomDialogProvider(this@WriteTagFragment)
+
         dialogBarcodeReaderStatus = DialogBarcodeReaderStatus(this@WriteTagFragment)
-        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this@WriteTagFragment)
         dialogErrorEmptyFields = DialogErrorEmptyFields(this@WriteTagFragment)
         dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
+        dialogRemoveProvider =  CustomDialogRemoveProvider(this@WriteTagFragment)
 
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
         activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+
+
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {}
 
@@ -71,46 +84,51 @@ class WriteTagFragment : Fragment(),
         deviceName = arguments?.getString("deviceName")
 
         CoroutineScope(Dispatchers.Main).launch {
-            if (readNumber == null) {
+            if (readNumber == null || readNumber==0) {
                 readNumber = viewModel.getNewReadNumber()
             }
         }
 
-        getProviderList()
-        viewModel.liveCode.observe(viewLifecycleOwner) {
+         activityMain!!.liveCode.observe(viewLifecycleOwner) {
             binding.tvIdentifier.setText(it.trim())
         }
 
 
+        viewModel.getProvidersList().observe(viewLifecycleOwner){
+            var listProviders:MutableList<ProviderModel> = mutableListOf()
 
-        /*
-        binding.tvIdentifier.setOnFocusChangeListener { _, b ->
-            Log.e("setOnFocusChangeListener", "$b")
-            if (b) {
-
-            }
-        }
-        */
-
-
-
-        viewModel.deviceConnected.observe(viewLifecycleOwner) {
-            if (it) {
-                dialogBarcodeReaderStatus.dismiss()
+            it.iterator().forEachRemaining {
+                listProviders.add(ProviderModel(it.id,it.idAS,it.name))
             }
 
+            val adapter: ArrayAdapter<ProviderModel> =
+                ArrayAdapter<ProviderModel>(
+                    requireContext(),
+                    android.R.layout.simple_spinner_dropdown_item,
+                    listProviders
+                )
 
+            binding.spProviderList.adapter = adapter
+            binding.spProviderList.onItemSelectedListener =
+                object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        idProvider = listProviders[position].id
+                        idSupplier= listProviders[position].idAS!!
+
+                    }
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                    }
+                }
         }
-        viewModel.deviceDisConnected.observe(viewLifecycleOwner){
-
-            if (it){
-
-                dialogBarcodeReaderStatus.dismiss()
-                dialogErrorDeviceConnected.show()
-                deviceStarted = false
-            }
+        binding.btnRemoveProvider.setOnClickListener {
+            dialogRemoveProvider.show()
         }
-
         binding.btnWriteTag.setOnClickListener {
             try {
                 CoroutineScope(Dispatchers.Main).launch {
@@ -124,40 +142,18 @@ class WriteTagFragment : Fragment(),
                         typeValue.isNotEmpty() && pieceValue.isNotEmpty()
                     ) {
 
-                        val conversor = Conversor()
-                        var hexValueEpc = ""
-                        val version = conversor.toBinaryString(versionValue, 5, '0')
-                        val subVersion = conversor.toBinaryString(subversionValue, 5, '0')
-                        val type = conversor.toBinaryString(typeValue, 6, '0')
-                        val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
-                        val piece = conversor.toBinaryString(pieceValue, 80, '0')
+                      val hexValueEpc = viewModel.calculateEPC(versionValue,
+                          subversionValue,
+                          typeValue,
+                          idSupplier,
+                          pieceValue)
 
-
-                        val binaryChain = "$version$type$subVersion$piece$supplier"
-                        val binaryGroup = binaryChain.chunked(4)
-                        binaryGroup.iterator().forEach {
-                            hexValueEpc += conversor.toHexadecimalString(it)
-                        }
-
-
-                        viewModel.newTag(
-                            readNumber!!,
-                            versionValue,
-                            subversionValue,
-                            typeValue,
-                            pieceValue,
-                            idProvider,
-                            hexValueEpc
-                        )
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
                             "readNumber" to readNumber,
                             "deviceName" to deviceName
                         )
-                        lifecycleScope.launch {
-                            viewModel.disconnectDevice()
-                        }
-
+                        activityMain!!.resetBarCode()
                         findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
 
                     } else {
@@ -168,6 +164,7 @@ class WriteTagFragment : Fragment(),
                 }
 
             } catch (ex: Exception) {
+                Sentry.captureMessage("${ex.message}")
                 Log.e("logError", ex.toString())
             }
         }
@@ -185,51 +182,17 @@ class WriteTagFragment : Fragment(),
         }
 
         binding.btnFinishWrite.setOnClickListener {
-            var a = readNumber
-            dialogWriteTag.show()
+             dialogWriteTag.show()
         }
 
 
         return binding.root
     }
-
-    private fun getProviderList() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val providerList = viewModel.getProviderList()
-            val adapter: ArrayAdapter<ProviderModel> =
-                ArrayAdapter<ProviderModel>(
-                    requireContext(),
-                    android.R.layout.simple_spinner_dropdown_item,
-                    providerList
-                )
-            binding.spProviderList.adapter = adapter
-
-
-            binding.spProviderList.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        idProvider = providerList[position].id
-
-                    }
-
-                    override fun onNothingSelected(p0: AdapterView<*>?) {
-                    }
-                }
-            closeDialog()
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activityMain!!.startBarCodeReadInstance()
     }
 
-    private fun insertProviders() {
-        CoroutineScope(Dispatchers.IO).launch {
-            viewModel.insertInitialProviders()
-            getProviderList()
-        }
-    }
 
     override fun saveProvider() {
         val idProvider = dialogProvider.tvIdProvider!!.text.toString()
@@ -240,9 +203,7 @@ class WriteTagFragment : Fragment(),
             CoroutineScope(Dispatchers.Main).launch {
                 viewModel.newProvider(idProvider.toInt(), idASProvider, nameProvider)
             }
-            Thread.sleep(1000)
-            getProviderList()
-            binding.spProviderList.refreshDrawableState()
+            closeDialog()
         } else
             Toast.makeText(
                 context,
@@ -252,7 +213,7 @@ class WriteTagFragment : Fragment(),
 
     override fun finishWrite() {
         CoroutineScope(Dispatchers.Main).launch {
-            viewModel.disconnectDevice()
+
             dialogWriteTag.dismiss()
             findNavController().navigate(R.id.optionsWriteFragment)
         }
@@ -268,13 +229,18 @@ class WriteTagFragment : Fragment(),
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        deviceStarted = true
-        dialogBarcodeReaderStatus.show()
-        lifecycleScope.launch {
-            viewModel.startHandHeldBarCode(deviceName!!)
+
+    override fun closeDialogRemoveProvider() {
+        dialogRemoveProvider.dismiss()
+    }
+
+    override fun removeProvider() {
+        CoroutineScope(Dispatchers.Main).launch {
+            viewModel.deleteProvider(idProvider)
+             dialogRemoveProvider.dismiss()
         }
     }
+
+
 
 }

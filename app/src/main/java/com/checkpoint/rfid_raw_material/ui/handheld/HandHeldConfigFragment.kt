@@ -13,80 +13,110 @@ import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBinding
+import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
 
 class HandHeldConfigFragment : Fragment() {
 
     private lateinit var viewModel: HandHeldConfigViewModel
     private var _binding: FragmentHandHeldConfigBinding? = null
+    private var activityMain: MainActivity? = null
 
     private val binding get() = _binding!!
-    private var maxPower: Int = 0
-    private var sessionSelected: String = ""
+     private var sessionSelected = 0
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val inventoryId = arguments?.getInt("inventoryId")
-        val batteryPercent = arguments?.getInt("batteryLevel")
-        val currentPower = arguments?.getInt("currentPower")
-        val powerLevelList = arguments?.getIntArray("transmitPowerLevelList")
-        val readNumber = arguments?.getInt("readNumber")
+         val readNumber = arguments?.getInt("readNumber")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
+        activityMain = requireActivity() as MainActivity
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            val bundle = bundleOf(
-                "readNumber" to readNumber
-            )
-            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
+
+            findNavController().popBackStack()
         }
 
-        binding.imgBattery.setPercent(batteryPercent!!)
-        val valueBattery = "${batteryPercent}%"
+        var config = viewModel.getConfigFromPreferences()
+        val currentPower= config.first!!
+        val session = config.second
 
-        binding.txtPercent.text = valueBattery
-        if (powerLevelList != null) {
-            binding.seekBarPower.max = powerLevelList.size
-            binding.seekBarPower.progress = currentPower!!
-            binding.txtPower.text = currentPower.toString()
+
+          activityMain!!.batteryLevel.observe(viewLifecycleOwner){
+            binding.imgBattery.setPercent(it!!)
+            binding.txtPercent.text = it.toString()
+
         }
+
+        binding.txtPower.text = currentPower.toString()
+
+        activityMain!!.maxPowerList.observe(viewLifecycleOwner) {
+            binding.seekBarPower.max = it.size
+
+        }
+        binding.seekBarPower.progress = currentPower!!
+
+
+
 
         binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            var startTrackeing= false
             @SuppressLint("SetTextI18n")
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                maxPower = progress
-                binding.txtPower.text = "$maxPower dbm"
+                if(startTrackeing){
+                    binding.txtPower.text = "$progress dbm"
+                    binding.seekBarPower.progress = progress
+                }
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
+                startTrackeing = true
             }
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
             }
         })
         val regionList: MutableList<String> = mutableListOf()
-        regionList += "SESSION_0"
+        //regionList += "SESSION_0"
         regionList += "SESSION_1"
+        regionList += "SESSION_2"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
-        binding.listRegions.setAdapter(adapter)
-        binding.listRegions.setSelection(1)
-        binding.listRegions.setOnItemClickListener { adapterView, _, i, _ ->
-            sessionSelected = adapterView.getItemAtPosition(i).toString()
-            Log.e("----->", "" + sessionSelected)
+
+        when(session){
+           /* "SESSION_0"->{
+                binding.listRegions.setText("SESSION_0")
+
+            }*/
+            "SESSION_1"->{
+                binding.listRegions.setText("SESSION_1")
+            }
+            "SESSION_2"->{
+                binding.listRegions.setText("SESSION_2")
+            }
         }
+        binding.listRegions.setAdapter(adapter)
+
         binding.btnSetPower.setOnClickListener {
-            val bundle = bundleOf(
-                "inventoryId" to inventoryId,
-                "needTag" to true,
-                "maxPower" to maxPower,
-                "session" to sessionSelected,
-                "readNumber" to readNumber
-            )
-            findNavController().navigate(R.id.inventoryPagerFragment, bundle)
+
+             viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
+                 binding.seekBarPower.progress ).apply {
+                 val bundle = bundleOf(
+                     "needTag" to true,
+                     "session" to sessionSelected,
+                     "readNumber" to readNumber
+                 )
+                //findNavController().popBackStack()
+                 findNavController().navigate(R.id.pagerFragment, bundle)
+
+             }
+
         }
         return binding.root
     }

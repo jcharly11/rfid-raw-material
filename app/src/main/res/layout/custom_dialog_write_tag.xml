@@ -37,6 +37,12 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/navy_800"></LinearLayout>
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -45,9 +51,9 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textAlignment="center"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:gravity="center_vertical|center_horizontal"/>
 
         <TextView
             android:id="@+id/tvQuestionDialog"
@@ -57,9 +63,9 @@
             android:text="@string/progress_write"
             android:textColor="@color/white"
             android:textSize="15sp"
-            android:textAlignment="center"
             android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginRight="15dp"
+            android:gravity="center_horizontal|center_vertical"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,8 +74,8 @@
             android:gravity="center_vertical|center_horizontal"
             android:orientation="horizontal">
             <TextView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:background="@drawable/ic_scan"
                 android:backgroundTint="@color/white"></TextView>
 

@@ -1,6 +1,7 @@
 package com.checkpoint.rfid_raw_material.ui.inventory.read
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
@@ -22,7 +23,8 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
     }
 
     fun getTagsListLive(readNumber:Int): LiveData<List<Tags>>{
-        return repository.getTagsListLive(readNumber)
+        val listData=repository.getTagsListLive(readNumber)
+         return listData
     }
 
     suspend fun getTagsList(readNumber:Int): List<Tags> = withContext(
@@ -47,10 +49,7 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
         repository.getTagsListForLogs(readNumber)
     }
 
-    fun disconnectDevice() {
 
-
-    }
 
     fun saveReadNumber(readNumber: Int){
         localSharedPreferences.saveReadNumber(readNumber)
@@ -58,6 +57,11 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
 
     fun getReadNumber():Int{
         return localSharedPreferences.getReadNumber()
+    }
+
+    suspend fun deleteCapturedData():Boolean = withContext(Dispatchers.IO){
+        repository.deleteTagsInInventory()
+        repository.countTags().equals(0)
     }
 
 }

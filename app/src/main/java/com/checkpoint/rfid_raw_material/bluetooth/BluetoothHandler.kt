@@ -29,25 +29,21 @@ class BluetoothHandler(context: Context) {
         return   bluetoothAdapter.state
     }
 
-    @SuppressLint("MissingPermission")
     fun list(): MutableSet<BluetoothDevice>? {
         return bluetoothAdapter.bondedDevices
 
     }
 
-    @SuppressLint("MissingPermission")
     fun discovey() {
         val finish =
             bluetoothAdapter.startDiscovery()
-        Log.e("Dsicovery result","$finish")
+        Log.e("Discovery result","$finish")
     }
 
-    @SuppressLint("MissingPermission")
     fun stopDiscovey(){
         bluetoothAdapter.cancelDiscovery()
     }
 
-    @SuppressLint("MissingPermission")
     fun pair(device: BluetoothDevice):Boolean{
         return device.createBond()
 

@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.utils
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.ui.inventory.items.ItemsReadFragment
 import com.checkpoint.rfid_raw_material.ui.inventory.read.ReadInventoryFragment
 

@@ -1,7 +1,23 @@
 package com.checkpoint.rfid_raw_material.ui.handheld
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 
-class HandHeldConfigViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class HandHeldConfigViewModel(application: Application) : AndroidViewModel(application) {
+
+    private var  localPreferences = LocalPreferences(application)
+
+
+    fun saveConfigToPreferences(sessionSelected: String, maxPower: Int) {
+        localPreferences.saveMaxToPreferences(maxPower)
+        localPreferences.saveSessionToPreferences(sessionSelected)
+    }
+
+    fun getConfigFromPreferences():Pair<Int, String>{
+
+        return Pair(localPreferences.getMaxFromPreferences(),
+            localPreferences.getSessionFromPreferences())
+
+    }
 }

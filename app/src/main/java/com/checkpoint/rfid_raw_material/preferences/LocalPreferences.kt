@@ -10,15 +10,21 @@ class LocalPreferences(application: Application) {
     private var sharedPreferences: SharedPreferences
     private var flagPowerValue:String? = null
     private var flagPauseValue:String? = null
+    private var flagSessionValue:String? = null
+
     private var selectedLanguageValue:String? = null
     private var readNumber:String? = null
+    private var tokenLicense:String? = null
 
     init{
         sharedPreferences = application.getSharedPreferences("config_device", Context.MODE_PRIVATE)
         flagPowerValue= application.resources.getString(R.string.power_config_settings)
         flagPauseValue= "pause"
+        flagSessionValue= "session"
+
         selectedLanguageValue="language"
         readNumber="0"
+        tokenLicense=""
     }
 
     fun saveMaxToPreferences(maxPower : Int){
@@ -29,9 +35,27 @@ class LocalPreferences(application: Application) {
     }
 
     fun getMaxFromPreferences():Int{
-        return sharedPreferences.getInt(flagPowerValue,10)
+        val mp  = sharedPreferences.getInt(flagPowerValue,150)
+        Log.e("---getMaxFromPreferences-->",""+mp)
+
+         return mp
     }
 
+    fun saveSessionToPreferences(session : String){
+        return with (sharedPreferences.edit()) {
+            putString(flagSessionValue, session)
+            apply()
+        }
+    }
+
+    fun getSessionFromPreferences():String{
+       val ss  = sharedPreferences.getString(flagSessionValue,"SESSION_0")!!
+        if (ss.isEmpty()){}
+
+        Log.e("---getSessionFromPreferences-->",""+ss)
+
+        return ss
+    }
     fun setPauseStatus(status: Boolean){
         return with (sharedPreferences.edit()) {
             putBoolean(flagPauseValue, status)
@@ -63,6 +87,18 @@ class LocalPreferences(application: Application) {
 
     fun getReadNumber():Int{
         return sharedPreferences.getInt(readNumber,0)
+    }
+
+    fun setTokenLicense(token: String){
+        return with (sharedPreferences.edit()) {
+            putString(tokenLicense, token)
+            apply()
+        }
+    }
+
+
+    fun getLicenseToken():String{
+        return sharedPreferences.getString(tokenLicense,"")!!
     }
 
 }

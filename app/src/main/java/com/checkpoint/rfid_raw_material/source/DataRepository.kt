@@ -32,8 +32,8 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
     }
 
 
-    suspend fun getProviders():List<Provider> = withContext(Dispatchers.IO) {
-        localDataSource.providerDao().getProviders()
+    fun getProviders():LiveData<List<Provider>> {
+        return localDataSource.providerDao().getProviders()
     }
 
     suspend fun insertNewProvider(provider: Provider):Provider = withContext(Dispatchers.IO) {
@@ -80,6 +80,23 @@ class DataRepository(private val localDataSource: RawMaterialsDatabase) {
             list[0].readNumber+1
         else
             1
+    }
+
+    fun deleteTagsInInventory() {
+        localDataSource.tagsDao().deleteAllTags()
+    }
+
+    suspend fun countTags(): Int= withContext(Dispatchers.IO){
+        localDataSource.tagsDao().getTagsList().size
+    }
+
+    fun deleteProvider(idProvider:Int) {
+        localDataSource.providerDao().deleteProvider(idProvider)
+    }
+
+    suspend fun getProvider(idProvider:Int):Int= withContext(Dispatchers.IO) {
+        var provider= localDataSource.providerDao().getProvider(idProvider)
+        provider.size
     }
 
 }

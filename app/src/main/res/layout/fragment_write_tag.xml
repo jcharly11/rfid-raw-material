@@ -51,12 +51,12 @@
                     android:layout_height="match_parent"
                     android:orientation="horizontal"
                     android:layout_marginLeft="25dp"
-                    android:layout_marginRight="15dp">
+                    android:layout_marginRight="5dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="8.5"
+                        android:layout_weight="7"
                         android:background="@drawable/bg_custom_entry"
                         android:paddingLeft="8dp">
                         <LinearLayout
@@ -103,6 +103,25 @@
                             app:backgroundTint="@color/navy"
                             app:fabCustomSize="35dp"
                             app:maxImageSize="30dp"
+                            app:tint="@color/white"
+                            android:layout_gravity="center_vertical"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:paddingLeft="2dp"
+                        android:gravity="center_vertical">
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/btnRemoveProvider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_trash"
+                            app:backgroundTint="@color/red_ckp"
+                            app:fabCustomSize="35dp"
+                            app:maxImageSize="25dp"
                             app:tint="@color/white"
                             android:layout_gravity="center_vertical"></com.google.android.material.floatingactionbutton.FloatingActionButton>
                     </LinearLayout>

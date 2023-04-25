@@ -1,6 +1,8 @@
 package com.checkpoint.rfid_raw_material.ui.selection
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,29 +20,24 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
-import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
-import com.checkpoint.rfid_raw_material.enums.TypeLoading
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogLoader
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
-import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
 
-
-class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
+class OptionsWriteFragment : Fragment(){
 
     private lateinit var viewModel: OptionsWriteViewModel
     private var _binding: FragmentOptionsWriteBinding? = null
     private val binding get() = _binding!!
     private var activityMain: MainActivity? = null
     var doubleBackPressed = false
-    private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
-    private lateinit var dialogSelectPairDevices: DialogSelectPairDevices
-    private var bluetoothHandler: BluetoothHandler? = null
     private var deviceName: String? = null
+    private var dialogLookingForDevice: DialogLookingForDevice? = null
+    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
 
 
-    private lateinit var dialogLoaderHandHeld: CustomDialogLoader
+
+
 
     @SuppressLint("MissingPermission")
     override fun onCreateView(
@@ -51,58 +48,23 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
         viewModel = ViewModelProvider(this)[OptionsWriteViewModel::class.java]
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
+        dialogLookingForDevice  = DialogLookingForDevice(requireContext())
+        dialogErrorDeviceConnected =  DialogErrorDeviceConnected(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             exitApp()
         }
 
-        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this@OptionsWriteFragment)
-        bluetoothHandler = BluetoothHandler(requireContext())
-        val devices = bluetoothHandler!!.list()
-        var devicesRFID = listOf<String>()
 
-        if (devices != null) {
-            if (devices.size > 0){
 
-                for (device in devices) {
-                    if (device.name.contains("RFD8500")) {
-                        devicesRFID += device.name
-                    }
-                }
-                if (devicesRFID.size>1){
 
-                    dialogSelectPairDevices = DialogSelectPairDevices(
-                        this@OptionsWriteFragment,
-                         devicesRFID)
-                    dialogSelectPairDevices.show()
-                }else{
-
-                    if(devicesRFID.isNotEmpty()){
-
-                        deviceName = devicesRFID.get(0)
-                    }else{
-                        dialogErrorDeviceConnected.show()
-
-                    }
-                }
-
-            }else{
-                dialogErrorDeviceConnected.show()
-                // DIALOG TURN ON BLUETOOTH
-            }
-
-        }
-
-        dialogLoaderHandHeld = CustomDialogLoader(
-            this@OptionsWriteFragment,
-            TypeLoading.BLUETOOTH_DEVICE
-        )
 
         binding.btnInventory.setOnClickListener {
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
-            findNavController().navigate(R.id.inventoryPagerFragment,bundle)
+            findNavController().navigate(R.id.pagerFragment, bundle)
+
         }
         binding.btnWriteTag.setOnClickListener {
             val bundle = bundleOf(
@@ -110,42 +72,74 @@ class OptionsWriteFragment : Fragment(),SelectDeviceDialogInterface{
             )
             findNavController().navigate(R.id.writeTagFragment, bundle)
         }
+        activityMain!!.deviceConnected.observe(viewLifecycleOwner) {
+            if(it){
+
+                dialogLookingForDevice!!.dismiss()
+                binding.tvDeviceSelected.text = activityMain!!.deviceName
+
+            }
+
+        }
+        activityMain!!.showErrorDeviceConnected.observe(viewLifecycleOwner){
+            if(dialogLookingForDevice!!.isShowing){
+                dialogLookingForDevice!!.dismiss()
+             }
+
+            binding.btnInventory.isEnabled = false
+            binding.btnWriteTag.isEnabled = false
+            dialogErrorDeviceConnected!!.show()
 
 
-        Log.e("DEVICE SELECTED ","$deviceName")
+        }
+
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        activityMain!!.batteryView!!.visibility = View.GONE
-        activityMain!!.btnHandHeldGun!!.visibility = View.GONE
-        activityMain!!.lyCreateLog!!.visibility = View.GONE
-    }
 
 
-
-    override fun onStart() {
-        super.onStart()
-        (activity as AppCompatActivity).supportActionBar!!.show()
-    }
-
-    fun exitApp(){
-        if(doubleBackPressed){
+        private fun exitApp() {
+        if (doubleBackPressed) {
             System.exit(0)
         }
-        doubleBackPressed=true
-        Toast.makeText(context, resources.getText(R.string.press_back_again), Toast.LENGTH_SHORT).show()
+        doubleBackPressed = true
+        Toast.makeText(
+            context,
+            resources.getText(R.string.press_back_again),
+            Toast.LENGTH_SHORT
+        )
+            .show()
 
         Handler(Looper.getMainLooper()).postDelayed(Runnable {
             doubleBackPressed = false
         }, 2000)
     }
 
-    override fun setDevice(device: String) {
-        Log.e("DEVICE SELECTED:", "$device")
-        deviceName = device
-        dialogSelectPairDevices.dismiss()
+
+
+
+    override fun onStart() {
+        super.onStart()
+        (activity as AppCompatActivity).supportActionBar!!.show()
+
+        dialogLookingForDevice!!.show()
+        activityMain!!.startDeviceConnection()
+
+
+        enableBarButtons()
     }
+
+
+
+
+    fun enableBarButtons(){
+        activityMain!!.batteryView!!.visibility = View.INVISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
+        activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
+    }
+
+
+
 
 }

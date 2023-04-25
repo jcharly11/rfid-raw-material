@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.utils.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.Window
 import android.widget.ArrayAdapter
@@ -12,10 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.adapter.DevicesListAdapter
-import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 
-class DialogSelectPairDevices(private val fragment: Fragment,val devices: List<String>): Dialog(fragment.requireContext()) {
+class DialogSelectPairDevices(val devices: List<String>,context: Context) : Dialog(context) {
    lateinit var  selectDeviceDialogInterface: SelectDeviceDialogInterface
    private var device =String()
     init {
@@ -36,7 +36,7 @@ class DialogSelectPairDevices(private val fragment: Fragment,val devices: List<S
         listDevices.adapter = adapter
 
 
-         selectDeviceDialogInterface = fragment as SelectDeviceDialogInterface
+         selectDeviceDialogInterface = context as SelectDeviceDialogInterface
 
         buttonSelectDevice.setOnClickListener {
 

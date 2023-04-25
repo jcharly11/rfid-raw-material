@@ -14,41 +14,61 @@
         <LinearLayout
              android:layout_width="300dp"
             android:layout_height="280dp"
-            android:background="@drawable/bg_custom_dialog"
+            android:background="@color/navy"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center_vertical"
-                android:gravity="right"
+                android:gravity="center_vertical"
                 android:paddingRight="10dp">
 
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Check fields"
+                    android:textColor="@color/white"
+                    android:textSize="17sp"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"></TextView>
                 </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:background="@color/gray"></LinearLayout>
+                android:layout_height="3dp"
+                android:background="@color/red_ckp"></LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20dp"
-                android:weightSum="1"
                 android:gravity="center">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="6"
+                    android:gravity="center_vertical|center_horizontal">
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:background="@drawable/ic_warning"
+                        android:backgroundTint="@color/white"></TextView>
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="4"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="No empty fields allowed"
-                    android:textColor="@color/red_ckp"
+                    android:text="@string/empty_fields"
+                    android:textColor="@color/white"
                     android:gravity="center"
-                    android:textSize="25dp"></TextView>
+                    android:textSize="20dp"></TextView>
 
 
             </LinearLayout>

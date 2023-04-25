@@ -41,8 +41,8 @@
     <string name="new_provider">New Provider</string>
     <string name="check_fields">Validate all fields</string>
     <string name="tags_list">Tags List</string>
-    <string name="finish_inventory_title">Finish Inventory</string>
-    <string name="finish_inventory_question">Do you want finish inventory?</string>
+    <string name="finish_inventory_title">Do you want finish inventory?</string>
+    <string name="finish_inventory_question">The progress will lost, and not will be save log</string>
     <string name="pause_inventory_title">Pause Inventory</string>
     <string name="pause_inventory_question">Do you want pause inventory?</string>
     <string name="start_inventory_title">Start Inventory</string>
@@ -56,7 +56,27 @@
     <string name="progress_write">the progress will lost, and not will be save log</string>
     <string name="error_log">No data exists to save</string>
     <string name="press_back_again">Press again back button to exit</string>
+    <string name="validate_license_text">Validate license</string>
+    <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your and press trigger again</string>
+    <string name="dialog_error_writing_tags"> Error while writing tag</string>
 
-    <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your area in order to read only one</string>
+    <string name="accept_permissions">You need to accept all permissions</string>
+    <string name="blank_field">Blank Field</string>
+    <string name="validate_license">Validate licence</string>
+    <string name="invalidate_token">Invalidate Token</string>
+    <string name="token_error">Check that token is valid and has not expired</string>
+    <string name="validate">Validate</string>
+    <string name="license_send_code">Send the code below to: support@checkpt.com in order to get a valid license</string>
+    <string name="paste_license">Paste your license here</string>
+    <string name="id_copied">Id copied to clipboard</string>
+    <string name="remove_provider">Remove Provider</string>
+    <string name="remove_provider_question">Do you want remove provider?</string>
+    <string name="epc_data">EPC Data</string>
+    <string name="looking_device">Looking for device</string>
+    <string name="device_unavailable">Device unavailable</string>
+    <string name="empty_fields">No empty fields allowed</string>
+    <string name="connecting">Connecting...</string>
+    <string name="error">Error</string>
+    <string name="warning">Warning</string>
 
 </resources>
