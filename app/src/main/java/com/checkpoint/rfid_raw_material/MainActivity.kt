@@ -126,9 +126,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
       btnHandHeldGun!!.setOnClickListener {
 
-          val navController = findNavController(R.id.nav_host_fragment_content_main)
-          navController.navigate(R.id.handHeldConfigFragment)
+          val readNumber= getReadNumber()
 
+          val bundle = bundleOf(
+              "readNumber" to readNumber)
+
+          val navController = findNavController(R.id.nav_host_fragment_content_main)
+          navController.navigate(R.id.handHeldConfigFragment,bundle)
 
         }
 
@@ -449,6 +453,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         _maxPowerList.postValue(level)
     }
 
+    fun getReadNumber():Int {
+        return localSharedPreferences!!.getReadNumber()
+    }
 
 
 }
