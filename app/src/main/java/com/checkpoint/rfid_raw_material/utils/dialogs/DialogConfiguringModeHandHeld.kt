@@ -15,7 +15,7 @@ class DialogConfiguringModeHandHeld(private val fragment: Fragment): Dialog(frag
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.dialog_configuring_mode_handheld)
+        setContentView(R.layout.dialog_write_tag_success)
 
     }
 

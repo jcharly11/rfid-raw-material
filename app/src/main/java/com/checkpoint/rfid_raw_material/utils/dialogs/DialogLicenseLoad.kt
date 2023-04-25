@@ -15,8 +15,7 @@ import com.checkpoint.rfid_raw_material.adapter.DevicesListAdapter
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 
 class DialogLicenseLoad(private val fragment: Fragment, val deviceId: String): Dialog(fragment.requireContext()) {
-   lateinit var  selectDeviceDialogInterface: SelectDeviceDialogInterface
-   private var device =String()
+
     init {
         setCancelable(false)
     }

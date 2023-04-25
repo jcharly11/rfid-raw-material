@@ -16,11 +16,12 @@ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
+class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
 
     private var _binding: FragmentConfirmWriteTagBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +35,7 @@ class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
     private var dialogWriteTag: CustomDialogWriteTag? = null
     private var dialogLoadingWrite: DialogPrepareTrigger? = null
     private var dialogERRORWriting: DialogErrorWritingTag? = null
+    private var dialogWriteTagSuccess: DialogWriteTagSuccess? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +54,7 @@ class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
         dialogWriteTag = CustomDialogWriteTag(this@ConfirmWriteTagFragment)
         dialogLoadingWrite = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogERRORWriting = DialogErrorWritingTag(this@ConfirmWriteTagFragment)
-
+        dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
 
         binding.edtTagEPC.setText(epc)
@@ -67,11 +69,6 @@ class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
             )
             findNavController().navigate(R.id.writeTagFragment,bundle)
         }
-        activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
-            if(it){
-                dialogErrorMultipleTags!!.show()
-            }
-        }
 
         activityMain!!.showDialogWritingTag.observe(viewLifecycleOwner){
             if(it){
@@ -80,31 +77,44 @@ class ConfirmWriteTagFragment : Fragment(), CustomDialogWriteTagInterface {
                 dialogLoadingWrite!!.dismiss()
             }
         }
-        activityMain!!.showDialogWritingError.observe(viewLifecycleOwner){
 
-            if (it){
-                dialogERRORWriting!!.show()
+        activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
+            if(it){
+                dialogErrorMultipleTags!!.show()
             }
         }
 
+        activityMain!!.showDialogWritingError.observe(viewLifecycleOwner){
+            if (it){
+                dialogERRORWriting!!.show()
+            }
 
+        }
+        activityMain!!.showDialogWritingSuccess.observe(viewLifecycleOwner){
+            if(it){
+                dialogWriteTagSuccess!!.show()
+            }
+
+        }
 
         return binding.root
     }
 
+    override fun successRecording() {
+        dialogWriteTagSuccess!!.dismiss()
+        activityMain!!.restartWritingFlags()
+        val bundle = bundleOf(
+            "readNumber" to readNumber
+        )
+
+         findNavController().navigate(R.id.writeTagFragment, bundle)
+     }
+
     override fun onStart() {
         super.onStart()
-       activityMain!!.stopReadedBarCode()
+        activityMain!!.stopReadedBarCode()
         activityMain!!.startRFIDReadInstance(true,this.epc!!)
 
-    }
-
-    override fun finishWrite() {
-        TODO("Not yet implemented")
-    }
-
-    override fun closeDialogWrite() {
-        TODO("Not yet implemented")
     }
 
 }

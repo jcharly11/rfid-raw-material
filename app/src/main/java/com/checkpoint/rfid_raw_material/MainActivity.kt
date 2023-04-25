@@ -59,12 +59,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     LevelPowerListHandlerInterface{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    var btnHandHeldGun: AppCompatImageView? = null
-    var batteryView: CustomBattery? = null
-    var btnCreateLog: AppCompatImageView? = null
-    var lyCreateLog: LinearLayout? = null
     lateinit var device: Device
-    var deviceName: String = String()
 
 
     private var readNumber: Int = 0
@@ -75,19 +70,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
 
-    private val requestPermissions12 by lazy {
-        permissionsBuilder(
-            Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_ADVERTISE
-        ).build()
-    }
-    private val requestPermissions11 by lazy {
-        permissionsBuilder(
-            Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_SCAN,Manifest.permission.BLUETOOTH_ADVERTISE, Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ).build()
-    }
 
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
     var liveCode: LiveData<String> = _liveCode
@@ -117,6 +99,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private val _showDialogWritingError: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogWritingError: LiveData<Boolean> = _showDialogWritingError
 
+    private val _showDialogWritingSuccess: MutableLiveData<Boolean> = MutableLiveData()
+    var showDialogWritingSuccess: LiveData<Boolean> = _showDialogWritingSuccess
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -358,7 +342,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     override fun connected(status: Boolean) {
-        TODO("Not yet implemented")
+        Log.e("connected", "$status")
     }
 
     override fun writingTagStatus(status: Boolean) {
@@ -368,14 +352,15 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         if(status){
 
             this.writeEnable = false
-
+            _showDialogWritingSuccess.postValue(true)
+/*
             val bundle = bundleOf(
                 "readNumber" to readNumber
             )
 
             val navController = findNavController(R.id.nav_host_fragment_content_main)
             navController.navigate(R.id.writeTagFragment, bundle)
-            _liveCode.value = ""
+            _liveCode.value = ""*/
 
         }else{
 
@@ -441,6 +426,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     fun resetBarCode() {
         _liveCode.value = ""
+    }
+    fun restartWritingFlags(){
+        _showErrorNumberTagsDetected.postValue(false)
+        _showDialogWritingError.postValue(false)
+        _showDialogWritingSuccess.postValue(false)
     }
 
     private fun createDeviceInstance(deviceName: String) {

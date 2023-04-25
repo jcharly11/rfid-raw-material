@@ -52,7 +52,6 @@ class WriteTagFragment : Fragment(),
     var idSupplier=  String()
 
 
-    private var deviceStarted = false
     private var activityMain: MainActivity? = null
     private var readNumber: Int? = 0
     private var deviceName: String? = null
@@ -229,14 +228,6 @@ class WriteTagFragment : Fragment(),
         dialogProvider.dismiss()
     }
 
-
-    override fun onStart() {
-        super.onStart()
-        deviceStarted = true
-
-
-
-    }
 
 
     override fun closeDialogRemoveProvider() {
