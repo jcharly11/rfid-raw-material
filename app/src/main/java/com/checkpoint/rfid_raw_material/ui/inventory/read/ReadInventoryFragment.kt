@@ -139,6 +139,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
 
     override fun closeDialog() {
         dialog.dismiss()
+
     }
 
 

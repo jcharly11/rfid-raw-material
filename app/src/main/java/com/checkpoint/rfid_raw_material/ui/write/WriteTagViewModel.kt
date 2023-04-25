@@ -30,6 +30,7 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
     init {
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
+
         )
 
 

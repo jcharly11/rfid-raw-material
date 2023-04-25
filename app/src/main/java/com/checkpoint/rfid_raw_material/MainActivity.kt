@@ -252,8 +252,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             singleTag = tagData?.get(0)?.tagID.toString()
 
         }else{
-            val isPause = localSharedPreferences!!.getPauseStatus()
-            if(!isPause){
+
                 tagData!!.iterator().forEachRemaining {
                     if (it!!.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
                         it!!.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
@@ -267,7 +266,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                         newTag(it!!.tagID.toString(), readNumber)
                     }
                 }
-            }
+
 
         }
 
@@ -277,7 +276,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun handleTriggerPress(pressed: Boolean) {
         Log.e("handleTriggerPress", "${pressed}")
 
-
+        val isPause = localSharedPreferences!!.getPauseStatus()
+        if(!isPause){
         if (pressed) {
             tagsDetected=0
             deviceInstanceRFID!!.perform()
@@ -300,6 +300,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
                 }
             }
+
+        }
 
         }
     }
