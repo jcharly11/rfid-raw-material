@@ -99,6 +99,7 @@ dependencies {
     // If you want the extensions for the Kotlin coroutines.
     implementation 'com.github.fondesa:kpermissions-coroutines:3.4.0'
 
+    implementation ('io.sentry:sentry-android:6.3.0')
 
 }
 
