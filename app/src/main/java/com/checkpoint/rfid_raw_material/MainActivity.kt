@@ -37,10 +37,8 @@ import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.isDenied
 import com.fondesa.kpermissions.isGranted
 import com.fondesa.kpermissions.request.PermissionRequest
+import com.zebra.rfid.api3.*
 
-import com.zebra.rfid.api3.ReaderDevice
-import com.zebra.rfid.api3.Readers
-import com.zebra.rfid.api3.TagData
 import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -114,6 +112,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     private val _showDialogWritingTag: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogWritingTag: LiveData<Boolean> = _showDialogWritingTag
+
+
+    private val _showDialogWritingError: MutableLiveData<Boolean> = MutableLiveData()
+    var showDialogWritingError: LiveData<Boolean> = _showDialogWritingError
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -260,16 +263,24 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             tagsDetected ++
             singleTag = tagData?.get(0)?.tagID.toString()
 
-
-
         }else{
-            tagData!!.iterator().forEachRemaining {
-                Log.e("TAG DATA","${it!!.tagID.toString()}")
+            val isPause = localSharedPreferences!!.getPauseStatus()
+            if(!isPause){
+                tagData!!.iterator().forEachRemaining {
+                    if (it!!.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                        it!!.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
+                        if (it!!.memoryBankData.length > 0) {
+                            Log.d("TAG", "Sequence=  ,Mem Bank Data " + it!!.memoryBankData);
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    newTag(it!!.tagID.toString(), readNumber)
+                        }
+                    }
+                    Log.e("TAG DATA","${it!!.tagID.toString()}")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        newTag(it!!.tagID.toString(), readNumber)
+                    }
                 }
             }
+
         }
 
     }
@@ -336,7 +347,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun batteryLevel(level: Int) {
         Log.e("BatteryLevel current", "${level}")
+        batteryView!!.setPercent(level)
         _batteryLevel.postValue(level)
+
     }
 
 
@@ -350,16 +363,26 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun writingTagStatus(status: Boolean) {
         Log.e("writingTagStatus", "${status}")
-        this.writeEnable = false
         _showDialogWritingTag.postValue(false)
 
-        val bundle = bundleOf(
-            "readNumber" to readNumber
-        )
+        if(status){
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        navController.navigate(R.id.writeTagFragment, bundle)
-        _liveCode.value = ""
+            this.writeEnable = false
+
+            val bundle = bundleOf(
+                "readNumber" to readNumber
+            )
+
+            val navController = findNavController(R.id.nav_host_fragment_content_main)
+            navController.navigate(R.id.writeTagFragment, bundle)
+            _liveCode.value = ""
+
+        }else{
+
+            _showDialogWritingError.postValue(true)
+        }
+
+
     }
 
 

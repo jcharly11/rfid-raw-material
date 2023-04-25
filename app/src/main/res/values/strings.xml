@@ -58,6 +58,8 @@
     <string name="press_back_again">Press again back button to exit</string>
     <string name="validate_license_text">Validate license</string>
     <string name="dialog_error_multiple_tags"> More than one tag detected, please clean your and press trigger again</string>
+    <string name="dialog_error_writing_tags"> Error while writing tag</string>
+
     <string name="accept_permissions">You need to accept all permissions</string>
     <string name="blank_field">Blank Field</string>
     <string name="validate_license">Validate licence</string>
