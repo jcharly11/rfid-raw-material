@@ -86,20 +86,22 @@ class HandHeldConfigFragment : Fragment() {
             }
         })
         val regionList: MutableList<String> = mutableListOf()
-        regionList += "SESSION_0"
+        //regionList += "SESSION_0"
         regionList += "SESSION_1"
+        regionList += "SESSION_2"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
 
         when(session){
-            "SESSION_0"->{
+           /* "SESSION_0"->{
                 binding.listRegions.setText("SESSION_0")
 
-            }
+            }*/
             "SESSION_1"->{
                 binding.listRegions.setText("SESSION_1")
-
             }
-
+            "SESSION_2"->{
+                binding.listRegions.setText("SESSION_2")
+            }
         }
         binding.listRegions.setAdapter(adapter)
 
@@ -107,8 +109,15 @@ class HandHeldConfigFragment : Fragment() {
 
              viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
                  binding.seekBarPower.progress ).apply {
-                findNavController().popBackStack()
-            }
+                 val bundle = bundleOf(
+                     "needTag" to true,
+                     "session" to sessionSelected,
+                     "readNumber" to readNumber
+                 )
+                //findNavController().popBackStack()
+                 findNavController().navigate(R.id.pagerFragment, bundle)
+
+             }
 
         }
         return binding.root

@@ -36,6 +36,9 @@ class PagerFragment : Fragment() {
         activityMain = requireActivity() as MainActivity
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
+        var readNumber = arguments?.getInt("readNumber")
+        if(readNumber==null)
+            readNumber= 0
 
         val viewPager = binding.pager
         val tabLayout = binding.tabLayout
@@ -46,7 +49,7 @@ class PagerFragment : Fragment() {
 
 
 
-        viewPager.adapter = PagerAdapter(this@PagerFragment, 0)
+        viewPager.adapter = PagerAdapter(this@PagerFragment, readNumber)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = itemsTitle[position]
         }.attach()
@@ -66,7 +69,7 @@ class PagerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityMain!!.startRFIDReadInstance(false,"")
+        //activityMain!!.startRFIDReadInstance(false,"")
     }
 
 

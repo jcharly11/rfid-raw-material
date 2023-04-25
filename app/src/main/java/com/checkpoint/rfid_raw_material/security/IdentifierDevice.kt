@@ -3,7 +3,7 @@ package com.checkpoint.rfid_raw_material.security
 import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings
-import io.sentry.Sentry
+//import io.sentry.Sentry
 
 class IdentifierDevice(private val context: Context){
 
@@ -17,7 +17,7 @@ class IdentifierDevice(private val context: Context){
 
 
         } catch (ex: Exception) {
-            Sentry.captureMessage("${ex.message}")
+            //Sentry.captureMessage("${ex.message}")
             ""
         }
     }
