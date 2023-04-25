@@ -38,10 +38,8 @@ class HandHeldConfigFragment : Fragment() {
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            val bundle = bundleOf(
-                "readNumber" to readNumber
-            )
-            findNavController().navigate(R.id.pagerFragment, bundle)
+
+            findNavController().popBackStack()
         }
 
         var config = viewModel.getConfigFromPreferences()

@@ -1,25 +1,18 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
 
@@ -54,7 +47,6 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         dialogWriteTag = CustomDialogWriteTag(this@ConfirmWriteTagFragment)
         dialogLoadingWrite = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogERRORWriting = DialogErrorWritingTag(this@ConfirmWriteTagFragment)
-        dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
 
         binding.edtTagEPC.setText(epc)
@@ -92,6 +84,7 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         }
         activityMain!!.showDialogWritingSuccess.observe(viewLifecycleOwner){
             if(it){
+                dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment,epc)
                 dialogWriteTagSuccess!!.show()
             }
 
