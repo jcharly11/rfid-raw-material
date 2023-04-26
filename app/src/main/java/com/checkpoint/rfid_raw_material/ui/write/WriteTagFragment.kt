@@ -49,7 +49,7 @@ class WriteTagFragment : Fragment(),
     private val binding get() = _binding!!
 
     var idProvider: Int = 0
-    var idSupplier=  String()
+    var idSupplier = String()
 
 
     private var activityMain: MainActivity? = null
@@ -69,7 +69,7 @@ class WriteTagFragment : Fragment(),
         dialogBarcodeReaderStatus = DialogBarcodeReaderStatus(this@WriteTagFragment)
         dialogErrorEmptyFields = DialogErrorEmptyFields(this@WriteTagFragment)
         dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
-        dialogRemoveProvider =  CustomDialogRemoveProvider(this@WriteTagFragment)
+        dialogRemoveProvider = CustomDialogRemoveProvider(this@WriteTagFragment)
 
         activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
         activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
@@ -84,22 +84,28 @@ class WriteTagFragment : Fragment(),
         deviceName = arguments?.getString("deviceName")
 
         CoroutineScope(Dispatchers.Main).launch {
-            if (readNumber == null || readNumber==0) {
+            if (readNumber == null || readNumber == 0) {
                 readNumber = viewModel.getNewReadNumber()
             }
         }
 
-         activityMain!!.liveCode.observe(viewLifecycleOwner) {
+        activityMain!!.liveCode.observe(viewLifecycleOwner) {
             binding.tvIdentifier.setText(it.trim())
         }
 
 
-        viewModel.getProvidersList().observe(viewLifecycleOwner){
-            var listProviders:MutableList<ProviderModel> = mutableListOf()
+        viewModel.getProvidersList().observe(viewLifecycleOwner) {
+            var listProviders: MutableList<ProviderModel> = mutableListOf()
+
 
             it.iterator().forEachRemaining {
-                listProviders.add(ProviderModel(it.id,it.idAS,it.name))
+                listProviders.add(ProviderModel(it.id, it.idAS, it.name))
             }
+
+            if (listProviders.size == 0)
+                binding.btnRemoveProvider.visibility = View.GONE
+            else
+                binding.btnRemoveProvider.visibility = View.VISIBLE
 
             val adapter: ArrayAdapter<ProviderModel> =
                 ArrayAdapter<ProviderModel>(
@@ -118,8 +124,7 @@ class WriteTagFragment : Fragment(),
                         id: Long
                     ) {
                         idProvider = listProviders[position].id
-                        idSupplier= listProviders[position].idAS!!
-
+                        idSupplier = listProviders[position].idAS!!
                     }
 
                     override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -139,14 +144,17 @@ class WriteTagFragment : Fragment(),
 
                     if (versionValue.isNotEmpty() &&
                         subversionValue.isNotEmpty() &&
-                        typeValue.isNotEmpty() && pieceValue.isNotEmpty()
+                        typeValue.isNotEmpty() && pieceValue.isNotEmpty() &&
+                        idProvider > 0
                     ) {
 
-                      val hexValueEpc = viewModel.calculateEPC(versionValue,
-                          subversionValue,
-                          typeValue,
-                          idSupplier,
-                          pieceValue)
+                        val hexValueEpc = viewModel.calculateEPC(
+                            versionValue,
+                            subversionValue,
+                            typeValue,
+                            idProvider.toString(),
+                            pieceValue
+                        )
 
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
@@ -182,12 +190,13 @@ class WriteTagFragment : Fragment(),
         }
 
         binding.btnFinishWrite.setOnClickListener {
-             dialogWriteTag.show()
+            dialogWriteTag.show()
         }
 
 
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityMain!!.startBarCodeReadInstance()
@@ -203,6 +212,7 @@ class WriteTagFragment : Fragment(),
             CoroutineScope(Dispatchers.Main).launch {
                 viewModel.newProvider(idProvider.toInt(), idASProvider, nameProvider)
             }
+            binding.btnRemoveProvider.visibility = View.VISIBLE
             closeDialog()
         } else
             Toast.makeText(
@@ -229,7 +239,6 @@ class WriteTagFragment : Fragment(),
     }
 
 
-
     override fun closeDialogRemoveProvider() {
         dialogRemoveProvider.dismiss()
     }
@@ -237,10 +246,9 @@ class WriteTagFragment : Fragment(),
     override fun removeProvider() {
         CoroutineScope(Dispatchers.Main).launch {
             viewModel.deleteProvider(idProvider)
-             dialogRemoveProvider.dismiss()
+            dialogRemoveProvider.dismiss()
         }
     }
-
 
 
 }
