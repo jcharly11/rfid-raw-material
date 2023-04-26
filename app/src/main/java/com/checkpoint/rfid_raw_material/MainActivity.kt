@@ -59,7 +59,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     LevelPowerListHandlerInterface{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    lateinit var device: Device
+    private var device: Device? = null
 
 
     private var readNumber: Int = 0
@@ -166,7 +166,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         val mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
-        deviceInstanceRFID = DeviceInstanceRFID(device.getReaderDevice(),mp,sess)
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(),mp,sess)
 
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
@@ -180,7 +180,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     fun startBarCodeReadInstance() {
-        deviceInstanceBARCODE = DeviceInstanceBARCODE(device.getReaderDevice(), applicationContext)
+        deviceInstanceBARCODE = DeviceInstanceBARCODE(device!!.getReaderDevice(), applicationContext)
         deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
     }
 
@@ -241,7 +241,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun onDestroy() {
         super.onDestroy()
-        device.disconnect()
+        device!!.disconnect()
+
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
@@ -254,13 +255,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         }else{
 
                 tagData!!.iterator().forEachRemaining {
-                    if (it!!.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
-                        it!!.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
-                        if (it!!.memoryBankData.length > 0) {
-                            Log.d("TAG", "Sequence=  ,Mem Bank Data " + it!!.memoryBankData);
 
-                        }
-                    }
                     Log.e("TAG DATA","${it!!.tagID.toString()}")
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(it!!.tagID.toString(), readNumber)
@@ -442,7 +437,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private fun createDeviceInstance(deviceName: String) {
 
         device = Device(this, deviceName, this)
-        device.connect()
+        device!!.connect()
     }
 
     override fun setDevice(device: String) {
