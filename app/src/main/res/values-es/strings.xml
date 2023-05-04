@@ -51,6 +51,8 @@
     <string name="cancel">Cancelar</string>
     <string name="configuration">Configuración</string>
     <string name="language">Idioma</string>
+    <string name="reload_device">Reconectar handheld</string>
+
     <string name="finish_write">Finalizar Escritura</string>
     <string name="write_question">¿Deseas terminar la escritura?</string>
     <string name="progress_write">El progreso se perderá y no se podrá guardar el log</string>

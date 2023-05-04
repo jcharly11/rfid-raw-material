@@ -24,7 +24,6 @@ class CustomDialogProvider(private val fragment: Fragment): Dialog(fragment.requ
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.custom_dialog_provider)
-        //setContentView(R.layout.custom_dialog)
         val btnSaveProvider = findViewById<Button>(R.id.btnSaveProvider)
         val btnCloseDialogProvider = findViewById<FloatingActionButton>(R.id.btnCloseDialogProvider)
 

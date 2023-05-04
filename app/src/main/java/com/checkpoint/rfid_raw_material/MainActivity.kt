@@ -209,7 +209,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         var res: Int = 0
 
         result.iterator().forEachRemaining {
-            if (it.isGranted() == true) {
+            if (it.isGranted()) {
                 Log.d(it.permission.toString(), "aceptado")
                 res++
             } else if (it.isDenied()) {
@@ -231,7 +231,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             _deviceConnected.postValue(b)
             localSharedPreferences!!.getSessionFromPreferences().apply {
                 if (this.isEmpty()){
-                    localSharedPreferences!!.saveSessionToPreferences("SESSION_0")
+                    localSharedPreferences!!.saveSessionToPreferences("SESSION_1")
                 }
             }
         } else {

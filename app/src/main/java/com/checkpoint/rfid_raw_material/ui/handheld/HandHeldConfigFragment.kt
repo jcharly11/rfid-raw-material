@@ -84,16 +84,12 @@ class HandHeldConfigFragment : Fragment() {
             }
         })
         val regionList: MutableList<String> = mutableListOf()
-        //regionList += "SESSION_0"
         regionList += "SESSION_1"
         regionList += "SESSION_2"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
 
         when(session){
-           /* "SESSION_0"->{
-                binding.listRegions.setText("SESSION_0")
 
-            }*/
             "SESSION_1"->{
                 binding.listRegions.setText("SESSION_1")
             }

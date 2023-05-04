@@ -12,16 +12,13 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
-import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentWriteTagBinding
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
-import com.checkpoint.rfid_raw_material.utils.Conversor
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogBarcodeReaderStatus
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
@@ -40,7 +37,6 @@ class WriteTagFragment : Fragment(),
     private lateinit var viewModel: WriteTagViewModel
     private lateinit var dialogProvider: CustomDialogProvider
     private lateinit var dialogBarcodeReaderStatus: DialogBarcodeReaderStatus
-    private lateinit var dialogErrorDeviceConnected: DialogErrorDeviceConnected
     private lateinit var dialogErrorEmptyFields: DialogErrorEmptyFields
     private lateinit var dialogWriteTag: CustomDialogWriteTag
     private lateinit var dialogRemoveProvider: CustomDialogRemoveProvider

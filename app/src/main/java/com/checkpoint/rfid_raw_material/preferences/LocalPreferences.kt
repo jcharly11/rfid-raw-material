@@ -49,7 +49,7 @@ class LocalPreferences(application: Application) {
     }
 
     fun getSessionFromPreferences():String{
-       val ss  = sharedPreferences.getString(flagSessionValue,"SESSION_0")!!
+       val ss  = sharedPreferences.getString(flagSessionValue,"SESSION_1")!!
         if (ss.isEmpty()){}
 
         Log.e("---getSessionFromPreferences-->",""+ss)

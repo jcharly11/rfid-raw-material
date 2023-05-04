@@ -51,6 +51,7 @@
     <string name="cancel">Cancel</string>
     <string name="configuration">Configuration</string>
     <string name="language">Language</string>
+    <string name="reload_device">Reconnect handheld</string>
     <string name="finish_write">Finish Write</string>
     <string name="write_question">Do you want finish writing?</string>
     <string name="progress_write">the progress will lost, and not will be save log</string>
