@@ -89,19 +89,21 @@ class HandHeldConfigFragment : Fragment() {
         regionList += "SESSION_2"
         val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
 
-        when(session){
-           /* "SESSION_0"->{
-                binding.listRegions.setText("SESSION_0")
+        binding.listRegions.setAdapter(adapter)
 
-            }*/
+        when(session){
+            /* "SESSION_0"->{
+                 binding.listRegions.setText("SESSION_0")
+
+             }*/
             "SESSION_1"->{
-                binding.listRegions.setText("SESSION_1")
+                binding.listRegions.setText("SESSION_1",false)
             }
             "SESSION_2"->{
-                binding.listRegions.setText("SESSION_2")
+                binding.listRegions.setText("SESSION_2",false)
             }
         }
-        binding.listRegions.setAdapter(adapter)
+
 
         binding.btnSetPower.setOnClickListener {
 
