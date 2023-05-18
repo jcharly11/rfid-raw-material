@@ -15,6 +15,7 @@
             <stringArg name="classpath">
               <args>
                 <arg>$MODULE_DIR$/../../../app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debug/R.jar</arg>
+                <arg>$MODULE_DIR$/../../../app/build/intermediates/compile_app_classes_jar/debug/classes.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/c2a61db93b7d0cd860f3abc67b9e5bd3/transformed/jetified-jjwt-api-0.11.5.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/1e6c48fbdfe03fc486e8e3e858652715/transformed/databinding-runtime-7.2.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/aae8839244c58fd362956061ab3d69bd/transformed/jetified-expandablelayout-1.0.7-api.jar</arg>
@@ -115,7 +116,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/98d6ed1bf134930daf2eb04b1c8a61c2/transformed/jetified-sentry-android-ndk-6.3.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/09ce8119b16bdc61e281801a2882cb6f/transformed/jetified-sentry-android-core-6.3.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/2396f931594c44181875c0b03b83f28f/transformed/jetified-sentry-6.3.0.jar</arg>
-                <arg>$USER_HOME$/.gradle/caches/transforms-3/fcf9d530646d37a98acf0a30871d8742/transformed/jetified-zebra_lib_rfid-api.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/e99bc300d8a52f808c8fe35c8fe006e2/transformed/jetified-zebra_lib_rfid-api.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-32/android.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/build-tools/30.0.3/core-lambda-stubs.jar</arg>
               </args>
@@ -177,8 +178,10 @@
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kapt/debugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kapt/debugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kapt/debugUnitTest" isTestSource="true" generated="true" />
+      <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kapt/debugUnitTest" isTestSource="true" generated="true" />
     </content>
     <content url="file://$MODULE_DIR$/../../../app/build/generated/source/kaptKotlin/debugUnitTest">
+      <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kaptKotlin/debugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kaptKotlin/debugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kaptKotlin/debugUnitTest" isTestSource="true" generated="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../../app/build/generated/source/kaptKotlin/debugUnitTest" isTestSource="true" generated="true" />

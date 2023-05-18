@@ -4,23 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.*
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.model.DeviceConfig
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
-import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
 import com.checkpoint.rfid_raw_material.utils.Conversor
-import com.zebra.rfid.api3.ENUM_TRANSPORT
-import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
-import com.zebra.rfid.api3.SESSION
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 
 @SuppressLint("MissingPermission")
 class WriteTagViewModel (application: Application) : AndroidViewModel(application){
@@ -66,14 +57,14 @@ class WriteTagViewModel (application: Application) : AndroidViewModel(applicatio
         val supplier = conversor.toBinaryString(idProvider.toString().trim(), 32, '0')
         val piece = conversor.toBinaryString(pieceValue, 80, '0')
 
-        Log.e("calculateEPC supplier","$supplier")
-
         val binaryChain = "$version$type$subVersion$piece$supplier"
-        val binaryGroup = binaryChain.chunked(4)
+       conversor.groupBytes(binaryChain)
+       /* val binaryGroup = binaryChain.chunked(4)
         binaryGroup.iterator().forEach {
             hexValueEpc += conversor.toHexadecimalString(it)
         }
-        hexValueEpc
+        hexValueEpc*/
+
 
     }
 

@@ -67,10 +67,7 @@ class WriteTagFragment : Fragment(),
         dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
         dialogRemoveProvider = CustomDialogRemoveProvider(this@WriteTagFragment)
 
-        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
-        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
-        activityMain!!.batteryView!!.visibility = View.VISIBLE
-        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+
 
 
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -196,6 +193,10 @@ class WriteTagFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityMain!!.startBarCodeReadInstance()
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
     }
 
 

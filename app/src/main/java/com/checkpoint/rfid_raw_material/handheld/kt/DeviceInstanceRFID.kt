@@ -11,7 +11,7 @@ import io.sentry.Sentry
 import kotlinx.coroutines.*
 
 
- class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
+class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
                            private  val session_region: String){
 
 
@@ -138,7 +138,8 @@ import kotlinx.coroutines.*
          triggerInfo.StartTrigger.triggerType =
              START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
          triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
-         eventHandler = EventHandler()
+         if(eventHandler == null)
+             eventHandler = EventHandler()
          reader.Events.addEventsListener(eventHandler)
          reader.Events.setBatteryEvent(true)
          reader.Events.setHandheldEvent(true)
@@ -171,7 +172,7 @@ import kotlinx.coroutines.*
              singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
          singulationControl.Action.slFlag = SL_FLAG.SL_ALL
          reader.Config.Antennas.setSingulationControl(1, singulationControl)
-         reader.Actions.PreFilters.deleteAll()
+          reader.Actions.PreFilters.deleteAll()
 
      }
      fun stop(){
@@ -233,7 +234,8 @@ import kotlinx.coroutines.*
          Log.e("tid ", "$tid")
          Log.e("epc", "$epc")
          Log.e("password", "$password")
-        writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
+         writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_USER, epc, 0)
+
 
      }
      @Synchronized
@@ -260,10 +262,11 @@ import kotlinx.coroutines.*
                  sourceEPC,
                  writeAccessParams,
                  null,
-                 tagData,
-                 true,
-                 useTIDfilter
+                 tagData,true,useTIDfilter
              )
+
+             Log.e("tagData.tagID)",tagData.tagID)
+             Log.e("tagData.pc)",tagData.pc.toString())
 
              writingTagInterface!!.writingTagStatus(true)
 
@@ -284,4 +287,32 @@ import kotlinx.coroutines.*
 
      }
 
+
+    fun readData(tid: String){
+        var readAccess = TagAccess().ReadAccessParams()
+        readAccess.accessPassword = 0
+        readAccess.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
+        readAccess.offset = 0
+        var tagData = reader.Actions.TagAccess.readWait(tid,readAccess,null)
+        Log.e("---->",tagData.tagID)
+        Log.e("---->",tagData.pc.toString())
+        if (tagData.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+            tagData.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
+            if (tagData.memoryBankData.isNotEmpty()) {
+                Log.e("TAG DATA", " Mem Bank Data " + tagData.memoryBankData);
+            }
+        }
+
+    }
+    private suspend fun readTask(tid: String){
+        return withContext(Dispatchers.Default) {
+            try {
+
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+            }
+        }
+    }
  }

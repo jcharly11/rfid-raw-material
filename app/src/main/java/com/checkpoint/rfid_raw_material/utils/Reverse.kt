@@ -153,7 +153,7 @@ class Reverse(application: Application) {
 
     fun getProvider(epc: String): Int {
         try {
-            var hexValue = hexadecimalToBinaryString(epc)
+            hexadecimalToBinaryString(epc)
             var supplier: Int = getSupplier().toInt()
             if (supplier.toString().isNullOrEmpty())
                 supplier = 0

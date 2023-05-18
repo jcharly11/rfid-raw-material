@@ -54,6 +54,7 @@ class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: 
 
         reverse.hexToBinary(dataSet[position].epc)
         val idProvider= reverse.getProvider(dataSet[position].epc)
+
         var validTag= false
         listProvider.iterator().forEachRemaining {
             Log.e("listProvider","${it.id}")
@@ -68,12 +69,7 @@ class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: 
             else
                 holder.lyTagIndicator.setBackgroundColor(Color.RED)
         }
-        /*CoroutineScope(Dispatchers.Main).launch {
-            if (reverse.checkValidTag(dataSet[position].epc))
-                holder.lyTagIndicator.setBackgroundColor(Color.GREEN)
-            else
-                holder.lyTagIndicator.setBackgroundColor(Color.RED)
-        }*/
+
 
         holder.textTagItem.text = dataSet[position].epc
         holder.itemView.setOnClickListener {

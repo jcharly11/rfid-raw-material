@@ -241,7 +241,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun onDestroy() {
         super.onDestroy()
-        device!!.disconnect()
+        try {
+            device!!.disconnect()
+
+        }catch (ex:  Exception){
+            Sentry.captureMessage(ex.message.toString())
+        }
 
     }
 
@@ -256,7 +261,14 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
                 tagData!!.iterator().forEachRemaining {
 
-                    Log.e("TAG DATA","${it!!.tagID.toString()}")
+                    Log.e("tagID DATA","${it!!.tagID.toString()}")
+                    Log.e("pc DATA","${it!!.pc}")
+                    if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                        it.getOpStatus() == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
+                        if (it.getMemoryBankData().length > 0) {
+                            Log.d("TAG DATA", " Mem Bank Data " + it.getMemoryBankData());
+                        }
+                    }
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(it!!.tagID.toString(), readNumber)
                     }
