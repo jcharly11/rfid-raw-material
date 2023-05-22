@@ -156,12 +156,14 @@ import kotlinx.coroutines.*
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
 
          val sessionx= when{
-
-             session_region == "SESSION_S0" ->{
-                 SESSION.SESSION_S0
+             session_region == "SESSION_1" ->{
+                 SESSION.SESSION_S1
+             }
+             session_region == "SESSION_2" ->{
+                 SESSION.SESSION_S2
              }
              else -> {
-                 SESSION.SESSION_S1
+                 SESSION.SESSION_S3
              }
          }
 
