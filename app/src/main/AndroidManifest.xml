@@ -57,10 +57,7 @@
         <activity
             android:name=".WriteTagActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <activity
@@ -70,7 +67,10 @@
             android:theme="@style/Theme.Rfid_raw_material.NoActionBar"
             tools:ignore="Instantiatable"
             android:screenOrientation="portrait">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

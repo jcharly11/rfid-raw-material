@@ -162,11 +162,11 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
 
-         val sessionx= when{
-             session_region == "SESSION_1" ->{
+         val session= when (session_region) {
+             "SESSION_1" -> {
                  SESSION.SESSION_S1
              }
-             session_region == "SESSION_2" ->{
+             "SESSION_2" -> {
                  SESSION.SESSION_S2
              }
              else -> {
@@ -174,13 +174,11 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              }
          }
 
-
-         singulationControl.session = sessionx
-
+         singulationControl.session = session
          singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
          singulationControl.Action.slFlag = SL_FLAG.SL_ALL
          reader.Config.Antennas.setSingulationControl(1, singulationControl)
-          reader.Actions.PreFilters.deleteAll()
+         reader.Actions.PreFilters.deleteAll()
 
      }
      fun stop(){

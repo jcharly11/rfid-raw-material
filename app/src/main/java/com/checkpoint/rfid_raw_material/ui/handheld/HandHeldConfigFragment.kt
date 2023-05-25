@@ -99,13 +99,6 @@ class HandHeldConfigFragment : Fragment() {
             override fun onStopTrackingTouch(p0: SeekBar?) {
             }
         })
-        val regionList: MutableList<String> = mutableListOf()
-        regionList += "SESSION_1"
-        regionList += "SESSION_2"
-        regionList += "SESSION_3"
-        val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
-
-        binding.listRegions.setAdapter(adapter)
 
         when(session){
             "SESSION_1"->{
@@ -119,6 +112,13 @@ class HandHeldConfigFragment : Fragment() {
             }
         }
 
+        val regionList: MutableList<String> = mutableListOf()
+        regionList += "SESSION_1"
+        regionList += "SESSION_2"
+        regionList += "SESSION_3"
+        val adapter = ArrayAdapter(requireContext(), R.layout.items_provider, regionList)
+        binding.listRegions.setAdapter(adapter)
+
 
         binding.btnSetPower.setOnClickListener {
 
@@ -130,7 +130,6 @@ class HandHeldConfigFragment : Fragment() {
                      "readNumber" to readNumber
                  )
                 findNavController().popBackStack()
-                // findNavController().navigate(R.id.pagerFragment, bundle)
 
              }
 
