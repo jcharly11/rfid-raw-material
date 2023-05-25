@@ -163,12 +163,14 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
 
          val sessionx= when{
-
-             session_region == "SESSION_S0" ->{
-                 SESSION.SESSION_S0
+             session_region == "SESSION_1" ->{
+                 SESSION.SESSION_S1
+             }
+             session_region == "SESSION_2" ->{
+                 SESSION.SESSION_S2
              }
              else -> {
-                 SESSION.SESSION_S1
+                 SESSION.SESSION_S3
              }
          }
 
@@ -256,14 +258,14 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          try {
              val tagData: TagData = TagData()
              val tagAccess = TagAccess()
-             val length =  targetData.length / 2
+             val length =  targetData.length / 4
              val writeAccessParams = tagAccess.WriteAccessParams()
              writeAccessParams.accessPassword = Password.toLong(16)
              writeAccessParams.memoryBank = memory_bank
              writeAccessParams.offset = offset
              writeAccessParams.setWriteData(targetData)
              writeAccessParams.writeRetries = 3
-             writeAccessParams.writeDataLength =
+             writeAccessParams.writeDataLength = length
              Log.e("writeDataLength","${length}")
 
 
@@ -314,7 +316,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             val data = targetData.encodeToByteArray()
             val length = data.size / 2
             Log.e("LENGTH DATA:","$length")
-            writeSpecificFieldAccessParams.writeDataLength = data.size
+            writeSpecificFieldAccessParams.writeDataLength = length
             writeSpecificFieldAccessParams.accessPassword = Password.toLong(16)
             writeSpecificFieldAccessParams.writeData = data
             reader!!.Actions.TagAccess.writeTagIDWait(tid,writeSpecificFieldAccessParams,null)
