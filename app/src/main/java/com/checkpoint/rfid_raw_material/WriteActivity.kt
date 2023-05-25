@@ -11,11 +11,8 @@ import androidx.core.app.ActivityCompat
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.DeviceConnectStatusInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.zebra.rfid.api3.*
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +25,8 @@ class WriteTagActivity : AppCompatActivity(),
     Readers.RFIDReaderEventHandler,
     BatteryHandlerInterface,
     DeviceConnectStatusInterface,
-    BarcodeHandHeldInterface{
+    BarcodeHandHeldInterface,
+    WritingTagInterface{
 
 
 
@@ -112,6 +110,7 @@ class WriteTagActivity : AppCompatActivity(),
             deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),150,"SESSION_S1")
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
+            deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
             deviceInstanceRFID!!.setRfidModeRead()
 
         }
@@ -139,8 +138,17 @@ class WriteTagActivity : AppCompatActivity(),
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        Log.e("handleTagdata", "${tagData?.get(0)?.tagID}")
-        deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
+        Log.e("tagID", "${tagData?.get(0)?.tagID}")
+        Log.e("pc", "${tagData?.get(0)?.pc}")
+        Log.e("memoryBankData", "${tagData?.get(0)?.memoryBankData}")
+        Log.e("memoryBank", "${tagData?.get(0)?.memoryBank}")
+        Log.e("numberOfWords", "${tagData?.get(0)?.numberOfWords}")
+        Log.e("opCode", "${tagData?.get(0)?.opCode}")
+        Log.e("tagIDAllocatedSize", "${tagData?.get(0)?.tagIDAllocatedSize}")
+        Log.e("permaLockData", "${tagData?.get(0)?.permaLockData}")
+
+         deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
+        //deviceInstanceRFID!!.writeTagMode("E2806894000040270002762A",tagData?.get(0)?.tagID.toString())
 
     }
 
@@ -180,6 +188,10 @@ class WriteTagActivity : AppCompatActivity(),
 
     override fun connected(status: Boolean) {
         TODO("Not yet implemented")
+    }
+
+    override fun writingTagStatus(status: Boolean) {
+        Log.e("writingTagStatus", "${status}")
     }
 
 

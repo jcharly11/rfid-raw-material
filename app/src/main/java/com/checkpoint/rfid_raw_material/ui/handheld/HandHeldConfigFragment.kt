@@ -45,7 +45,23 @@ class HandHeldConfigFragment : Fragment() {
         var config = viewModel.getConfigFromPreferences()
         val currentPower= config.first!!
         val session = config.second
+        binding.seekBarPower.max = 270
+        binding.seekBarPower.progress =currentPower!!
+        binding.txtPower.text = currentPower.toString()
 
+        binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            @SuppressLint("SetTextI18n")
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+                binding.txtPower.text = "$progress dbm"
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
 
           activityMain!!.batteryLevel.observe(viewLifecycleOwner){
             binding.imgBattery.setPercent(it!!)
@@ -108,8 +124,8 @@ class HandHeldConfigFragment : Fragment() {
                      "session" to sessionSelected,
                      "readNumber" to readNumber
                  )
-                //findNavController().popBackStack()
-                 findNavController().navigate(R.id.pagerFragment, bundle)
+                findNavController().popBackStack()
+                // findNavController().navigate(R.id.pagerFragment, bundle)
 
              }
 

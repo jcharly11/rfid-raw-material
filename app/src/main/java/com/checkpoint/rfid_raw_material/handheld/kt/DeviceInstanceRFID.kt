@@ -152,6 +152,12 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          antennaConfig.transmitPowerIndex = maxPower
          antennaConfig.setrfModeTableIndex(0)
          antennaConfig.tari = 0
+         val tagStorageSettings = reader.Config.tagStorageSettings
+         tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+         tagStorageSettings.isAccessReportsEnabled
+        // tagStorageSettings.maxTagIDLength = 8
+         reader.Config.tagStorageSettings = tagStorageSettings
+
          reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
 
          val singulationControl = reader.Config.Antennas.getSingulationControl(1)
@@ -169,7 +175,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
          singulationControl.session = sessionx
 
-             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+         singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
          singulationControl.Action.slFlag = SL_FLAG.SL_ALL
          reader.Config.Antennas.setSingulationControl(1, singulationControl)
           reader.Actions.PreFilters.deleteAll()
@@ -217,12 +223,12 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
      }
      fun writeTagMode(epc: String, tid: String) {
          try {
-             Log.e("writeMode","stated")
+             Log.e("writeMode","started")
              reader.Config.setAccessOperationWaitTimeout(1000)
              reader.Actions.Inventory.stop()
              reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
-
              write(tid,epc,"0")
+
          } catch (e: InvalidUsageException) {
              e.printStackTrace()
          } catch (e: OperationFailureException) {
@@ -234,7 +240,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          Log.e("tid ", "$tid")
          Log.e("epc", "$epc")
          Log.e("password", "$password")
-         writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_USER, epc, 0)
+         writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
 
 
      }
@@ -250,13 +256,17 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          try {
              val tagData: TagData = TagData()
              val tagAccess = TagAccess()
+             val length =  targetData.length / 2
              val writeAccessParams = tagAccess.WriteAccessParams()
              writeAccessParams.accessPassword = Password.toLong(16)
              writeAccessParams.memoryBank = memory_bank
              writeAccessParams.offset = offset
              writeAccessParams.setWriteData(targetData)
              writeAccessParams.writeRetries = 3
-             writeAccessParams.writeDataLength = targetData.length / 4
+             writeAccessParams.writeDataLength =
+             Log.e("writeDataLength","${length}")
+
+
              val useTIDfilter = memory_bank === MEMORY_BANK.MEMORY_BANK_EPC
              reader!!.Actions.TagAccess.writeWait(
                  sourceEPC,
@@ -265,21 +275,23 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                  tagData,true,useTIDfilter
              )
 
-             Log.e("tagData.tagID)",tagData.tagID)
-             Log.e("tagData.pc)",tagData.pc.toString())
+             Log.e("Result tagID",tagData.tagID)
+             Log.e("Result pc",tagData.pc.toString())
 
              writingTagInterface!!.writingTagStatus(true)
 
          } catch (e: InvalidUsageException) {
              e.printStackTrace()
              writingTagInterface!!.writingTagStatus(false)
-             Sentry.captureMessage("${e.message.toString()}")
+            // Sentry.captureMessage("${e.message.toString()}")
+             Log.e("InvalidUsageException", e.info)
 
          } catch (e: OperationFailureException) {
              e.printStackTrace()
              writingTagInterface!!.writingTagStatus(false)
+             Log.e("OperationFailureException", e.message.toString())
 
-             Sentry.captureMessage("${e.message.toString()}")
+             //Sentry.captureMessage("${e.message.toString()}")
              Log.e("EXCEPTION", e.vendorMessage.toString())
              Log.e("RESULTS", e.results.toString())
              Log.e("RESULTS", e.statusDescription.toString())
@@ -287,10 +299,49 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
      }
 
+    @Synchronized
+    private fun writeTag2(
+        tid: String,
+        Password: String,
+        memory_bank: MEMORY_BANK,
+        targetData: String,
+        offset: Int
+    ) {
+
+        try {
+
+            val writeSpecificFieldAccessParams = TagAccess().WriteSpecificFieldAccessParams()
+            val data = targetData.encodeToByteArray()
+            val length = data.size / 2
+            Log.e("LENGTH DATA:","$length")
+            writeSpecificFieldAccessParams.writeDataLength = data.size
+            writeSpecificFieldAccessParams.accessPassword = Password.toLong(16)
+            writeSpecificFieldAccessParams.writeData = data
+            reader!!.Actions.TagAccess.writeTagIDWait(tid,writeSpecificFieldAccessParams,null)
+
+
+           // writingTagInterface!!.writingTagStatus(true)
+
+        } catch (e: InvalidUsageException) {
+            e.printStackTrace()
+            writingTagInterface!!.writingTagStatus(false)
+            Sentry.captureMessage("${e.message.toString()}")
+
+        } catch (e: OperationFailureException) {
+            e.printStackTrace()
+           // writingTagInterface!!.writingTagStatus(false)
+
+            Sentry.captureMessage("${e.message.toString()}")
+            Log.e("EXCEPTION", e.vendorMessage.toString())
+            Log.e("RESULTS", e.results.toString())
+            Log.e("RESULTS", e.statusDescription.toString())
+        }
+
+    }
 
     fun readData(tid: String){
         var readAccess = TagAccess().ReadAccessParams()
-        readAccess.accessPassword = 0
+        readAccess.accessPassword = 0L
         readAccess.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
         readAccess.offset = 0
         var tagData = reader.Actions.TagAccess.readWait(tid,readAccess,null)
@@ -315,4 +366,6 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             }
         }
     }
- }
+
+
+}
