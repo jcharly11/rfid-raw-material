@@ -50,8 +50,8 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
                 CustomDialogInventory(this@ReadInventoryFragment, TypeInventory.START_INVENTORY)
             dialog.show()
             CoroutineScope(Dispatchers.Main).launch {
-                activityMain!!.newTag("90801A249B1F10A06C96AFF20001E240",readNumber!!)
-                activityMain!!.newTag("200",readNumber!!)
+                //activityMain!!.newTag("90801A249B1F10A06C96AFF20001E240",readNumber!!)
+                //activityMain!!.newTag("200",readNumber!!)
             }
 
 

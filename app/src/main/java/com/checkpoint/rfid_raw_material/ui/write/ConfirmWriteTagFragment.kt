@@ -24,6 +24,11 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
     private var tid: String? = null
     private var deviceName: String? = null
     private var epc: String? = null
+    private var version: String? = null
+    private var subversion: String? = null
+    private var type: String? = null
+    private var identifier: String? = null
+    private var provider: Int? = null
     private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
     private var dialogWriteTag: CustomDialogWriteTag? = null
     private var dialogLoadingWrite: DialogPrepareTrigger? = null
@@ -35,6 +40,13 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         savedInstanceState: Bundle?
     ): View {
         epc = arguments?.getString("epc")
+        version = arguments?.getString("version")
+        subversion = arguments?.getString("subversion")
+        type = arguments?.getString("type")
+        identifier = arguments?.getString("identifier")
+        provider = arguments?.getInt("provider")
+
+
 
         Log.e("GENERATED EPC","$epc")
         readNumber = arguments?.getInt("readNumber")
@@ -48,6 +60,12 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         dialogLoadingWrite = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogERRORWriting = DialogErrorWritingTag(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
+        activityMain!!.version= version!!
+        activityMain!!.subVersion= subversion!!
+        activityMain!!.type= type!!
+        activityMain!!.identifier= identifier!!
+        activityMain!!.provider= provider!!
+
 
         binding.edtTagEPC.setText(epc)
         binding.edtTagEPC.isEnabled = false
