@@ -7,6 +7,7 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.LevelPowerListHan
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
 import com.zebra.rfid.api3.*
+import com.zebra.rfid.api3.STATUS_EVENT_TYPE.INVENTORY_STOP_EVENT
 import io.sentry.Sentry
 import kotlinx.coroutines.*
 
@@ -111,6 +112,12 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 batteryHandlerInterface!!.batteryLevel(batteryData.level)
             }
 
+            if (rfidStatusEvents.StatusEventData.statusEventType === INVENTORY_STOP_EVENT){
+
+                //rfidStatusEvents.StatusEventData.
+
+
+            }
 
         }
 
@@ -242,7 +249,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          Log.e("password", "$password")
          writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
 
-
+         //writeWithFilters(tid,epc)
      }
      @Synchronized
      private fun writeTag(
@@ -277,6 +284,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
              Log.e("Result tagID",tagData.tagID)
              Log.e("Result pc",tagData.pc.toString())
+
 
              writingTagInterface!!.writingTagStatus(true)
 
@@ -339,6 +347,27 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
     }
 
+    private fun addfilters(tag: String) {
+        val filters = PreFilters()
+        val filter = filters.PreFilter()
+        filter.antennaID = 1.toShort()
+        filter.setTagPattern(tag)
+        filter.tagPatternBitCount = tag.length * 4
+        filter.bitOffset = 32 // skip PC bits (always it should be in bit length)
+        filter.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+        filter.filterAction = FILTER_ACTION.FILTER_ACTION_STATE_AWARE
+        filter.StateAwareAction.target =
+            TARGET.TARGET_INVENTORIED_STATE_S1
+        filter.StateAwareAction.stateAwareAction = STATE_AWARE_ACTION.STATE_AWARE_ACTION_INV_B
+         try {
+            reader.Actions.PreFilters.add(filter)
+        } catch (e: InvalidUsageException) {
+            e.printStackTrace()
+        } catch (e: OperationFailureException) {
+            e.printStackTrace()
+        }
+    }
+
     fun readData(tid: String){
         var readAccess = TagAccess().ReadAccessParams()
         readAccess.accessPassword = 0L
@@ -353,6 +382,26 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 Log.e("TAG DATA", " Mem Bank Data " + tagData.memoryBankData);
             }
         }
+
+    }
+    fun writeWithFilters(tag: String,writeData: String){
+        val accessFilter = AccessFilter()
+        val tagMask = tag.encodeToByteArray()
+        accessFilter.TagPatternA.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+        accessFilter.TagPatternA.tagPattern = byteArrayOf(0x45, 0x32)
+        accessFilter.TagPatternA.tagPatternBitCount = 2 * 8
+        accessFilter.TagPatternA.bitOffset = 0
+        accessFilter.TagPatternA.tagMask = tagMask
+        accessFilter.TagPatternA.tagMaskBitCount = tagMask.size * 8
+        accessFilter.accessFilterMatchPattern = FILTER_MATCH_PATTERN.A
+        val tagAccess =  TagAccess()
+        val writeAccessParams =  tagAccess.WriteAccessParams()
+        writeAccessParams.accessPassword = 0
+        writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
+        writeAccessParams.offset = 0
+        writeAccessParams.setWriteData(writeData)
+        reader.Actions.TagAccess.writeEvent(writeAccessParams, accessFilter, null)
+
 
     }
     private suspend fun readTask(tid: String){

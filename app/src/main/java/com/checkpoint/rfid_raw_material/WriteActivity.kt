@@ -147,8 +147,8 @@ class WriteTagActivity : AppCompatActivity(),
         Log.e("tagIDAllocatedSize", "${tagData?.get(0)?.tagIDAllocatedSize}")
         Log.e("permaLockData", "${tagData?.get(0)?.permaLockData}")
 
-        // deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-        deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())
+         deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
+        //deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())
 
     }
 

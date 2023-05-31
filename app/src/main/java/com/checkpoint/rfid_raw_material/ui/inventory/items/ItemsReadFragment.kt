@@ -16,6 +16,7 @@ import com.checkpoint.rfid_raw_material.databinding.FragmentItemsReadBinding
 import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.utils.Reverse
+import com.checkpoint.rfid_raw_material.utils.ReverseStandAlone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,6 +31,8 @@ class ItemsReadFragment : Fragment() {
     private var listProviders: List<Provider> = listOf()
     private var listTags: List<Tags> = listOf()
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,6 +43,10 @@ class ItemsReadFragment : Fragment() {
 
 
         val tvProviderEPC = binding.expandableProvider.findViewById<TextView>(R.id.tvProviderEPC)
+        val tvIdentifier = binding.expandableProvider.findViewById<TextView>(R.id.identifier)
+        val tvType = binding.expandableProvider.findViewById<TextView>(R.id.type)
+        val tvSubtype = binding.expandableProvider.findViewById<TextView>(R.id.subtype)
+
         val lvTags =
             binding.expandableTags.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.lvTags)
         lvTags.layoutManager = LinearLayoutManager(context)
@@ -69,10 +76,14 @@ class ItemsReadFragment : Fragment() {
                         if (!expandableProvider.isExpanded) {
                             expandableProvider.toggleLayout()
                         }
-                        /*var reverse= Reverse()
-                var hexValue= reverse.hexadecimalToBinaryString(it.epc)
-                var supplier= reverse.getSupplier()
-                tvProviderEPC.text= supplier*/
+                        var rever = ReverseStandAlone()
+                        var hexValue= rever.hexadecimalToBinaryString(it.epc)
+                        var supplier= rever.getSupplier()
+                        tvProviderEPC.text= supplier
+                        tvType.text = rever.getType()
+                        tvSubtype.text = rever.getSubVersion()
+
+
                     })
 
             }
