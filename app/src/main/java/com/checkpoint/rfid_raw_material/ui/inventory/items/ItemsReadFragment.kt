@@ -66,7 +66,7 @@ class ItemsReadFragment : Fragment() {
            listProviders= it
             Log.e("getProvidersList","${it.size}")
 
-            viewModel?.getTagsList(readNumber)!!.observe(viewLifecycleOwner) {
+            viewModel?.getTagsList(readNumber)!!.observe(viewLifecycleOwner) { it ->
                 Log.e("getTagsList","${it.size}")
 
                 listTags = it
@@ -78,16 +78,19 @@ class ItemsReadFragment : Fragment() {
                         if (!expandableProvider.isExpanded) {
                             expandableProvider.toggleLayout()
                         }
-                        var rever = ReverseStandAlone()
-                        var hexValue= rever.hexadecimalToBinaryString(it.epc)
-                        var supplier= rever.getSupplier()
 
-                        tvProviderEPC.text=  rever.getPiece()
-                        tvIdentifier.text = rever.getSupplier()
-                        tvType.text = rever.getType()
-                        tvSubversion.text = rever.getSubVersion()
-                        tvVersion.text = rever.getVersion()
+                        try {
+                            var rever = ReverseStandAlone()
+                            rever.hexadecimalToBinaryString(it.epc)
+                            tvProviderEPC.text=  rever.getPiece()
+                            tvIdentifier.text = rever.getSupplier()
+                            tvType.text = rever.getType()
+                            tvSubversion.text = rever.getSubVersion()
+                            tvVersion.text = rever.getVersion()
 
+                        }catch (ex: Exception){
+
+                        }
 
                     })
 

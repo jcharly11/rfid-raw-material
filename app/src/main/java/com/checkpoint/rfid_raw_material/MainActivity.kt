@@ -56,7 +56,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     BarcodeHandHeldInterface,
     WritingTagInterface,
     SelectDeviceDialogInterface,
-    LevelPowerListHandlerInterface{
+    LevelPowerListHandlerInterface,
+    UnavailableDeviceInterface{
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private var device: Device? = null
@@ -102,6 +103,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private val _showDialogWritingSuccess: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogWritingSuccess: LiveData<Boolean> = _showDialogWritingSuccess
 
+    private val _showDialogUnavailableReader: MutableLiveData<Boolean> = MutableLiveData()
+    var showDialogUnavailableReader: LiveData<Boolean> = _showDialogUnavailableReader
 
     var version:String=""
     var subVersion:String=""
@@ -179,6 +182,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
+        deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
 
         deviceInstanceRFID!!.setRfidModeRead()
         deviceInstanceRFID!!.battery()
@@ -453,6 +457,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         _showErrorNumberTagsDetected.postValue(false)
         _showDialogWritingError.postValue(false)
         _showDialogWritingSuccess.postValue(false)
+
     }
 
     private fun createDeviceInstance(deviceName: String) {
@@ -473,6 +478,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     fun getReadNumber():Int {
         return localSharedPreferences!!.getReadNumber()
+    }
+
+    override fun deviceCharging() {
+        _showDialogUnavailableReader.postValue(true)
     }
 
 

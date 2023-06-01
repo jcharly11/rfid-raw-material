@@ -93,6 +93,11 @@ class OptionsWriteFragment : Fragment(){
 
         }
 
+        activityMain!!.showDialogUnavailableReader.observe(viewLifecycleOwner){
+            if(it){
+                dialogErrorDeviceConnected!!.show()
+            }
+        }
         return binding.root
     }
 

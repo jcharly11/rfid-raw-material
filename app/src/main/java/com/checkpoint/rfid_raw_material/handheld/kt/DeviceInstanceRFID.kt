@@ -2,10 +2,7 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
 
 import android.util.Log
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.LevelPowerListHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.zebra.rfid.api3.*
 import com.zebra.rfid.api3.STATUS_EVENT_TYPE.INVENTORY_STOP_EVENT
 import io.sentry.Sentry
@@ -23,6 +20,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
      private var batteryHandlerInterface: BatteryHandlerInterface? = null
      private var writingTagInterface: WritingTagInterface? = null
      private var levelPowerListHandlerInterface: LevelPowerListHandlerInterface? = null
+    private var unavailableDeviceInterface: UnavailableDeviceInterface? = null
 
 
     private suspend fun performTask(){
@@ -135,6 +133,9 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          this.writingTagInterface = writingTagInterface
 
      }
+    fun setHanHeldUnavailableInterface(unavailableDeviceInterface: UnavailableDeviceInterface){
+        this.unavailableDeviceInterface = unavailableDeviceInterface
+    }
 
 
      fun setHandlerLevelTransmisioPowerInterfacResponse(levelPowerListHandlerInterface: LevelPowerListHandlerInterface){
@@ -142,51 +143,57 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
      }
 
      fun setRfidModeRead(){
-         triggerInfo.StartTrigger.triggerType =
-             START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
-         triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
-         if(eventHandler == null)
-             eventHandler = EventHandler()
-         reader.Events.addEventsListener(eventHandler)
-         reader.Events.setBatteryEvent(true)
-         reader.Events.setHandheldEvent(true)
-         reader.Events.setTagReadEvent(true)
-         reader.Events.setAttachTagDataWithReadEvent(false)
-         reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
-         reader.Config.startTrigger = triggerInfo.StartTrigger
-         reader.Config.stopTrigger = triggerInfo.StopTrigger
-         val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
-         antennaConfig.transmitPowerIndex = maxPower
-         antennaConfig.setrfModeTableIndex(0)
-         antennaConfig.tari = 0
-         val tagStorageSettings = reader.Config.tagStorageSettings
-         tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
-         tagStorageSettings.isAccessReportsEnabled
-        // tagStorageSettings.maxTagIDLength = 8
-         reader.Config.tagStorageSettings = tagStorageSettings
+         try{
 
-         reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
+             triggerInfo.StartTrigger.triggerType =
+                 START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
+             triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
+             if(eventHandler == null)
+                 eventHandler = EventHandler()
+             reader.Events.addEventsListener(eventHandler)
+             reader.Events.setBatteryEvent(true)
+             reader.Events.setHandheldEvent(true)
+             reader.Events.setTagReadEvent(true)
+             reader.Events.setAttachTagDataWithReadEvent(false)
+             reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
+             reader.Config.startTrigger = triggerInfo.StartTrigger
+             reader.Config.stopTrigger = triggerInfo.StopTrigger
+             reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+             val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
+             antennaConfig.transmitPowerIndex = maxPower
+             antennaConfig.setrfModeTableIndex(0)
+             antennaConfig.tari = 0
+             val tagStorageSettings = reader.Config.tagStorageSettings
+             tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+             tagStorageSettings.isAccessReportsEnabled
+             // tagStorageSettings.maxTagIDLength = 8
+             reader.Config.tagStorageSettings = tagStorageSettings
 
-         val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+             reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
 
-         val session= when (session_region) {
-             "SESSION_1" -> {
-                 SESSION.SESSION_S1
+             val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+             val session= when (session_region) {
+                 "SESSION_1" -> {
+                     SESSION.SESSION_S1
+                 }
+                 "SESSION_2" -> {
+                     SESSION.SESSION_S2
+                 }
+                 else -> {
+                     SESSION.SESSION_S3
+                 }
              }
-             "SESSION_2" -> {
-                 SESSION.SESSION_S2
-             }
-             else -> {
-                 SESSION.SESSION_S3
-             }
+
+             singulationControl.session = session
+             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+             singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+             reader.Config.Antennas.setSingulationControl(1, singulationControl)
+             reader.Actions.PreFilters.deleteAll()
+
+         }catch (ex: Exception){
+             unavailableDeviceInterface!!.deviceCharging()
          }
-
-         singulationControl.session = session
-         singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
-         singulationControl.Action.slFlag = SL_FLAG.SL_ALL
-         reader.Config.Antennas.setSingulationControl(1, singulationControl)
-         reader.Actions.PreFilters.deleteAll()
-
      }
      fun stop(){
          GlobalScope.launch(Dispatchers.Main) {
