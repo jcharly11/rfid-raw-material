@@ -115,7 +115,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/98d6ed1bf134930daf2eb04b1c8a61c2/transformed/jetified-sentry-android-ndk-6.3.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/09ce8119b16bdc61e281801a2882cb6f/transformed/jetified-sentry-android-core-6.3.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/2396f931594c44181875c0b03b83f28f/transformed/jetified-sentry-6.3.0.jar</arg>
-                <arg>$USER_HOME$/.gradle/caches/transforms-3/e99bc300d8a52f808c8fe35c8fe006e2/transformed/jetified-zebra_lib_rfid-api.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/ddff4fdb36998b3ce2738a710885cf7a/transformed/jetified-zebra_lib_rfid-api.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-32/android.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/build-tools/30.0.3/core-lambda-stubs.jar</arg>
               </args>

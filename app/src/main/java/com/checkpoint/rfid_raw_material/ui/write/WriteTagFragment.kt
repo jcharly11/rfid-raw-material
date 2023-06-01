@@ -152,7 +152,12 @@ class WriteTagFragment : Fragment(),
                         val bundle = bundleOf(
                             "epc" to hexValueEpc,
                             "readNumber" to readNumber,
-                            "deviceName" to deviceName
+                            "deviceName" to deviceName,
+                            "version" to versionValue,
+                            "subversion" to subversionValue,
+                            "type" to typeValue,
+                            "identifier" to pieceValue,
+                            "provider" to idProvider
                         )
                         activityMain!!.resetBarCode()
                         findNavController().navigate(R.id.confirmWriteTagFragment, bundle)

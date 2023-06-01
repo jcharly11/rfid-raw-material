@@ -43,9 +43,11 @@ class ItemsReadFragment : Fragment() {
 
 
         val tvProviderEPC = binding.expandableProvider.findViewById<TextView>(R.id.tvProviderEPC)
-        val tvIdentifier = binding.expandableProvider.findViewById<TextView>(R.id.identifier)
+        val tvIdentifier = binding.expandableProvider.findViewById<TextView>(R.id.provider)
+
         val tvType = binding.expandableProvider.findViewById<TextView>(R.id.type)
-        val tvSubtype = binding.expandableProvider.findViewById<TextView>(R.id.subtype)
+        val tvVersion = binding.expandableProvider.findViewById<TextView>(R.id.version)
+        val tvSubversion = binding.expandableProvider.findViewById<TextView>(R.id.subversion)
 
         val lvTags =
             binding.expandableTags.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.lvTags)
@@ -79,9 +81,12 @@ class ItemsReadFragment : Fragment() {
                         var rever = ReverseStandAlone()
                         var hexValue= rever.hexadecimalToBinaryString(it.epc)
                         var supplier= rever.getSupplier()
-                        tvProviderEPC.text= supplier
+
+                        tvProviderEPC.text=  rever.getPiece()
+                        tvIdentifier.text = rever.getSupplier()
                         tvType.text = rever.getType()
-                        tvSubtype.text = rever.getSubVersion()
+                        tvSubversion.text = rever.getSubVersion()
+                        tvVersion.text = rever.getVersion()
 
 
                     })

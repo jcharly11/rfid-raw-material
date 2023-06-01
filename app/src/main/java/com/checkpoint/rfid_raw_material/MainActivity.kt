@@ -102,6 +102,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private val _showDialogWritingSuccess: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogWritingSuccess: LiveData<Boolean> = _showDialogWritingSuccess
 
+
+    var version:String=""
+    var subVersion:String=""
+    var type:String=""
+    var identifier:String=""
+    var provider:Int=0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -270,7 +277,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                         }
                     }
                     CoroutineScope(Dispatchers.IO).launch {
-                        newTag(it!!.tagID.toString(), readNumber)
+
+                        newTag(it!!.tagID.toString(), readNumber,"","","","",0)
                     }
                 }
 
@@ -301,7 +309,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     _showDialogWritingTag.postValue(true)
                     var epc = this.epc!!
                     CoroutineScope(Dispatchers.IO).launch {
-                        newTag(epc, readNumber)
+                        newTag(epc, readNumber,version,subVersion,type,identifier,provider)
                     }
                     deviceInstanceRFID!!.writeTagMode(epc, singleTag)
 
@@ -312,7 +320,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         }
     }
-     suspend fun newTag(epc: String, readNumb: Int): Tags = withContext(Dispatchers.IO) {
+     suspend fun newTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
+                        piece:String, provider:Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
@@ -320,11 +329,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             Tags(
                 0,
                 readNumb,
-                "0",
-                "0",
-                "0",
-                "0",
-                0,
+                version,
+                subVersion,
+                type,
+                piece,
+                provider,
                 epc,
                 formatter.format(nowDate)
             )

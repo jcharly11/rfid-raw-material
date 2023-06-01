@@ -120,7 +120,7 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/52dc388cd453e79a13aefae8565715ba/transformed/jetified-javax.inject-1.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/aa16fae04f1f5975463f0089c3f2b6b1/transformed/constraintlayout-2.1.4-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/c432ac9ced0647f0079896c20ae07613/transformed/jetified-commons-csv-1.5.jar</arg>
-                <arg>$USER_HOME$/.gradle/caches/transforms-3/e99bc300d8a52f808c8fe35c8fe006e2/transformed/jetified-zebra_lib_rfid-api.jar</arg>
+                <arg>$USER_HOME$/.gradle/caches/transforms-3/ddff4fdb36998b3ce2738a710885cf7a/transformed/jetified-zebra_lib_rfid-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/a8824446122b721ee8c54cd54eb233ba/transformed/jetified-jwtdecode-2.0.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-3/9b0c93df8bf3e26eb24dbd0f5af6c464/transformed/jetified-sentry-android-6.3.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/androidx.room/room-migration/2.4.2/3f681427593343d0b296b8fccc117569184f96f7/room-migration-2.4.2.jar</arg>
