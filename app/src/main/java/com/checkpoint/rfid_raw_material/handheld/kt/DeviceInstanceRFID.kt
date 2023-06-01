@@ -381,8 +381,6 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
         readAccess.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
         readAccess.offset = 0
         var tagData = reader.Actions.TagAccess.readWait(tid,readAccess,null)
-        Log.e("---->",tagData.tagID)
-        Log.e("---->",tagData.pc.toString())
         if (tagData.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
             tagData.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
             if (tagData.memoryBankData.isNotEmpty()) {

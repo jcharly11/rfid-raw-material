@@ -138,14 +138,18 @@ class WriteTagActivity : AppCompatActivity(),
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        Log.e("tagID", "${tagData?.get(0)?.tagID}")
-        Log.e("pc", "${tagData?.get(0)?.pc}")
-        Log.e("memoryBankData", "${tagData?.get(0)?.memoryBankData}")
-        Log.e("memoryBank", "${tagData?.get(0)?.memoryBank}")
-        Log.e("numberOfWords", "${tagData?.get(0)?.numberOfWords}")
-        Log.e("opCode", "${tagData?.get(0)?.opCode}")
-        Log.e("tagIDAllocatedSize", "${tagData?.get(0)?.tagIDAllocatedSize}")
-        Log.e("permaLockData", "${tagData?.get(0)?.permaLockData}")
+        tagData!!.iterator().forEach {
+
+            Log.e("tagID", "${it!!.tagID}")
+            Log.e("pc", "${it!!.pc}")
+            Log.e("memoryBankData", "${it!!.memoryBankData}")
+            Log.e("memoryBank", "${it!!.memoryBank}")
+            Log.e("numberOfWords", "${it!!.numberOfWords}")
+            Log.e("opCode", "${it!!.opCode}")
+            Log.e("tagIDAllocatedSize", "${it!!.tagIDAllocatedSize}")
+            Log.e("permaLockData", "${it!!.permaLockData}")
+
+        }
 
          deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
         //deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())

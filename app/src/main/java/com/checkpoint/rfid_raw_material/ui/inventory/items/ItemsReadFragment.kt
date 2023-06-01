@@ -80,6 +80,7 @@ class ItemsReadFragment : Fragment() {
                         }
 
                         try {
+
                             var rever = ReverseStandAlone()
                             rever.hexadecimalToBinaryString(it.epc)
                             tvProviderEPC.text=  rever.getPiece()

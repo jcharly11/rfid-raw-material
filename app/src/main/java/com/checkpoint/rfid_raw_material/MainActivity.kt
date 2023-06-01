@@ -1,15 +1,10 @@
 package com.checkpoint.rfid_raw_material
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.PermissionChecker
 import androidx.core.os.bundleOf
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.LiveData
@@ -29,16 +24,13 @@ import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Tags
-import com.checkpoint.rfid_raw_material.utils.CustomBattery
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 import com.fondesa.kpermissions.PermissionStatus
-import com.fondesa.kpermissions.extension.permissionsBuilder
 import com.fondesa.kpermissions.isDenied
 import com.fondesa.kpermissions.isGranted
 import com.fondesa.kpermissions.request.PermissionRequest
 import com.zebra.rfid.api3.*
-
 import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class MainActivity : ActivityBase(), PermissionRequest.Listener,
@@ -166,6 +159,24 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        val t = Timer()
+//Set the schedule function and rate
+//Set the schedule function and rate
+        t.scheduleAtFixedRate(
+            object : TimerTask() {
+                override fun run() {
+
+                    if (deviceInstanceRFID != null)
+                        deviceInstanceRFID!!.battery()
+
+                }
+            },
+            0,
+            6000
+        )
+    }
     fun startRFIDReadInstance(writeEnable: Boolean, epc: String) {
         this.writeEnable = writeEnable
         this.epc = epc
@@ -271,11 +282,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         }else{
 
                 tagData!!.iterator().forEachRemaining {
-
                     Log.e("tagID DATA","${it!!.tagID.toString()}")
                     Log.e("pc DATA","${it!!.pc}")
-                    if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
-                        it.getOpStatus() == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
+                    if (it.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                        it.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
                         if (it.getMemoryBankData().length > 0) {
                             Log.d("TAG DATA", " Mem Bank Data " + it.getMemoryBankData());
                         }
