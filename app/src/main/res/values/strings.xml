@@ -79,5 +79,8 @@
     <string name="connecting">Connecting...</string>
     <string name="error">Error</string>
     <string name="warning">Warning</string>
+    <string name="invalid_tag">Invalid Tag</string>
+    <string name="invalid_tag_message">The tag you want writing is not 128 bits</string>
+    <string name="continue_message">Continue</string>
 
 </resources>

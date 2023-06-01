@@ -80,5 +80,8 @@
     <string name="connecting">Conectando...</string>
     <string name="error">Error</string>
     <string name="warning">Adventencia</string>
+    <string name="invalid_tag">Tag Invalido</string>
+    <string name="invalid_tag_message">El tag que deseas escribir no es de 128 bits</string>
+    <string name="continue_message">Continuar</string>
 
 </resources>

@@ -57,19 +57,19 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     WritingTagInterface,
     SelectDeviceDialogInterface,
     LevelPowerListHandlerInterface,
-    UnavailableDeviceInterface{
+    UnavailableDeviceInterface {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
     private var device: Device? = null
 
 
+    private var validTag: Boolean = false
     private var readNumber: Int = 0
     private var tagsDetected: Int = 0
     private var singleTag = String()
     private var writeEnable = false
     private var epc: String? = null
-
-
+    private var epcInvalid: String? = null
 
 
     private val _liveCode: MutableLiveData<String> = MutableLiveData()
@@ -80,8 +80,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     private val _maxPowerList: MutableLiveData<IntArray> = MutableLiveData()
     var maxPowerList: LiveData<IntArray> = _maxPowerList
-
-
 
 
     private val _deviceConnected: MutableLiveData<Boolean> = MutableLiveData()
@@ -97,6 +95,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     var showDialogWritingTag: LiveData<Boolean> = _showDialogWritingTag
 
 
+    private val _showDialogInvalidTag: MutableLiveData<Boolean> = MutableLiveData()
+    var showDialogInvalidTag: LiveData<Boolean> = _showDialogInvalidTag
+
+
     private val _showDialogWritingError: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogWritingError: LiveData<Boolean> = _showDialogWritingError
 
@@ -106,11 +108,11 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     private val _showDialogUnavailableReader: MutableLiveData<Boolean> = MutableLiveData()
     var showDialogUnavailableReader: LiveData<Boolean> = _showDialogUnavailableReader
 
-    var version:String=""
-    var subVersion:String=""
-    var type:String=""
-    var identifier:String=""
-    var provider:Int=0
+    var version: String = ""
+    var subVersion: String = ""
+    var type: String = ""
+    var identifier: String = ""
+    var provider: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,15 +136,16 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
 
-      btnHandHeldGun!!.setOnClickListener {
+        btnHandHeldGun!!.setOnClickListener {
 
-          val readNumber= getReadNumber()
+            val readNumber = getReadNumber()
 
-          val bundle = bundleOf(
-              "readNumber" to readNumber)
+            val bundle = bundleOf(
+                "readNumber" to readNumber
+            )
 
-          val navController = findNavController(R.id.nav_host_fragment_content_main)
-          navController.navigate(R.id.handHeldConfigFragment,bundle)
+            val navController = findNavController(R.id.nav_host_fragment_content_main)
+            navController.navigate(R.id.handHeldConfigFragment, bundle)
 
         }
 
@@ -158,10 +161,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
             // Android 12 or Android 12 Beta
             requestPermissions12.addListener(this)
-        }
-        else
+        } else
             requestPermissions11.addListener(this)
-
 
 
     }
@@ -176,7 +177,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         val mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
-        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(),mp,sess)
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess)
 
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
@@ -191,7 +192,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     fun startBarCodeReadInstance() {
-        deviceInstanceBARCODE = DeviceInstanceBARCODE(device!!.getReaderDevice(), applicationContext)
+        deviceInstanceBARCODE =
+            DeviceInstanceBARCODE(device!!.getReaderDevice(), applicationContext)
         deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
     }
 
@@ -205,7 +207,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             if (this)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME))
                     requestPermissions12.send()
-            else
+                else
                     requestPermissions11.send()
 
         }
@@ -241,7 +243,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         if (b) {
             _deviceConnected.postValue(b)
             localSharedPreferences!!.getSessionFromPreferences().apply {
-                if (this.isEmpty()){
+                if (this.isEmpty()) {
                     localSharedPreferences!!.saveSessionToPreferences("SESSION_1")
                 }
             }
@@ -255,7 +257,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         try {
             device!!.disconnect()
 
-        }catch (ex:  Exception){
+        } catch (ex: Exception) {
             Sentry.captureMessage(ex.message.toString())
         }
 
@@ -264,27 +266,35 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun handleTagdata(tagData: Array<TagData?>?) {
         readNumber = localSharedPreferences!!.getReadNumber()
 
-        if(this.writeEnable){
-            tagsDetected ++
+        if (this.writeEnable) {
+            tagsDetected++
             singleTag = tagData?.get(0)?.tagID.toString()
 
-        }else{
+            if (tagData?.get(0)?.pc == 12288) {
+                validTag = false
+            }
+            else //if (tagData?.get(0)?.pc == 16384) {
+                validTag = true
 
-                tagData!!.iterator().forEachRemaining {
+        } else {
 
-                    Log.e("tagID DATA","${it!!.tagID.toString()}")
-                    Log.e("pc DATA","${it!!.pc}")
-                    if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
-                        it.getOpStatus() == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
-                        if (it.getMemoryBankData().length > 0) {
-                            Log.d("TAG DATA", " Mem Bank Data " + it.getMemoryBankData());
-                        }
-                    }
-                    CoroutineScope(Dispatchers.IO).launch {
+            tagData!!.iterator().forEachRemaining {
 
-                        newTag(it!!.tagID.toString(), readNumber,"","","","",0)
+                Log.e("tagID DATA", "${it!!.tagID.toString()}")
+                Log.e("pc DATA", "${it!!.pc}")
+
+                if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                    it.getOpStatus() == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS
+                ) {
+                    if (it.getMemoryBankData().length > 0) {
+                        Log.d("TAG DATA", " Mem Bank Data " + it.getMemoryBankData());
                     }
                 }
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    newTag(it!!.tagID.toString(), readNumber, "", "", "", "", 0)
+                }
+            }
 
 
         }
@@ -296,36 +306,69 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         Log.e("handleTriggerPress", "${pressed}")
 
         val isPause = localSharedPreferences!!.getPauseStatus()
-        if(!isPause){
-        if (pressed) {
-            tagsDetected=0
-            deviceInstanceRFID!!.perform()
+        if (!isPause) {
+            if (pressed) {
+                tagsDetected = 0
+                deviceInstanceRFID!!.perform()
 
-        } else {
-            Log.e("TAG NUMBER DETECTED","${tagsDetected}")
-            deviceInstanceRFID!!.stop()
-            if (this.writeEnable) {
-                if(tagsDetected > 1){
-                    _showErrorNumberTagsDetected.postValue(true)
+            } else {
+                Log.e("TAG NUMBER DETECTED", "${tagsDetected}")
+                deviceInstanceRFID!!.stop()
+                if (this.writeEnable) {
+                    if (tagsDetected > 1) {
+                        _showErrorNumberTagsDetected.postValue(true)
 
-                }else{
-                    _showErrorNumberTagsDetected.postValue(false)
-                    _showDialogWritingTag.postValue(true)
-                    var epc = this.epc!!
-                    CoroutineScope(Dispatchers.IO).launch {
-                        newTag(epc, readNumber,version,subVersion,type,identifier,provider)
+                    } else {
+                        if (validTag == true) {
+                            _showDialogInvalidTag.postValue(false)
+                            _showErrorNumberTagsDetected.postValue(false)
+                            _showDialogWritingTag.postValue(true)
+                            var epc = this.epc!!
+                            CoroutineScope(Dispatchers.IO).launch {
+                                newTag(
+                                    epc,
+                                    readNumber,
+                                    version,
+                                    subVersion,
+                                    type,
+                                    identifier,
+                                    provider
+                                )
+                            }
+                            deviceInstanceRFID!!.writeTagMode(epc, singleTag)
+                        } else {
+                            _showDialogInvalidTag.postValue(true)
+                            epcInvalid = this.epc
+                        }
                     }
-                    deviceInstanceRFID!!.writeTagMode(epc, singleTag)
-
                 }
+
             }
 
         }
-
-        }
     }
-     suspend fun newTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
-                        piece:String, provider:Int): Tags = withContext(Dispatchers.IO) {
+
+    fun writeInvalidTag() {
+        _showDialogWritingTag.postValue(true)
+        CoroutineScope(Dispatchers.IO).launch {
+            newTag(
+                epcInvalid!!,
+                readNumber,
+                version,
+                subVersion,
+                type,
+                identifier,
+                provider
+            )
+        }
+        _showDialogInvalidTag.postValue(false)
+        deviceInstanceRFID!!.writeTagMode(epcInvalid!!, singleTag)
+    }
+
+    suspend fun newTag(
+        epc: String, readNumb: Int, version: String, subVersion: String, type: String,
+        piece: String, provider: Int
+    ): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
 
@@ -375,7 +418,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         Log.e("writingTagStatus", "${status}")
         _showDialogWritingTag.postValue(false)
 
-        if(status){
+        if (status) {
 
             this.writeEnable = false
             _showDialogWritingSuccess.postValue(true)
@@ -388,7 +431,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             navController.navigate(R.id.writeTagFragment, bundle)
             _liveCode.value = ""*/
 
-        }else{
+        } else {
 
             _showDialogWritingError.postValue(true)
         }
@@ -397,11 +440,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
 
-
     @SuppressLint("MissingPermission")
     private fun searchDevices() {
 
-        try{
+        try {
             Log.e("searchDevices()", ".....")
             bluetoothHandler = BluetoothHandler(this)
             val devices = bluetoothHandler!!.list()
@@ -439,8 +481,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 }
 
             }
-        }catch (ex: Exception){
-            Log.e("Exception search devices","${ex.message}")
+        } catch (ex: Exception) {
+            Log.e("Exception search devices", "${ex.message}")
             Sentry.captureMessage("${ex.message}")
             _deviceConnected.postValue(false)
             _showErrorDeviceConnected.postValue(true)
@@ -453,11 +495,16 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     fun resetBarCode() {
         _liveCode.value = ""
     }
-    fun restartWritingFlags(){
+
+    fun restartWritingFlags() {
         _showErrorNumberTagsDetected.postValue(false)
         _showDialogWritingError.postValue(false)
         _showDialogWritingSuccess.postValue(false)
+    }
 
+    fun closeDialogs() {
+        _showDialogInvalidTag.postValue(false)
+        _showDialogWritingTag.postValue(false)
     }
 
     private fun createDeviceInstance(deviceName: String) {
@@ -476,7 +523,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         _maxPowerList.postValue(level)
     }
 
-    fun getReadNumber():Int {
+    fun getReadNumber(): Int {
         return localSharedPreferences!!.getReadNumber()
     }
 

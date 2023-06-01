@@ -12,9 +12,10 @@ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfirmWriteTagBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogInvalidTagInterface
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 
-class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
+class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface, CustomDialogInvalidTagInterface {
 
     private var _binding: FragmentConfirmWriteTagBinding? = null
     private val binding get() = _binding!!
@@ -34,6 +35,7 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
     private var dialogLoadingWrite: DialogPrepareTrigger? = null
     private var dialogERRORWriting: DialogErrorWritingTag? = null
     private var dialogWriteTagSuccess: DialogWriteTagSuccess? = null
+    private var dialogInvalidTag: CustomDIalogInvalidTag? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +61,7 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         dialogWriteTag = CustomDialogWriteTag(this@ConfirmWriteTagFragment)
         dialogLoadingWrite = DialogPrepareTrigger(this@ConfirmWriteTagFragment)
         dialogERRORWriting = DialogErrorWritingTag(this@ConfirmWriteTagFragment)
+        dialogInvalidTag = CustomDIalogInvalidTag(this@ConfirmWriteTagFragment)
         activityMain!!.lyCreateLog!!.visibility = View.GONE
         activityMain!!.version= version!!
         activityMain!!.subVersion= subversion!!
@@ -88,6 +91,14 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
             }
         }
 
+        activityMain!!.showDialogInvalidTag.observe(viewLifecycleOwner){
+            if(it){
+                dialogInvalidTag!!.show()
+            }else{
+                dialogInvalidTag!!.dismiss()
+            }
+        }
+
         activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
             if(it){
                 dialogErrorMultipleTags!!.show()
@@ -108,6 +119,8 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
 
         }
 
+
+
         return binding.root
     }
 
@@ -126,6 +139,17 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         activityMain!!.stopReadedBarCode()
         activityMain!!.startRFIDReadInstance(true,this.epc!!)
 
+    }
+
+    override fun closeDialog() {
+        dialogInvalidTag!!.dismiss()
+        activityMain!!.closeDialogs()
+    }
+
+    override fun writeTag() {
+        dialogLoadingWrite!!.show()
+        dialogInvalidTag!!.dismiss()
+        activityMain!!.writeInvalidTag()
     }
 
 }
