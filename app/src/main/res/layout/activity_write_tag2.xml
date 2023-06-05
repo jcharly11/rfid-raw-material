@@ -24,4 +24,12 @@
         android:text="barcode  read"/>
 
 
+    <Button
+        android:id="@+id/btnTestLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:text="create log"/>
+
+
 </LinearLayout>

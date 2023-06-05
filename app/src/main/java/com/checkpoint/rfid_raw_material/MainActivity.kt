@@ -283,7 +283,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 Log.e("tagID DATA", "${it!!.tagID.toString()}")
                 Log.e("pc DATA", "${it!!.pc}")
 
-                if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
+                    if (it.getOpCode() == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
                     it.getOpStatus() == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS
                 ) {
                     if (it.getMemoryBankData().length > 0) {
@@ -295,8 +295,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     newTag(it!!.tagID.toString(), readNumber, "", "", "", "", 0)
                 }
             }
-
-
         }
 
     }

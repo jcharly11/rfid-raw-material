@@ -254,8 +254,8 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          Log.e("tid ", "$tid")
          Log.e("epc", "$epc")
          Log.e("password", "$password")
+         //reader!!.Actions.purgeTags()
          writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
-
          //writeWithFilters(tid,epc)
      }
      @Synchronized
@@ -272,12 +272,22 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              val tagAccess = TagAccess()
              val length =  targetData.length / 4
              val writeAccessParams = tagAccess.WriteAccessParams()
+             val writeSpecificParams= tagAccess.WriteSpecificFieldAccessParams()
+
              writeAccessParams.accessPassword = Password.toLong(16)
              writeAccessParams.memoryBank = memory_bank
              writeAccessParams.offset = offset
              writeAccessParams.setWriteData(targetData)
              writeAccessParams.writeRetries = 3
              writeAccessParams.writeDataLength = length
+
+             writeSpecificParams.accessPassword= Password.toLong(16)
+             writeAccessParams.memoryBank= memory_bank
+             writeAccessParams.offset=offset
+             writeSpecificParams.setWriteData(targetData)
+             writeSpecificParams.writeDataLength=length
+
+
              Log.e("writeDataLength","${length}")
 
 
@@ -286,8 +296,15 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                  sourceEPC,
                  writeAccessParams,
                  null,
-                 tagData,true,useTIDfilter
+                 tagData
              )
+
+             var antenna= AntennaInfo()
+
+            /* reader!!.Actions.TagAccess.writeTagIDWait(
+                 sourceEPC,writeSpecificParams,antenna
+             )*/
+
 
              Log.e("Result tagID",tagData.tagID)
              Log.e("Result pc",tagData.pc.toString())

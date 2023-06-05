@@ -3,11 +3,15 @@ package com.checkpoint.rfid_raw_material.utils
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
+import android.os.Environment
 import android.view.View
 import android.widget.Toast
 import com.checkpoint.rfid_raw_material.source.model.Logs
 import com.checkpoint.rfid_raw_material.source.model.TagsLogs
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -27,7 +31,8 @@ class LogCreator constructor(context: Context): View(context) {
 
     init {
         //pathApplication= context?.filesDir?.absolutePath //app storage
-        pathApplication = "${context?.getExternalFilesDir(null)}/logs" //internal storage}
+        //pathApplication = "${context?.getExternalFilesDir(null)}/logs" //internal storage}
+        pathApplication = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/raw-materials/logs/"
         isFileExists=false
     }
 
@@ -42,8 +47,10 @@ class LogCreator constructor(context: Context): View(context) {
         var initialFile: File
         var targetStream: InputStream
         var list= listOf<Logs>()
+        CoroutineScope(Dispatchers.IO).launch {
+            createFile(fileName)
+        }
 
-        createFile(fileName)
 
         if(isFileExists) {
             initialFile = File("$pathApplication/$fileName")
@@ -55,11 +62,13 @@ class LogCreator constructor(context: Context): View(context) {
             writeCsv(list,date,epc,version,type,subversion,identifier,supplier) }
     }
 
-    fun  <T: Any> createLog(typeCSV:String, list: List<T>){
-        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+     fun <T: Any> createLog(typeCSV:String, list: List<T>){
+        val df: DateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH_mm_ss")
+        //val df: DateFormat = SimpleDateFormat("yyyyMMdd'T'HHmmss")
         val dateFormatter: String = df.format(Date())
         var fileName = "${typeCSV}_$dateFormatter.csv"
         var fullPath= "$pathApplication/$fileName"
+
 
         createFile(fileName)
 
@@ -68,7 +77,30 @@ class LogCreator constructor(context: Context): View(context) {
         Toast.makeText(context, "Log file create in $fullPath", Toast.LENGTH_LONG).show()
     }
 
-    private fun createFile(fileName: String) {
+     fun createFile(fileName:String){
+        val directory= File(pathApplication)
+        if(!directory.exists()){
+            val dir1 = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/raw-materials/"
+            val dir2 = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/raw-materials/logs/"
+            val directory1= File(dir1)
+            val directory2= File(dir2)
+            directory1.mkdirs()
+            directory2.mkdirs()
+        }
+        val file = File(pathApplication, fileName)
+         //file.createNewFile()
+         val file2 = File(
+             Environment.getExternalStorageDirectory()
+                 .toString() + "/" + Environment.DIRECTORY_DOCUMENTS + "/raw-materials/logs/$fileName"
+         )
+         if (!file2.exists()) {
+             file2.createNewFile()
+         }
+
+    }
+
+
+    /*private fun createFile(fileName: String) {
         val path = pathApplication
         val directory = File(path)
 
@@ -86,7 +118,7 @@ class LogCreator constructor(context: Context): View(context) {
             isFileExists=true
             Log.e("file", "$file already exists.")
         }
-    }
+    }*/
 
     private fun OutputStream.writeCsv(listCSV: List<Logs>,date: String, epc:String, version:String,
                                       type:String,subversion:String, identifier:String,supplier:String ) {

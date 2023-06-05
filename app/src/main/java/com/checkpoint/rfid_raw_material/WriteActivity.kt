@@ -2,22 +2,24 @@ package com.checkpoint.rfid_raw_material
 
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
-import com.zebra.rfid.api3.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.zebra.rfid.api3.ReaderDevice
+import com.zebra.rfid.api3.Readers
+import com.zebra.rfid.api3.TagData
+import java.io.File
+import java.io.FileWriter
 
 
 class WriteTagActivity : AppCompatActivity(),
@@ -55,6 +57,10 @@ class WriteTagActivity : AppCompatActivity(),
             permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
                 Log.d("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
             }
+            permissions.getOrDefault(Manifest.permission.WRITE_EXTERNAL_STORAGE, false) -> {
+            }
+            permissions.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false) -> {
+            }
             else -> {
                 finish()
             }
@@ -73,7 +79,10 @@ class WriteTagActivity : AppCompatActivity(),
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_CONNECT
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+
         ))
         bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
@@ -122,6 +131,26 @@ class WriteTagActivity : AppCompatActivity(),
             deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
         }
 
+        var btnTestLog= findViewById<Button>(R.id.btnTestLog)
+        btnTestLog.setOnClickListener {
+
+
+            val dir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/raw_materials/"
+            val directory3= File(dir)
+
+            if(!directory3.exists()){
+                directory3.mkdir()
+            }
+
+            val file3 = File(dir, "example2.txt")
+
+            FileWriter(file3).use { fileWriter -> fileWriter.append("Writing to file!")}
+
+
+            var a =0
+
+        }
+
     }
 
 
@@ -147,8 +176,8 @@ class WriteTagActivity : AppCompatActivity(),
         Log.e("tagIDAllocatedSize", "${tagData?.get(0)?.tagIDAllocatedSize}")
         Log.e("permaLockData", "${tagData?.get(0)?.permaLockData}")
 
-         deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-        //deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())
+         //deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
+        deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())
 
     }
 
