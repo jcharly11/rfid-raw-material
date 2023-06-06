@@ -137,16 +137,14 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         lyCreateLog!!.visibility = View.GONE
 
         btnHandHeldGun!!.setOnClickListener {
-
             val readNumber = getReadNumber()
-
+            val fragment= getFragment()
             val bundle = bundleOf(
-                "readNumber" to readNumber
+                "readNumber" to readNumber,
+                "fragment" to fragment
             )
-
             val navController = findNavController(R.id.nav_host_fragment_content_main)
             navController.navigate(R.id.handHeldConfigFragment, bundle)
-
         }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -177,7 +175,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         val mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
-        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess)
+        val volumeHH= localSharedPreferences!!.getVolumeHH()
+
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
 
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
@@ -527,6 +527,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun deviceCharging() {
         _showDialogUnavailableReader.postValue(true)
+    }
+
+    fun getFragment(): String {
+        return localSharedPreferences!!.getFragment()
     }
 
 

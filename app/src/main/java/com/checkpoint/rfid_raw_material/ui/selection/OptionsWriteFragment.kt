@@ -60,6 +60,7 @@ class OptionsWriteFragment : Fragment(){
 
 
         binding.btnInventory.setOnClickListener {
+            viewModel.setFragment("inventory")
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
@@ -67,6 +68,7 @@ class OptionsWriteFragment : Fragment(){
 
         }
         binding.btnWriteTag.setOnClickListener {
+            viewModel.setFragment("write")
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )

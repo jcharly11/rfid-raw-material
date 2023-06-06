@@ -10,7 +10,7 @@ import kotlinx.coroutines.*
 
 
 class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
-                           private  val session_region: String){
+                           private  val session_region: String, private val volumeHH:Boolean){
 
 
      private var eventHandler: EventHandler? = null
@@ -158,7 +158,11 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
              reader.Config.startTrigger = triggerInfo.StartTrigger
              reader.Config.stopTrigger = triggerInfo.StopTrigger
-             reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+             if(volumeHH==true)
+                reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+             else
+                 reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
+
              val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
              antennaConfig.transmitPowerIndex = maxPower
              antennaConfig.setrfModeTableIndex(0)

@@ -28,7 +28,7 @@ android:layout_width="match_parent"
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_weight="20">
+            android:layout_weight="15">
 
             <com.checkpoint.rfid_raw_material.utils.CustomBattery
                 android:id="@+id/imgBattery"
@@ -51,7 +51,7 @@ android:layout_width="match_parent"
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="60"
+            android:layout_weight="70"
             android:orientation="vertical"
             android:gravity="center">
 
@@ -59,6 +59,51 @@ android:layout_width="match_parent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="20sp"
+                    android:text="@string/volume"
+                    android:gravity="right" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:orientation="horizontal">
+
+                <Switch
+                    android:id="@+id/swVolume"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:textOn="ON"
+                    android:textOff="OFF"
+                    android:showText="false"
+                    android:scaleX="1.5"
+                    android:scaleY="1.5"
+                    android:textSize="10sp"
+                    android:thumbTint="@color/navy"
+                    android:checked="true"></Switch>
+
+                <TextView
+                    android:id="@+id/tvStatusVolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/volume_text_on"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/navy"></TextView>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp">
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
@@ -152,7 +197,7 @@ android:layout_width="match_parent"
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="20"
+            android:layout_weight="15"
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatButton
@@ -160,7 +205,7 @@ android:layout_width="match_parent"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginLeft="25dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginBottom="25dp"
                 android:background="@drawable/button_icon_large"

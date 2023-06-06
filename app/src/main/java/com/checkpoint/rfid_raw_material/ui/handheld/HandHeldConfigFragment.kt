@@ -1,22 +1,22 @@
 package com.checkpoint.rfid_raw_material.ui.handheld
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.CompoundButton
 import android.widget.SeekBar
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBinding
-import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
+
 
 class HandHeldConfigFragment : Fragment() {
 
@@ -33,21 +33,37 @@ class HandHeldConfigFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
          val readNumber = arguments?.getInt("readNumber")
+         val fragment = arguments?.getString("fragment")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as MainActivity
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-
-            findNavController().popBackStack()
+            val bundle = bundleOf(
+                "readNumber" to readNumber
+            )
+            if(fragment=="inventory")
+                findNavController().navigate(R.id.pagerFragment, bundle)
+            else
+                findNavController().navigate(R.id.writeTagFragment, bundle)
         }
 
         var config = viewModel.getConfigFromPreferences()
         val currentPower= config.first!!
         val session = config.second
+        var volumeHH= viewModel.getVolume()
         binding.seekBarPower.max = 270
         binding.seekBarPower.progress =currentPower!!
         binding.txtPower.text = currentPower.toString()
+        binding.swVolume.isChecked= volumeHH
+        if(volumeHH==true) {
+            binding.tvStatusVolume.setText(R.string.volume_text_on)
+            binding.tvStatusVolume.setTextColor(R.color.navy)
+        }
+        else {
+            binding.tvStatusVolume.setText(R.string.volume_text_off)
+            binding.tvStatusVolume.setTextColor(R.color.red)
+        }
 
         binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             @SuppressLint("SetTextI18n")
@@ -121,19 +137,37 @@ class HandHeldConfigFragment : Fragment() {
 
 
         binding.btnSetPower.setOnClickListener {
-
              viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
-                 binding.seekBarPower.progress ).apply {
+                 binding.seekBarPower.progress, volumeHH).apply {
                  val bundle = bundleOf(
                      "needTag" to true,
                      "session" to sessionSelected,
-                     "readNumber" to readNumber
+                     "readNumber" to readNumber,
+                     "volumeHH" to volumeHH
                  )
-                findNavController().popBackStack()
-
+                //findNavController().popBackStack()
+                 if(fragment=="inventory")
+                     findNavController().navigate(R.id.pagerFragment, bundle)
+                 else
+                     findNavController().navigate(R.id.writeTagFragment, bundle)
              }
 
         }
+
+
+        binding.swVolume.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                binding.tvStatusVolume.setText(R.string.volume_text_on)
+                binding.tvStatusVolume.setTextColor(R.color.navy)
+                volumeHH=true
+            }
+            else{
+                binding.tvStatusVolume.setText(R.string.volume_text_off)
+                binding.tvStatusVolume.setTextColor(R.color.red)
+                volumeHH=false
+            }
+        })
+
         return binding.root
     }
 }

@@ -83,5 +83,8 @@
     <string name="invalid_tag">Tag Invalido</string>
     <string name="invalid_tag_message">El tag que deseas escribir no es de 128 bits</string>
     <string name="continue_message">Continuar</string>
+    <string name="volume">Volumen Hand Held</string>
+    <string name="volume_text_on">ENCENDIDO</string>
+    <string name="volume_text_off">APAGADO</string>
 
 </resources>

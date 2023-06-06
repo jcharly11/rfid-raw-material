@@ -225,7 +225,7 @@ class WriteTagFragment : Fragment(),
 
     override fun finishWrite() {
         CoroutineScope(Dispatchers.Main).launch {
-
+            viewModel.saveReadNumber(0)
             dialogWriteTag.dismiss()
             findNavController().navigate(R.id.optionsWriteFragment)
         }
