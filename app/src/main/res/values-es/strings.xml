@@ -80,5 +80,7 @@
     <string name="connecting">Conectando...</string>
     <string name="error">Error</string>
     <string name="warning">Adventencia</string>
+    <string name="label_volume_config">Volumen beep</string>
+
 
 </resources>

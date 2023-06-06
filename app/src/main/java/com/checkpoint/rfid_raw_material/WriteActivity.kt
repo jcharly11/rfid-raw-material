@@ -142,17 +142,15 @@ class WriteTagActivity : AppCompatActivity(),
 
             Log.e("tagID", "${it!!.tagID}")
             Log.e("pc", "${it!!.pc}")
-            Log.e("memoryBankData", "${it!!.memoryBankData}")
-            Log.e("memoryBank", "${it!!.memoryBank}")
-            Log.e("numberOfWords", "${it!!.numberOfWords}")
-            Log.e("opCode", "${it!!.opCode}")
-            Log.e("tagIDAllocatedSize", "${it!!.tagIDAllocatedSize}")
-            Log.e("permaLockData", "${it!!.permaLockData}")
+            Log.e("TAG DATA", " crc " + "${it!!.crc}")
+            Log.e("TAG DATA", " xpcw1 " + it!!.xpC_W1)
+            Log.e("TAG DATA", " xpcw2 " + it!!.xpC_W2)
 
         }
 
-         deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-        //deviceInstanceRFID!!.writeTagMode("90801A249B1F10A06C96AFF20001E240",tagData?.get(0)?.tagID.toString())
+        //deviceInstanceRFID!!.erase(tagData?.get(0)?.tagID.toString(),"90801A249B1F10A06C96AFF20001E240")
+        // deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
+        deviceInstanceRFID!!.writeTagMode("33314343241431414124413414412417",tagData?.get(0)?.tagID.toString())
 
     }
 

@@ -4,7 +4,6 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 import android.util.Log
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.zebra.rfid.api3.*
-import com.zebra.rfid.api3.STATUS_EVENT_TYPE.INVENTORY_STOP_EVENT
 import io.sentry.Sentry
 import kotlinx.coroutines.*
 
@@ -110,12 +109,6 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 batteryHandlerInterface!!.batteryLevel(batteryData.level)
             }
 
-            if (rfidStatusEvents.StatusEventData.statusEventType === INVENTORY_STOP_EVENT){
-
-                //rfidStatusEvents.StatusEventData.
-
-
-            }
 
         }
 
@@ -158,15 +151,15 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
              reader.Config.startTrigger = triggerInfo.StartTrigger
              reader.Config.stopTrigger = triggerInfo.StopTrigger
-             reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+             reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
              val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
              antennaConfig.transmitPowerIndex = maxPower
              antennaConfig.setrfModeTableIndex(0)
              antennaConfig.tari = 0
              val tagStorageSettings = reader.Config.tagStorageSettings
              tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+
              tagStorageSettings.isAccessReportsEnabled
-             // tagStorageSettings.maxTagIDLength = 8
              reader.Config.tagStorageSettings = tagStorageSettings
 
              reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
@@ -233,12 +226,16 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
      }
 
      fun transmitPowerLevels(){
-         levelPowerListHandlerInterface!!.transmitPowerLevelValues(reader.ReaderCapabilities.transmitPowerLevelValues)
+            if(reader!= null){
+                levelPowerListHandlerInterface!!.transmitPowerLevelValues(reader.ReaderCapabilities.transmitPowerLevelValues)
+
+            }
      }
+
      fun writeTagMode(epc: String, tid: String) {
          try {
              Log.e("writeMode","started")
-             reader.Config.setAccessOperationWaitTimeout(1000)
+             reader.Config.setAccessOperationWaitTimeout(5000)
              reader.Actions.Inventory.stop()
              reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
              write(tid,epc,"0")
@@ -249,14 +246,16 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              e.printStackTrace()
          }
      }
+
      fun write( tid: String, epc: String,  password: String){
 
          Log.e("tid ", "$tid")
          Log.e("epc", "$epc")
          Log.e("password", "$password")
-         writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
+        // writeTAGID(tid, epc)
+        //writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
+         writeWait(tid,epc)
 
-         //writeWithFilters(tid,epc)
      }
      @Synchronized
      private fun writeTag(
@@ -271,6 +270,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              val tagData: TagData = TagData()
              val tagAccess = TagAccess()
              val length =  targetData.length / 4
+             targetData.encodeToByteArray()
              val writeAccessParams = tagAccess.WriteAccessParams()
              writeAccessParams.accessPassword = Password.toLong(16)
              writeAccessParams.memoryBank = memory_bank
@@ -278,10 +278,8 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              writeAccessParams.setWriteData(targetData)
              writeAccessParams.writeRetries = 3
              writeAccessParams.writeDataLength = length
-             Log.e("writeDataLength","${length}")
-
-
              val useTIDfilter = memory_bank === MEMORY_BANK.MEMORY_BANK_EPC
+             writeAccessParams.byteOffset
              reader!!.Actions.TagAccess.writeWait(
                  sourceEPC,
                  writeAccessParams,
@@ -329,7 +327,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             val data = targetData.encodeToByteArray()
             val length = data.size / 2
             Log.e("LENGTH DATA:","$length")
-            writeSpecificFieldAccessParams.writeDataLength = length
+            writeSpecificFieldAccessParams.writeDataLength = 16
             writeSpecificFieldAccessParams.accessPassword = Password.toLong(16)
             writeSpecificFieldAccessParams.writeData = data
             reader!!.Actions.TagAccess.writeTagIDWait(tid,writeSpecificFieldAccessParams,null)
@@ -354,42 +352,69 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
     }
 
-    private fun addfilters(tag: String) {
-        val filters = PreFilters()
-        val filter = filters.PreFilter()
-        filter.antennaID = 1.toShort()
-        filter.setTagPattern(tag)
-        filter.tagPatternBitCount = tag.length * 4
-        filter.bitOffset = 32 // skip PC bits (always it should be in bit length)
-        filter.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
-        filter.filterAction = FILTER_ACTION.FILTER_ACTION_STATE_AWARE
-        filter.StateAwareAction.target =
-            TARGET.TARGET_INVENTORIED_STATE_S1
-        filter.StateAwareAction.stateAwareAction = STATE_AWARE_ACTION.STATE_AWARE_ACTION_INV_B
+
+     fun writeTAGID(tid: String, epc: String){
          try {
-            reader.Actions.PreFilters.add(filter)
+             val data = epc.encodeToByteArray()
+             val tagAccess = TagAccess()
+             val writeAccessParams = tagAccess.WriteSpecificFieldAccessParams()
+             writeAccessParams.accessPassword = 0
+             writeAccessParams.writeDataLength = data.size
+             writeAccessParams.writeData = data
+              reader.Actions.TagAccess.writeTagIDWait(tid, writeAccessParams, null)
+
+         } catch (e: InvalidUsageException) {
+             e.printStackTrace()
+             Log.e("EXCEPTION", e.vendorMessage.toString())
+             Log.e("RESULTS", e.message.toString())
+
+         } catch (e: OperationFailureException) {
+             e.printStackTrace()
+
+             Log.e("EXCEPTION", e.vendorMessage.toString())
+             Log.e("RESULTS", e.results.toString())
+             Log.e("RESULTS", e.statusDescription.toString())
+         }
+
+     }
+    fun erase(tagId: String,epc: String){
+        val tagAccess = TagAccess()
+        val tagData = TagData()
+
+        try {
+            val eraseParams = tagAccess.BlockEraseAccessParams()
+            eraseParams.accessPassword = 0
+            eraseParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+            eraseParams.offset = 0
+            eraseParams.count = 8
+            reader.Actions.TagAccess.blockEraseWait(tagId, eraseParams, null, tagData)
+            Log.e("blockEraseWait", tagData.tagID)
+            // writeTagMode(epc,tagId)
+
         } catch (e: InvalidUsageException) {
             e.printStackTrace()
+            Log.e("EXCEPTION", e.vendorMessage.toString())
+            Log.e("RESULTS", e.message.toString())
+
         } catch (e: OperationFailureException) {
             e.printStackTrace()
+
+            Log.e("EXCEPTION", e.vendorMessage.toString())
+            Log.e("RESULTS", e.results.toString())
+            Log.e("RESULTS", e.statusDescription.toString())
         }
     }
-
     fun readData(tid: String){
         var readAccess = TagAccess().ReadAccessParams()
         readAccess.accessPassword = 0L
         readAccess.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
         readAccess.offset = 0
         var tagData = reader.Actions.TagAccess.readWait(tid,readAccess,null)
-        if (tagData.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
-            tagData.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
-            if (tagData.memoryBankData.isNotEmpty()) {
-                Log.e("TAG DATA", " Mem Bank Data " + tagData.memoryBankData);
-            }
-        }
+
 
     }
     fun writeWithFilters(tag: String,writeData: String){
+
         val accessFilter = AccessFilter()
         val tagMask = tag.encodeToByteArray()
         accessFilter.TagPatternA.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
@@ -407,19 +432,41 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
         writeAccessParams.setWriteData(writeData)
         reader.Actions.TagAccess.writeEvent(writeAccessParams, accessFilter, null)
 
-
     }
-    private suspend fun readTask(tid: String){
-        return withContext(Dispatchers.Default) {
-            try {
 
-            } catch (e: InvalidUsageException) {
-                e.printStackTrace()
-            } catch (e: OperationFailureException) {
-                e.printStackTrace()
-            }
+    fun writeWait(tid: String, epc: String){
+        val epcBytes= epc.toByteArray()
+        val bytes = listOf(
+            0x74,
+            0xED, 0x40, 0x00, 0x33 ,0x31, 0x43, 0x43, 0x24, 0x14, 0x31, 0x41,0x41,0x24, 0x41, 0x34, 0x14, 0x41, 0x24, 0x17)
+
+
+        val bt = bytes.map { it.toByte() }.toByteArray()
+
+        Log.e("",epcBytes.contentToString())
+        Log.e("","$bt")
+
+        try {
+            val accessParams = TagAccess().WriteAccessParams()
+            accessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+            accessParams.writeData = bt
+            accessParams.writeDataLength = bytes.size / 4
+            accessParams.offset = 0
+            accessParams.accessPassword = 0L
+
+            val dataResult = TagData()
+            reader.Actions.TagAccess.writeWait(tid, accessParams, null, dataResult)
+
+            Log.e("RESULT: ", dataResult.tagID)
+        } catch (e: InvalidUsageException) {
+
+            Log.e("InvalidUsageException: ", e.printStackTrace().toString())
+
+        } catch (e: OperationFailureException) {
+
+            Log.e("OperationFailureException: ", e.printStackTrace().toString())
         }
-    }
 
+    }
 
 }

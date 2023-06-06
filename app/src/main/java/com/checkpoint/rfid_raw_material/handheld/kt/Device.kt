@@ -24,9 +24,14 @@ class Device(private val context: Context,
             }
             connected.await().let {
 
-                Log.e("DEVICE CONNECTED", "connect " + reader!!.hostName+"$it")
-                deviceConnectStatusInterface.isConnected(it)
+                if(reader != null){
 
+                    Log.e("DEVICE CONNECTED", "connect " + reader!!.hostName+"$it")
+                    deviceConnectStatusInterface.isConnected(it)
+
+                } else{
+                    deviceConnectStatusInterface.isConnected(false)
+                }
             }
 
         }
@@ -76,6 +81,9 @@ class Device(private val context: Context,
             } catch (e: OperationFailureException) {
                 e.printStackTrace()
                 return@withContext false
+            } catch (ex: NullPointerException){
+                return@withContext false
+
             }
 
         }

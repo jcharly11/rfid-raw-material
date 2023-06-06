@@ -77,7 +77,38 @@ class HandHeldConfigFragment : Fragment() {
         }
         binding.seekBarPower.progress = currentPower!!
 
+        binding.seekBarVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
 
+            var startTrackeing= false
+            @SuppressLint("SetTextI18n")
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                when(progress){
+
+                    0->{
+                        binding.txtVolume.text = "Quiet"
+                    }
+                    1->{
+                        binding.txtVolume.text = "Low"
+                    }
+                    2->{
+                        binding.txtVolume.text = "Medium"
+                    }
+                    3->{
+                        binding.txtVolume.text = "High"
+                    }
+
+
+                }
+
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+                startTrackeing = true
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+            }
+        })
 
 
         binding.seekBarPower.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {

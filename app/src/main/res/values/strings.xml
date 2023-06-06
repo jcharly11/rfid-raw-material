@@ -31,6 +31,7 @@
     <string name="power_config_settings">max_power</string>
     <string name="set_power">Set Power Configuration</string>
     <string name="label_max_power_config">Set power transmission</string>
+    <string name="label_volume_config">Beep volume</string>
 
     <string name="select_session">Select session</string>
     <string name="title_dialog_bluetooth">Looks like your bluetooth is off!</string>

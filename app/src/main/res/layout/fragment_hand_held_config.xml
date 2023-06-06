@@ -66,11 +66,46 @@ android:layout_width="match_parent"
                     android:layout_marginLeft="25dp"
                     android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:text="@string/label_max_power_config"
+                    android:text="@string/label_volume_config"
                     android:gravity="right" />
 
 
             </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/label_max_power_config"
+                android:paddingBottom="12dp">
+
+                <SeekBar
+                    android:id="@+id/seekBarVolume"
+                    style="@style/Widget.AppCompat.SeekBar.Discrete"
+                    android:layout_width="match_parent"
+                    android:layout_marginRight="25dp"
+                    android:layout_marginLeft="25dp"
+                    android:max="3"
+                    android:layout_height="50dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.textview.MaterialTextView
+
+                    android:id="@+id/txtVolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textColor="@color/purple_700"
+                    android:textSize="20sp"
+                    android:text="Quiet"
+                    android:layout_gravity="right" />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

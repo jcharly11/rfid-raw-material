@@ -159,24 +159,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     }
 
-    override fun onStart() {
-        super.onStart()
-        val t = Timer()
-//Set the schedule function and rate
-//Set the schedule function and rate
-        t.scheduleAtFixedRate(
-            object : TimerTask() {
-                override fun run() {
-
-                    if (deviceInstanceRFID != null)
-                        deviceInstanceRFID!!.battery()
-
-                }
-            },
-            0,
-            6000
-        )
-    }
     fun startRFIDReadInstance(writeEnable: Boolean, epc: String) {
         this.writeEnable = writeEnable
         this.epc = epc
@@ -279,11 +261,13 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             tagsDetected ++
             singleTag = tagData?.get(0)?.tagID.toString()
 
+
         }else{
 
                 tagData!!.iterator().forEachRemaining {
                     Log.e("tagID DATA","${it!!.tagID.toString()}")
                     Log.e("pc DATA","${it!!.pc}")
+
                     if (it.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
                         it.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
                         if (it.getMemoryBankData().length > 0) {
@@ -322,6 +306,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     _showErrorNumberTagsDetected.postValue(false)
                     _showDialogWritingTag.postValue(true)
                     var epc = this.epc!!
+
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(epc, readNumber,version,subVersion,type,identifier,provider)
                     }
