@@ -265,17 +265,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         }else{
 
                 tagData!!.iterator().forEachRemaining {
-                    Log.e("tagID DATA","${it!!.tagID.toString()}")
-                    Log.e("pc DATA","${it!!.pc}")
 
-                    if (it.opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
-                        it.opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
-                        if (it.getMemoryBankData().length > 0) {
-                            Log.d("TAG DATA", " Mem Bank Data " + it.getMemoryBankData());
-                        }
-                    }
                     CoroutineScope(Dispatchers.IO).launch {
-
                         newTag(it!!.tagID.toString(), readNumber,"","","","",0)
                     }
                 }
@@ -310,7 +301,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     CoroutineScope(Dispatchers.IO).launch {
                         newTag(epc, readNumber,version,subVersion,type,identifier,provider)
                     }
-                    deviceInstanceRFID!!.writeTagMode(epc, singleTag)
+                    deviceInstanceRFID!!.writeTagMode(singleTag, epc )
 
                 }
             }

@@ -151,7 +151,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
              reader.Config.startTrigger = triggerInfo.StartTrigger
              reader.Config.stopTrigger = triggerInfo.StopTrigger
-             reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
+             reader.Config.beeperVolume = BEEPER_VOLUME.MEDIUM_BEEP
              val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
              antennaConfig.transmitPowerIndex = maxPower
              antennaConfig.setrfModeTableIndex(0)
@@ -232,13 +232,13 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             }
      }
 
-     fun writeTagMode(epc: String, tid: String) {
+     fun writeTagMode(tid: String,epc: String) {
          try {
              Log.e("writeMode","started")
              reader.Config.setAccessOperationWaitTimeout(5000)
              reader.Actions.Inventory.stop()
              reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
-             write(tid,epc,"0")
+             writeWait(tid,epc,"0")
 
          } catch (e: InvalidUsageException) {
              e.printStackTrace()
@@ -247,224 +247,45 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
          }
      }
 
-     fun write( tid: String, epc: String,  password: String){
 
-         Log.e("tid ", "$tid")
-         Log.e("epc", "$epc")
-         Log.e("password", "$password")
-        // writeTAGID(tid, epc)
-        //writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
-         writeWait(tid,epc)
+    fun writeWait(tid: String, epc: String, password: String){
 
-     }
-     @Synchronized
-     private fun writeTag(
-         sourceEPC: String,
-         Password: String,
-         memory_bank: MEMORY_BANK,
-         targetData: String,
-         offset: Int
-     ) {
-
-         try {
-             val tagData: TagData = TagData()
-             val tagAccess = TagAccess()
-             val length =  targetData.length / 4
-             targetData.encodeToByteArray()
-             val writeAccessParams = tagAccess.WriteAccessParams()
-             writeAccessParams.accessPassword = Password.toLong(16)
-             writeAccessParams.memoryBank = memory_bank
-             writeAccessParams.offset = offset
-             writeAccessParams.setWriteData(targetData)
-             writeAccessParams.writeRetries = 3
-             writeAccessParams.writeDataLength = length
-             val useTIDfilter = memory_bank === MEMORY_BANK.MEMORY_BANK_EPC
-             writeAccessParams.byteOffset
-             reader!!.Actions.TagAccess.writeWait(
-                 sourceEPC,
-                 writeAccessParams,
-                 null,
-                 tagData,true,useTIDfilter
-             )
-
-             Log.e("Result tagID",tagData.tagID)
-             Log.e("Result pc",tagData.pc.toString())
-
-
-             writingTagInterface!!.writingTagStatus(true)
-
-         } catch (e: InvalidUsageException) {
-             e.printStackTrace()
-             writingTagInterface!!.writingTagStatus(false)
-            // Sentry.captureMessage("${e.message.toString()}")
-             Log.e("InvalidUsageException", e.info)
-
-         } catch (e: OperationFailureException) {
-             e.printStackTrace()
-             writingTagInterface!!.writingTagStatus(false)
-             Log.e("OperationFailureException", e.message.toString())
-
-             //Sentry.captureMessage("${e.message.toString()}")
-             Log.e("EXCEPTION", e.vendorMessage.toString())
-             Log.e("RESULTS", e.results.toString())
-             Log.e("RESULTS", e.statusDescription.toString())
-         }
-
-     }
-
-    @Synchronized
-    private fun writeTag2(
-        tid: String,
-        Password: String,
-        memory_bank: MEMORY_BANK,
-        targetData: String,
-        offset: Int
-    ) {
-
+        val data = "4000$epc"
+        Log.e("tid ", "$tid")
+        Log.e("epc", "$data")
+        Log.e("password", "$password")
         try {
+            val tagData: TagData = TagData()
+            val tagAccess = TagAccess()
+            val writeAccessParams = tagAccess.WriteAccessParams()
+            writeAccessParams.accessPassword = password.toLong(16)
+            writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+            writeAccessParams.offset = 1
+            writeAccessParams.setWriteData(data)
 
-            val writeSpecificFieldAccessParams = TagAccess().WriteSpecificFieldAccessParams()
-            val data = targetData.encodeToByteArray()
-            val length = data.size / 2
-            Log.e("LENGTH DATA:","$length")
-            writeSpecificFieldAccessParams.writeDataLength = 16
-            writeSpecificFieldAccessParams.accessPassword = Password.toLong(16)
-            writeSpecificFieldAccessParams.writeData = data
-            reader!!.Actions.TagAccess.writeTagIDWait(tid,writeSpecificFieldAccessParams,null)
+            writeAccessParams.writeDataLength = data.length / 4
+            reader!!.Actions.TagAccess.writeWait(
+                tid,
+                writeAccessParams,
+                null,
+                tagData,
+                true,
+                true
+            )
+            Log.e("RESULT: ", tagData.tagID)
+            writingTagInterface!!.writingTagStatus(true)
 
-
-           // writingTagInterface!!.writingTagStatus(true)
 
         } catch (e: InvalidUsageException) {
-            e.printStackTrace()
+
+            Log.e("InvalidUsageException: ", e.info)
             writingTagInterface!!.writingTagStatus(false)
-            Sentry.captureMessage("${e.message.toString()}")
-
-        } catch (e: OperationFailureException) {
-            e.printStackTrace()
-           // writingTagInterface!!.writingTagStatus(false)
-
-            Sentry.captureMessage("${e.message.toString()}")
-            Log.e("EXCEPTION", e.vendorMessage.toString())
-            Log.e("RESULTS", e.results.toString())
-            Log.e("RESULTS", e.statusDescription.toString())
-        }
-
-    }
-
-
-     fun writeTAGID(tid: String, epc: String){
-         try {
-             val data = epc.encodeToByteArray()
-             val tagAccess = TagAccess()
-             val writeAccessParams = tagAccess.WriteSpecificFieldAccessParams()
-             writeAccessParams.accessPassword = 0
-             writeAccessParams.writeDataLength = data.size
-             writeAccessParams.writeData = data
-              reader.Actions.TagAccess.writeTagIDWait(tid, writeAccessParams, null)
-
-         } catch (e: InvalidUsageException) {
-             e.printStackTrace()
-             Log.e("EXCEPTION", e.vendorMessage.toString())
-             Log.e("RESULTS", e.message.toString())
-
-         } catch (e: OperationFailureException) {
-             e.printStackTrace()
-
-             Log.e("EXCEPTION", e.vendorMessage.toString())
-             Log.e("RESULTS", e.results.toString())
-             Log.e("RESULTS", e.statusDescription.toString())
-         }
-
-     }
-    fun erase(tagId: String,epc: String){
-        val tagAccess = TagAccess()
-        val tagData = TagData()
-
-        try {
-            val eraseParams = tagAccess.BlockEraseAccessParams()
-            eraseParams.accessPassword = 0
-            eraseParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
-            eraseParams.offset = 0
-            eraseParams.count = 8
-            reader.Actions.TagAccess.blockEraseWait(tagId, eraseParams, null, tagData)
-            Log.e("blockEraseWait", tagData.tagID)
-            // writeTagMode(epc,tagId)
-
-        } catch (e: InvalidUsageException) {
-            e.printStackTrace()
-            Log.e("EXCEPTION", e.vendorMessage.toString())
-            Log.e("RESULTS", e.message.toString())
-
-        } catch (e: OperationFailureException) {
-            e.printStackTrace()
-
-            Log.e("EXCEPTION", e.vendorMessage.toString())
-            Log.e("RESULTS", e.results.toString())
-            Log.e("RESULTS", e.statusDescription.toString())
-        }
-    }
-    fun readData(tid: String){
-        var readAccess = TagAccess().ReadAccessParams()
-        readAccess.accessPassword = 0L
-        readAccess.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
-        readAccess.offset = 0
-        var tagData = reader.Actions.TagAccess.readWait(tid,readAccess,null)
-
-
-    }
-    fun writeWithFilters(tag: String,writeData: String){
-
-        val accessFilter = AccessFilter()
-        val tagMask = tag.encodeToByteArray()
-        accessFilter.TagPatternA.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
-        accessFilter.TagPatternA.tagPattern = byteArrayOf(0x45, 0x32)
-        accessFilter.TagPatternA.tagPatternBitCount = 2 * 8
-        accessFilter.TagPatternA.bitOffset = 0
-        accessFilter.TagPatternA.tagMask = tagMask
-        accessFilter.TagPatternA.tagMaskBitCount = tagMask.size * 8
-        accessFilter.accessFilterMatchPattern = FILTER_MATCH_PATTERN.A
-        val tagAccess =  TagAccess()
-        val writeAccessParams =  tagAccess.WriteAccessParams()
-        writeAccessParams.accessPassword = 0
-        writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
-        writeAccessParams.offset = 0
-        writeAccessParams.setWriteData(writeData)
-        reader.Actions.TagAccess.writeEvent(writeAccessParams, accessFilter, null)
-
-    }
-
-    fun writeWait(tid: String, epc: String){
-        val epcBytes= epc.toByteArray()
-        val bytes = listOf(
-            0x74,
-            0xED, 0x40, 0x00, 0x33 ,0x31, 0x43, 0x43, 0x24, 0x14, 0x31, 0x41,0x41,0x24, 0x41, 0x34, 0x14, 0x41, 0x24, 0x17)
-
-
-        val bt = bytes.map { it.toByte() }.toByteArray()
-
-        Log.e("",epcBytes.contentToString())
-        Log.e("","$bt")
-
-        try {
-            val accessParams = TagAccess().WriteAccessParams()
-            accessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
-            accessParams.writeData = bt
-            accessParams.writeDataLength = bytes.size / 4
-            accessParams.offset = 0
-            accessParams.accessPassword = 0L
-
-            val dataResult = TagData()
-            reader.Actions.TagAccess.writeWait(tid, accessParams, null, dataResult)
-
-            Log.e("RESULT: ", dataResult.tagID)
-        } catch (e: InvalidUsageException) {
-
-            Log.e("InvalidUsageException: ", e.printStackTrace().toString())
 
         } catch (e: OperationFailureException) {
 
-            Log.e("OperationFailureException: ", e.printStackTrace().toString())
+            Log.e("OperationFailureException: ", e.vendorMessage)
+            writingTagInterface!!.writingTagStatus(false)
+
         }
 
     }

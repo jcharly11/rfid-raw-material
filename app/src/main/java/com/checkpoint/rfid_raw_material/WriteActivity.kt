@@ -141,16 +141,12 @@ class WriteTagActivity : AppCompatActivity(),
         tagData!!.iterator().forEach {
 
             Log.e("tagID", "${it!!.tagID}")
-            Log.e("pc", "${it!!.pc}")
-            Log.e("TAG DATA", " crc " + "${it!!.crc}")
-            Log.e("TAG DATA", " xpcw1 " + it!!.xpC_W1)
-            Log.e("TAG DATA", " xpcw2 " + it!!.xpC_W2)
 
         }
 
         //deviceInstanceRFID!!.erase(tagData?.get(0)?.tagID.toString(),"90801A249B1F10A06C96AFF20001E240")
         // deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-        deviceInstanceRFID!!.writeTagMode("33314343241431414124413414412417",tagData?.get(0)?.tagID.toString())
+        //deviceInstanceRFID!!.writeTagMode(tagData?.get(0)?.tagID.toString(),"400090801A249B1F10A06C96AFF20001E240",)
 
     }
 
