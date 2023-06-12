@@ -25,6 +25,7 @@ import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Tags
+import com.checkpoint.rfid_raw_material.ui.notifications.BatteryTimerTask
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 import com.fondesa.kpermissions.PermissionStatus
@@ -192,6 +193,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         deviceInstanceRFID!!.setRfidModeRead()
         deviceInstanceRFID!!.battery()
+       /* BatteryTimerTask().startTimer {
+            deviceInstanceRFID!!.battery()
+        }*/
         deviceInstanceRFID!!.transmitPowerLevels()
 
     }
@@ -294,34 +298,88 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         Log.e("handleTriggerPress", "${pressed}")
 
         val isPause = localSharedPreferences!!.getPauseStatus()
-        if(!isPause){
-        if (pressed) {
-            tagsDetected = 0
-            deviceInstanceRFID!!.perform()
+        val fragment = localSharedPreferences!!.getFragment()
 
-        } else {
-            Log.e("TAG NUMBER DETECTED","${tagsDetected}")
-            deviceInstanceRFID!!.stop()
-            if (this.writeEnable) {
-                if(tagsDetected > 1){
+        when(fragment){
+            "write"->{
+               if (pressed) {
+                        tagsDetected = 0
+                        deviceInstanceRFID!!.perform()
 
-                    _showErrorNumberTagsDetected.postValue(true)
+                    } else {
+                        Log.e("TAG NUMBER DETECTED","${tagsDetected}")
+                        deviceInstanceRFID!!.stop()
+                        if (this.writeEnable) {
+                            if(tagsDetected > 1){
+
+                                _showErrorNumberTagsDetected.postValue(true)
+
+                            }else{
+                                _showErrorNumberTagsDetected.postValue(false)
+                                _showDialogWritingTag.postValue(true)
+                                var epc = this.epc!!
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    newTag(epc, readNumber,version,subVersion,type,identifier,provider)
+                                }
+                                deviceInstanceRFID!!.writeTagMode(singleTag, epc )
+
+                            }
+                        }
+
+                    }
+
+
+            }
+            "read"->{
+                if(!isPause ){
+                    if (pressed) {
+                        deviceInstanceRFID!!.perform()
+
+                    } else {
+                        deviceInstanceRFID!!.stop()
+
+                    }
 
                 }else{
-                    _showErrorNumberTagsDetected.postValue(false)
-                    _showDialogWritingTag.postValue(true)
-                    var epc = this.epc!!
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        newTag(epc, readNumber,version,subVersion,type,identifier,provider)
-                    }
-                    deviceInstanceRFID!!.writeTagMode(singleTag, epc )
-
+                    Log.e("SORRY","IM PAUSED")
                 }
             }
 
         }
 
+
+
+        if(!isPause){
+            if (pressed) {
+                tagsDetected = 0
+                deviceInstanceRFID!!.perform()
+
+            } else {
+                Log.e("TAG NUMBER DETECTED","${tagsDetected}")
+                deviceInstanceRFID!!.stop()
+                if (this.writeEnable) {
+                    if(tagsDetected > 1){
+
+                        _showErrorNumberTagsDetected.postValue(true)
+
+                    }else{
+                        _showErrorNumberTagsDetected.postValue(false)
+                        _showDialogWritingTag.postValue(true)
+                        var epc = this.epc!!
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            newTag(epc, readNumber,version,subVersion,type,identifier,provider)
+                        }
+                        deviceInstanceRFID!!.writeTagMode(singleTag, epc )
+
+                    }
+                }
+
+            }
+
+        }else{
+            Log.e("SORRY","IM PAUSED")
         }
     }
      suspend fun newTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
@@ -357,6 +415,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun batteryLevel(level: Int) {
         Log.e("BatteryLevel current", "${level}")
+
         batteryView!!.setPercent(level)
         _batteryLevel.postValue(level)
 
