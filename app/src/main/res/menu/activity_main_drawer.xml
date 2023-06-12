@@ -11,11 +11,13 @@
             android:iconTint="@color/navy">
 
         </item>
-        <item
-            android:icon="@drawable/ic_sync_fill0_wght400_grad0_opsz48"
-            android:title="@string/reload_device"
-            android:iconTint="@color/navy">
-        </item>
+<!--        <item-->
+<!--            android:id="@+id/optionsWriteFragment"-->
+<!--            android:icon="@drawable/ic_sync_fill0_wght400_grad0_opsz48"-->
+<!--            android:title="@string/reload_device"-->
+<!--            android:iconTint="@color/navy">-->
+
+<!--        </item>-->
     </group>
 
 </menu>

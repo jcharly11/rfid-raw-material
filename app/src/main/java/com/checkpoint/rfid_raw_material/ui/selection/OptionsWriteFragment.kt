@@ -60,6 +60,8 @@ class OptionsWriteFragment : Fragment(){
 
 
         binding.btnInventory.setOnClickListener {
+            viewModel.setFragment("inventory")
+
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
@@ -67,10 +69,15 @@ class OptionsWriteFragment : Fragment(){
 
         }
         binding.btnWriteTag.setOnClickListener {
+            viewModel.setFragment("write")
+
             val bundle = bundleOf(
                 "deviceName" to deviceName
             )
             findNavController().navigate(R.id.writeTagFragment, bundle)
+        }
+        binding.pullToRefreshConnection.setOnRefreshListener {
+            connectDevice()
         }
         activityMain!!.deviceConnected.observe(viewLifecycleOwner) {
             if(it){
@@ -120,17 +127,17 @@ class OptionsWriteFragment : Fragment(){
         }, 2000)
     }
 
+    fun connectDevice(){
+        dialogLookingForDevice!!.show()
+        activityMain!!.startDeviceConnection()
+    }
 
 
 
     override fun onStart() {
         super.onStart()
         (activity as AppCompatActivity).supportActionBar!!.show()
-
-        dialogLookingForDevice!!.show()
-        activityMain!!.startDeviceConnection()
-
-
+        connectDevice()
         enableBarButtons()
     }
 

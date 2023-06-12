@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,8 @@ import com.zebra.rfid.api3.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileWriter
 
 
 class WriteTagActivity : AppCompatActivity(),
@@ -55,6 +58,10 @@ class WriteTagActivity : AppCompatActivity(),
             permissions.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false) -> {
                 Log.d("BLUETOOTH_CONNECT","${permissions.getValue(Manifest.permission.BLUETOOTH_CONNECT)}")
             }
+            permissions.getOrDefault(Manifest.permission.WRITE_EXTERNAL_STORAGE, false) -> {
+            }
+            permissions.getOrDefault(Manifest.permission.READ_EXTERNAL_STORAGE, false) -> {
+            }
             else -> {
                 finish()
             }
@@ -73,8 +80,9 @@ class WriteTagActivity : AppCompatActivity(),
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.BLUETOOTH_SCAN,
             Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.BLUETOOTH_CONNECT
-        ))
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE,        ))
         bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
         if (devices != null) {
@@ -107,7 +115,7 @@ class WriteTagActivity : AppCompatActivity(),
                 deviceInstanceRFID!!.clean()
 
             }
-            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),150,"SESSION_S1")
+            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),150,"SESSION_S1", true)
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
             deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
@@ -120,6 +128,26 @@ class WriteTagActivity : AppCompatActivity(),
 
             deviceInstanceBARCODE= DeviceInstanceBARCODE(device.getReaderDevice(),applicationContext)
             deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
+        }
+
+        var btnTestLog= findViewById<Button>(R.id.btnTestLog)
+        btnTestLog.setOnClickListener {
+
+
+            val dir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}/raw_materials/"
+            val directory3= File(dir)
+
+            if(!directory3.exists()){
+                directory3.mkdir()
+            }
+
+            val file3 = File(dir, "example2.txt")
+
+            FileWriter(file3).use { fileWriter -> fileWriter.append("Writing to file!")}
+
+
+            var a =0
+
         }
 
     }

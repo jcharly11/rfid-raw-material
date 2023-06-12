@@ -82,5 +82,7 @@
     <string name="warning">Adventencia</string>
     <string name="label_volume_config">Volumen beep</string>
 
-
+    <string name="volume">Volumen Hand Held</string>
+    <string name="volume_text_on">ENCENDIDO</string>
+    <string name="volume_text_off">APAGADO</string>
 </resources>

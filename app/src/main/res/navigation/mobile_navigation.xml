@@ -15,6 +15,7 @@
             android:id="@+id/action_optionsWriteFragment_to_writeTagFragment"
             app:destination="@id/writeTagFragment" />
 
+
     </fragment>
 
     <fragment

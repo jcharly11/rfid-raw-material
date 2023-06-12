@@ -14,6 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -30,6 +31,7 @@ import com.fondesa.kpermissions.PermissionStatus
 import com.fondesa.kpermissions.isDenied
 import com.fondesa.kpermissions.isGranted
 import com.fondesa.kpermissions.request.PermissionRequest
+import com.google.android.material.navigation.NavigationView
 import com.zebra.rfid.api3.*
 import io.sentry.Sentry
 import kotlinx.coroutines.CoroutineScope
@@ -128,11 +130,14 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         lyCreateLog!!.visibility = View.GONE
 
       btnHandHeldGun!!.setOnClickListener {
+          val fragment= getFragment()
 
           val readNumber= getReadNumber()
 
           val bundle = bundleOf(
-              "readNumber" to readNumber)
+              "readNumber" to readNumber,
+              "fragment" to fragment
+          )
 
           val navController = findNavController(R.id.nav_host_fragment_content_main)
           navController.navigate(R.id.handHeldConfigFragment,bundle)
@@ -143,11 +148,15 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
         val navController = navHostFragment.navController
+        val navView: NavigationView = binding.navView
 
         appBarConfiguration = AppBarConfiguration(
             setOf(R.id.optionsWriteFragment), drawerLayout
         )
+
         setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
             // Android 12 or Android 12 Beta
             requestPermissions12.addListener(this)
@@ -157,7 +166,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
 
 
+
     }
+
 
     fun startRFIDReadInstance(writeEnable: Boolean, epc: String) {
         this.writeEnable = writeEnable
@@ -169,7 +180,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         val mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
-        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(),mp,sess)
+        val volumeHH= localSharedPreferences!!.getVolumeHH()
+
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
 
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
@@ -283,7 +296,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         val isPause = localSharedPreferences!!.getPauseStatus()
         if(!isPause){
         if (pressed) {
-            tagsDetected=0
+            tagsDetected = 0
             deviceInstanceRFID!!.perform()
 
         } else {
@@ -291,6 +304,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             deviceInstanceRFID!!.stop()
             if (this.writeEnable) {
                 if(tagsDetected > 1){
+
                     _showErrorNumberTagsDetected.postValue(true)
 
                 }else{
@@ -462,13 +476,15 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         _maxPowerList.postValue(level)
     }
 
-    fun getReadNumber():Int {
-        return localSharedPreferences!!.getReadNumber()
-    }
 
     override fun deviceCharging() {
         _showDialogUnavailableReader.postValue(true)
     }
-
+    fun getFragment(): String {
+        return localSharedPreferences!!.getFragment()
+    }
+    fun getReadNumber():Int {
+        return localSharedPreferences!!.getReadNumber()
+    }
 
 }

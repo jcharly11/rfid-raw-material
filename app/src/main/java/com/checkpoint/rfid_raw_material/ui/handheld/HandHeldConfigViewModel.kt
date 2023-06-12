@@ -9,15 +9,18 @@ class HandHeldConfigViewModel(application: Application) : AndroidViewModel(appli
     private var  localPreferences = LocalPreferences(application)
 
 
-    fun saveConfigToPreferences(sessionSelected: String, maxPower: Int) {
+    fun saveConfigToPreferences(sessionSelected: String, maxPower: Int, volumeHH:Boolean) {
         localPreferences.saveMaxToPreferences(maxPower)
         localPreferences.saveSessionToPreferences(sessionSelected)
+        localPreferences.saveVolumeHH(volumeHH)
     }
-
     fun getConfigFromPreferences():Pair<Int, String>{
 
         return Pair(localPreferences.getMaxFromPreferences(),
             localPreferences.getSessionFromPreferences())
 
+    }
+    fun getVolume():Boolean{
+        return localPreferences.getVolumeHH()
     }
 }

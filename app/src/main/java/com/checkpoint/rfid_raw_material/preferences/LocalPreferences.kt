@@ -15,7 +15,8 @@ class LocalPreferences(application: Application) {
     private var selectedLanguageValue:String? = null
     private var readNumber:String? = null
     private var tokenLicense:String? = null
-
+    private var volumeHH:Boolean? = null
+    private var fragment:String? = null
     init{
         sharedPreferences = application.getSharedPreferences("config_device", Context.MODE_PRIVATE)
         flagPowerValue= application.resources.getString(R.string.power_config_settings)
@@ -25,6 +26,9 @@ class LocalPreferences(application: Application) {
         selectedLanguageValue="language"
         readNumber="0"
         tokenLicense=""
+
+        volumeHH=true
+        fragment="inventory"
     }
 
     fun saveMaxToPreferences(maxPower : Int){
@@ -99,6 +103,29 @@ class LocalPreferences(application: Application) {
 
     fun getLicenseToken():String{
         return sharedPreferences.getString(tokenLicense,"")!!
+    }
+
+
+    fun saveVolumeHH(volume: Boolean){
+        return with (sharedPreferences.edit()) {
+            putBoolean("volumeHH", volume)
+            apply()
+        }
+    }
+
+    fun getVolumeHH():Boolean{
+        return sharedPreferences.getBoolean("volumeHH",volumeHH!!)!!
+    }
+
+    fun saveFragment(fragmentOrigin: String){
+        return with (sharedPreferences.edit()) {
+            putString(fragment, fragmentOrigin)
+            apply()
+        }
+    }
+
+    fun getFragment():String{
+        return sharedPreferences.getString(fragment,"")!!
     }
 
 }
