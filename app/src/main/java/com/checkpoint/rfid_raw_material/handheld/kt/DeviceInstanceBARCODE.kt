@@ -45,7 +45,7 @@ class DeviceInstanceBARCODE(
         }
 
     }
-
+    @Synchronized
     private suspend fun connectTask(): Boolean {
         return withContext(Dispatchers.Default) {
             try {
@@ -78,10 +78,13 @@ class DeviceInstanceBARCODE(
         }
     }
 
+    @Synchronized
     private suspend fun disConnectTask(): Boolean {
         return withContext(Dispatchers.Default) {
             try {
-                sdkHandler.dcssdkTerminateCommunicationSession(mScannerInfoList[0].scannerID).let {
+                sdkHandler.dcssdkGetActiveScannersList(mScannerInfoList)
+                val scannerId = mScannerInfoList[0].scannerID
+                sdkHandler.dcssdkTerminateCommunicationSession(scannerId).let {
                     true
                 }
             } catch (ex: Exception) {
@@ -162,6 +165,20 @@ class DeviceInstanceBARCODE(
     }
 
 
+    fun disconnect(){
+        GlobalScope.launch(Dispatchers.Main) {
+            val stop = async {
+                disConnectTask()
+            }
+            stop.await().let {
+
+                Log.e("disConnectTask", "$it")
+
+
+            }
+        }
+
+    }
     private val dataHandler: Handler = object : Handler(Looper.myLooper()!!) {
 
         override fun handleMessage(msg: Message) {

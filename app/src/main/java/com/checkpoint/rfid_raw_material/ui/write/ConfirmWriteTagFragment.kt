@@ -90,7 +90,8 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
 
         activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
             if(it){
-                dialogErrorMultipleTags!!.show()
+                if(!dialogErrorMultipleTags!!.isShowing)
+                    dialogErrorMultipleTags!!.show()
             }
         }
 
@@ -110,6 +111,15 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
 
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.batteryView!!.visibility = View.VISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.VISIBLE
+    }
+
 
     override fun successRecording() {
         dialogWriteTagSuccess!!.dismiss()

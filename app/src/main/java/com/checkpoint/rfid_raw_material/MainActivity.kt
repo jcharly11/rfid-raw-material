@@ -131,18 +131,20 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         lyCreateLog!!.visibility = View.GONE
 
       btnHandHeldGun!!.setOnClickListener {
-          val fragment= getFragment()
+          deviceInstanceRFID!!.battery().apply {
 
-          val readNumber= getReadNumber()
+              val fragment= getFragment()
+              val readNumber= getReadNumber()
 
-          val bundle = bundleOf(
-              "readNumber" to readNumber,
-              "fragment" to fragment
-          )
+              val bundle = bundleOf(
+                  "readNumber" to readNumber,
+                  "fragment" to fragment
+              )
 
-          val navController = findNavController(R.id.nav_host_fragment_content_main)
-          navController.navigate(R.id.handHeldConfigFragment,bundle)
+              val navController = findNavController(R.id.nav_host_fragment_content_main)
+              navController.navigate(R.id.handHeldConfigFragment,bundle)
 
+          }
         }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
@@ -190,17 +192,18 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
         deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
-
-        deviceInstanceRFID!!.setRfidModeRead()
+        //BatteryTimerTask().startTimer { deviceInstanceRFID!!.battery() }
         deviceInstanceRFID!!.battery()
-       /* BatteryTimerTask().startTimer {
-            deviceInstanceRFID!!.battery()
-        }*/
+        deviceInstanceRFID!!.setRfidModeRead()
         deviceInstanceRFID!!.transmitPowerLevels()
 
     }
 
     fun startBarCodeReadInstance() {
+        if (deviceInstanceBARCODE != null) {
+            deviceInstanceBARCODE!!.disconnect()
+
+        }
         deviceInstanceBARCODE = DeviceInstanceBARCODE(device!!.getReaderDevice(), applicationContext)
         deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
     }
@@ -255,6 +258,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     localSharedPreferences!!.saveSessionToPreferences("SESSION_1")
                 }
             }
+
         } else {
             _showErrorDeviceConnected.postValue(true)
         }
@@ -298,9 +302,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         Log.e("handleTriggerPress", "${pressed}")
 
         val isPause = localSharedPreferences!!.getPauseStatus()
-        val fragment = localSharedPreferences!!.getFragment()
 
-        when(fragment){
+        when(localSharedPreferences!!.getFragment()){
             "write"->{
                if (pressed) {
                         tagsDetected = 0
@@ -428,6 +431,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     override fun connected(status: Boolean) {
         Log.e("connected", "$status")
+
     }
 
     override fun writingTagStatus(status: Boolean) {
@@ -438,14 +442,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
             this.writeEnable = false
             _showDialogWritingSuccess.postValue(true)
-/*
-            val bundle = bundleOf(
-                "readNumber" to readNumber
-            )
 
-            val navController = findNavController(R.id.nav_host_fragment_content_main)
-            navController.navigate(R.id.writeTagFragment, bundle)
-            _liveCode.value = ""*/
 
         }else{
 
@@ -513,6 +510,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         _liveCode.value = ""
     }
     fun restartWritingFlags(){
+
         _showErrorNumberTagsDetected.postValue(false)
         _showDialogWritingError.postValue(false)
         _showDialogWritingSuccess.postValue(false)

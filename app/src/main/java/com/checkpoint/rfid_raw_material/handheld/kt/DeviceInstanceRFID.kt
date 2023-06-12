@@ -248,8 +248,12 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
          } catch (e: InvalidUsageException) {
              e.printStackTrace()
+             writingTagInterface!!.writingTagStatus(false)
+
          } catch (e: OperationFailureException) {
              e.printStackTrace()
+             writingTagInterface!!.writingTagStatus(false)
+
          }
      }
 
