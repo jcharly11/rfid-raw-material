@@ -104,7 +104,11 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
         activityMain!!.showDialogWritingSuccess.observe(viewLifecycleOwner){
             if(it){
                 dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment,epc)
+                if(dialogERRORWriting!!.isShowing){
+                    dialogERRORWriting!!.dismiss()
+                }
                 dialogWriteTagSuccess!!.show()
+
             }
 
         }

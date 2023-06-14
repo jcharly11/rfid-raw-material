@@ -9,6 +9,7 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldIn
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
 import com.zebra.rfid.api3.RFIDReader
 import com.zebra.scannercontrol.*
+import io.sentry.Sentry
 //import io.sentry.Sentry
 import kotlinx.coroutines.*
 
@@ -65,7 +66,7 @@ class DeviceInstanceBARCODE(
                                 DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_SESSION_TERMINATION.value)
                 notificationsMask = notificationsMask or
                         DCSSDKDefs.DCSSDK_EVENT.DCSSDK_EVENT_BARCODE.value
-                sdkHandler.dcssdkEstablishCommunicationSession(connectedScannerID)
+                //sdkHandler.dcssdkEstablishCommunicationSession(connectedScannerID)
                 sdkHandler.dcssdkSubsribeForEvents(notificationsMask)
                 sdkHandler.dcssdkEnableAvailableScannersDetection(true)
                 true
@@ -84,11 +85,12 @@ class DeviceInstanceBARCODE(
             try {
                 sdkHandler.dcssdkGetActiveScannersList(mScannerInfoList)
                 val scannerId = mScannerInfoList[0].scannerID
+                sdkHandler.dcssdkClose()
                 sdkHandler.dcssdkTerminateCommunicationSession(scannerId).let {
                     true
                 }
             } catch (ex: Exception) {
-                //Sentry.captureMessage("${ex.message}")
+                Sentry.captureMessage("${ex.message}")
                 false
 
             }
@@ -124,7 +126,7 @@ class DeviceInstanceBARCODE(
     }
 
     override fun dcssdkEventCommunicationSessionEstablished(p0: DCSScannerInfo?) {
-        Log.e("dcssdkEventCommunicationSessionEstablished(", "${p0!!}")
+        Log.e("dcssdkEventCommunicationSessionEstablished(", "${p0!!.isActive}")
 
         connectedScannerID = p0!!.scannerID
 

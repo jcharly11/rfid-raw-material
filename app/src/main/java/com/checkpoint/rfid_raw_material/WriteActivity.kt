@@ -209,7 +209,7 @@ class WriteTagActivity : AppCompatActivity(),
     }
 
     override fun setDataBarCode(code: String) {
-        TODO("Not yet implemented")
+        Log.e("BARCODE:","$code")
     }
 
     override fun connected(status: Boolean) {

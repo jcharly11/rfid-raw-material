@@ -129,7 +129,7 @@ class OptionsWriteFragment : Fragment(){
 
     fun connectDevice(){
         dialogLookingForDevice!!.show()
-        activityMain!!.startDeviceConnection()
+        activityMain!!.refreshDeviceConnection()
     }
 
 

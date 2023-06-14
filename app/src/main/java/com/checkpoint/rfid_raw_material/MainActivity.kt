@@ -130,7 +130,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         btnHandHeldGun!!.visibility = View.GONE
         lyCreateLog!!.visibility = View.GONE
 
-      btnHandHeldGun!!.setOnClickListener {
+        btnHandHeldGun!!.setOnClickListener {
           deviceInstanceRFID!!.battery().apply {
 
               val fragment= getFragment()
@@ -161,14 +161,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         navView.setupWithNavController(navController)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
-            // Android 12 or Android 12 Beta
             requestPermissions12.addListener(this)
         }
         else
             requestPermissions11.addListener(this)
-
-
-
 
     }
 
@@ -181,18 +177,20 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
         }
 
-        val mp = localSharedPreferences!!.getMaxFromPreferences()
+        var mp = localSharedPreferences!!.getMaxFromPreferences()
         val sess = localSharedPreferences!!.getSessionFromPreferences()
         val volumeHH= localSharedPreferences!!.getVolumeHH()
 
-        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
+        if(this.writeEnable){
+            mp=220
+        }
 
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
         deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
         deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
-        //BatteryTimerTask().startTimer { deviceInstanceRFID!!.battery() }
         deviceInstanceRFID!!.battery()
         deviceInstanceRFID!!.setRfidModeRead()
         deviceInstanceRFID!!.transmitPowerLevels()
@@ -222,6 +220,12 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                     requestPermissions11.send()
 
         }
+    }
+
+    fun refreshDeviceConnection() {
+
+        searchDevices()
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -267,6 +271,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     override fun onDestroy() {
         super.onDestroy()
         try {
+
             device!!.disconnect()
 
         }catch (ex:  Exception){
@@ -296,7 +301,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         }
 
     }
-
 
     override fun handleTriggerPress(pressed: Boolean) {
         Log.e("handleTriggerPress", "${pressed}")
@@ -385,7 +389,8 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
             Log.e("SORRY","IM PAUSED")
         }
     }
-     suspend fun newTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
+
+    suspend fun newTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
                         piece:String, provider:Int): Tags = withContext(Dispatchers.IO) {
         val nowDate: OffsetDateTime = OffsetDateTime.now()
         val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT

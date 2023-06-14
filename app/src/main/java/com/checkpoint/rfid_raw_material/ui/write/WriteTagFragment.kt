@@ -107,6 +107,13 @@ class WriteTagFragment : Fragment(),
                     listProviders
                 )
 
+            binding.tvIdentifier.setOnFocusChangeListener { view, b ->
+                if(b){
+                    activityMain!!.startBarCodeReadInstance()
+                }
+
+            }
+            binding.tvIdentifier.requestFocus()
             binding.spProviderList.adapter = adapter
             binding.spProviderList.onItemSelectedListener =
                 object : AdapterView.OnItemSelectedListener {
@@ -124,7 +131,7 @@ class WriteTagFragment : Fragment(),
                     }
                 }
         }
-        binding.btnRemoveProvider.setOnClickListener {
+         binding.btnRemoveProvider.setOnClickListener {
             dialogRemoveProvider.show()
         }
         binding.btnWriteTag.setOnClickListener {
@@ -197,7 +204,10 @@ class WriteTagFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityMain!!.startBarCodeReadInstance()
+        activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
+        activityMain!!.batteryView!!.visibility = View.INVISIBLE
+        activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
     }
 
 

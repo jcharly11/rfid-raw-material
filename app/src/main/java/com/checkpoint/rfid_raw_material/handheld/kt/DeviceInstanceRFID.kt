@@ -272,7 +272,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
             writeAccessParams.offset = 1
             writeAccessParams.setWriteData(data)
-
+            writeAccessParams.writeRetries = 1
             writeAccessParams.writeDataLength = data.length / 4
             reader!!.Actions.TagAccess.writeWait(
                 tid,
