@@ -26,6 +26,7 @@ import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.ui.notifications.BatteryTimerTask
+import com.checkpoint.rfid_raw_material.utils.ReverseStandAlone
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.SelectDeviceDialogInterface
 import com.fondesa.kpermissions.PermissionStatus
@@ -107,7 +108,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     var type:String=""
     var identifier:String=""
     var provider:Int=0
-
+    val reverse = ReverseStandAlone()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -193,7 +194,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
         deviceInstanceRFID!!.battery()
         deviceInstanceRFID!!.setRfidModeRead()
-        deviceInstanceRFID!!.transmitPowerLevels()
 
     }
 
@@ -293,8 +293,20 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
                 tagData!!.iterator().forEachRemaining {
 
                     CoroutineScope(Dispatchers.IO).launch {
-                        newTag(it!!.tagID.toString(), readNumber,"","","","",0)
-                    }
+                        var epc = it!!.tagID.toString()
+                        reverse.hexadecimalToBinaryString(epc)
+                        var version= reverse.getVersion()
+                        var subVersion= reverse.getSubVersion()
+                        var type= reverse.getType()
+                        var piece= reverse.getPiece()
+                        var idProvider= reverse.getProvider(epc)
+                        if(version.isNullOrEmpty()) version=""
+                        if(subVersion.isNullOrEmpty()) subVersion=""
+                        if(type.isNullOrEmpty()) type=""
+                        if(piece.isNullOrEmpty()) piece=""
+                        if(idProvider==null) idProvider=0
+
+                        newTag(epc, readNumber, version , subVersion, type, piece, idProvider)                    }
                 }
 
 

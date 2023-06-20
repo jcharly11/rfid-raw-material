@@ -1,12 +1,9 @@
 package com.checkpoint.rfid_raw_material.ui.selection
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +40,7 @@ class OptionsWriteFragment : Fragment(){
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         viewModel = ViewModelProvider(this)[OptionsWriteViewModel::class.java]
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
@@ -77,7 +74,10 @@ class OptionsWriteFragment : Fragment(){
             findNavController().navigate(R.id.writeTagFragment, bundle)
         }
         binding.pullToRefreshConnection.setOnRefreshListener {
-            connectDevice()
+            dialogLookingForDevice!!.show()
+            activityMain!!.refreshDeviceConnection()
+            binding.pullToRefreshConnection.isRefreshing = false
+            binding.pullToRefreshConnection.isEnabled = false
         }
         activityMain!!.deviceConnected.observe(viewLifecycleOwner) {
             if(it){
@@ -93,8 +93,8 @@ class OptionsWriteFragment : Fragment(){
                 dialogLookingForDevice!!.dismiss()
              }
 
-            //binding.btnInventory.isEnabled = false
-            //binding.btnWriteTag.isEnabled = false
+            binding.btnInventory.isEnabled = false
+            binding.btnWriteTag.isEnabled = false
             dialogErrorDeviceConnected!!.show()
 
 
@@ -122,14 +122,14 @@ class OptionsWriteFragment : Fragment(){
         )
             .show()
 
-        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+        Handler(Looper.getMainLooper()).postDelayed({
             doubleBackPressed = false
         }, 2000)
     }
 
     fun connectDevice(){
         dialogLookingForDevice!!.show()
-        activityMain!!.refreshDeviceConnection()
+        activityMain!!.startDeviceConnection()
     }
 
 

@@ -7,27 +7,105 @@
     tools:context=".WriteTagActivity"
     android:orientation="vertical"
     android:gravity="center"
+    android:weightSum="100"
     android:id="@+id/fragmentHolder">
-    <Button
-        android:id="@+id/btnReadMode"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="rfid read"/>
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:orientation="horizontal"
+        android:paddingTop="30dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:visibility="invisible">
+        <Button
+            android:id="@+id/btnReadMode"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:textColor="@color/white"
+            android:text="rfid"
+            android:layout_marginRight="20dp"/>
+
+        <Button
+            android:id="@+id/btnBarcode"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:textColor="@color/white"
+            android:text="Barcode"
+            android:layout_marginRight="20dp"/>
+
+        <Button
+            android:id="@+id/btnTestLog"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:textColor="@color/white"
+            android:text="Log"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="60"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Write Tag"
+            android:textSize="20sp"
+            android:textAlignment="center"></TextView>
 
 
-    <Button
-        android:id="@+id/btnBarcode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="barcode  read"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TagID"
+            android:textSize="16sp"></TextView>
 
-    <Button
-        android:id="@+id/btnTestLog"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtTagID"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+        </com.google.android.material.textfield.TextInputEditText>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="EPC"
+            android:textSize="16sp"
+            ></TextView>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtEPC"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="100"
+            android:maxLines="10"
+            android:gravity="top">
+        </com.google.android.material.textfield.TextInputEditText>
+
+
+
+    </LinearLayout>
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="create log"/>
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:gravity="center"
+        android:paddingRight="25dp"
+        android:paddingLeft="25dp">
+
+        <Button
+            android:id="@+id/btnWrite"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:text="Write"
+            android:textColor="@color/white"></Button>
+    </RelativeLayout>
 
 </LinearLayout>

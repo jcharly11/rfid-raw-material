@@ -204,8 +204,6 @@ class WriteTagFragment : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
-        activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
         activityMain!!.batteryView!!.visibility = View.INVISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
     }

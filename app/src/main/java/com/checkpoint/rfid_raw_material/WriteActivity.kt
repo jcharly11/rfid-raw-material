@@ -7,13 +7,18 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorMultipleTags
+import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogSelectPairDevices
 import com.zebra.rfid.api3.*
 import kotlinx.coroutines.CoroutineScope
@@ -35,10 +40,16 @@ class WriteTagActivity : AppCompatActivity(),
 
     private  var  deviceInstanceRFID: DeviceInstanceRFID? = null
     private  var deviceInstanceBARCODE: DeviceInstanceBARCODE? = null
+    private var dialogLookingForDevice: DialogLookingForDevice? = null
+    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
+    private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
     private lateinit var device: Device
     private var deviceReady = false
     private var bluetoothHandler: BluetoothHandler? = null
     private var deviceName =  String()
+    private var editextTagid: EditText? = null
+    private var editextEPC: EditText? = null
+
     val permissionRequest = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -83,7 +94,10 @@ class WriteTagActivity : AppCompatActivity(),
             Manifest.permission.BLUETOOTH_CONNECT,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,        ))
-        bluetoothHandler = BluetoothHandler(this)
+
+        dialogLookingForDevice  = DialogLookingForDevice(this)
+        dialogErrorDeviceConnected =  DialogErrorDeviceConnected(this)
+         bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
         if (devices != null) {
             if (devices.size > 0){
@@ -115,7 +129,7 @@ class WriteTagActivity : AppCompatActivity(),
                 deviceInstanceRFID!!.clean()
 
             }
-            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),150,"SESSION_S1", true)
+            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),220,"SESSION_S1", true)
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
             deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
@@ -123,6 +137,15 @@ class WriteTagActivity : AppCompatActivity(),
 
         }
 
+        editextTagid= findViewById<EditText>(R.id.edtTagID)
+        editextEPC = findViewById<EditText>(R.id.edtEPC)
+
+        var btnWrite = findViewById<Button>(R.id.btnWrite)
+        btnWrite.setOnClickListener {
+            var tid = editextTagid!!.text.toString()
+            var epc = editextEPC!!.text.toString()
+            deviceInstanceRFID!!.writeTagMode(tid,epc)
+        }
         var btnBarcode = findViewById<Button>(R.id.btnBarcode)
         btnBarcode.setOnClickListener {
 
@@ -155,7 +178,7 @@ class WriteTagActivity : AppCompatActivity(),
 
     override fun onStart() {
         super.onStart()
-
+        dialogLookingForDevice!!.show()
         device.connect()
 
     }
@@ -167,14 +190,14 @@ class WriteTagActivity : AppCompatActivity(),
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
         tagData!!.iterator().forEach {
-
             Log.e("tagID", "${it!!.tagID}")
+            editextTagid!!.setText(it!!.tagID)
 
         }
 
+
         //deviceInstanceRFID!!.erase(tagData?.get(0)?.tagID.toString(),"90801A249B1F10A06C96AFF20001E240")
         // deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-        //deviceInstanceRFID!!.writeTagMode(tagData?.get(0)?.tagID.toString(),"400090801A249B1F10A06C96AFF20001E240",)
 
     }
 
@@ -206,6 +229,12 @@ class WriteTagActivity : AppCompatActivity(),
         Log.e("handleStartConnect", "${b}")
         deviceReady = b
 
+        if(deviceReady){
+            dialogLookingForDevice!!.dismiss()
+        }else{
+            dialogErrorDeviceConnected!!.show()
+        }
+
     }
 
     override fun setDataBarCode(code: String) {
@@ -218,6 +247,7 @@ class WriteTagActivity : AppCompatActivity(),
 
     override fun writingTagStatus(status: Boolean) {
         Log.e("writingTagStatus", "${status}")
+
     }
 
 
