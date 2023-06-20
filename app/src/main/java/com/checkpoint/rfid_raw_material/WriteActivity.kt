@@ -129,11 +129,7 @@ class WriteTagActivity : AppCompatActivity(),
                 deviceInstanceRFID!!.clean()
 
             }
-            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),220,"SESSION_S1", true)
-            deviceInstanceRFID!!.setBatteryHandlerInterface(this)
-            deviceInstanceRFID!!.setHandlerInterfacResponse(this)
-            deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
-            deviceInstanceRFID!!.setRfidModeRead()
+
 
         }
 
@@ -180,6 +176,11 @@ class WriteTagActivity : AppCompatActivity(),
         super.onStart()
         dialogLookingForDevice!!.show()
         device.connect()
+        deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),220,"SESSION_S1", true)
+        deviceInstanceRFID!!.setBatteryHandlerInterface(this)
+        deviceInstanceRFID!!.setHandlerInterfacResponse(this)
+        deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
+        deviceInstanceRFID!!.setRfidModeRead()
 
     }
 
