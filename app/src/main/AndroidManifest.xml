@@ -79,7 +79,7 @@
         </activity>
 
         <activity
-            android:name=".ui.write.ConfirmWriteActivity"
+            android:name=".ConfirmWriteActivity"
             android:exported="true">
 
         </activity>

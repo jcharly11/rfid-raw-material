@@ -1,20 +1,9 @@
-package com.checkpoint.rfid_raw_material.ui.write
+package com.checkpoint.rfid_raw_material
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.os.bundleOf
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.navigation.fragment.findNavController
-import com.checkpoint.rfid_raw_material.MainActivity
-import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
