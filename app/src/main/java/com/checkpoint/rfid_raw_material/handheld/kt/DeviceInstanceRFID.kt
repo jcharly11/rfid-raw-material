@@ -237,18 +237,17 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             }
      }
 
-     fun writeTagMode(tid: String,epc: String) {
+    fun writeTagMode(tid: String,epc: String) {
 
-             Sentry.captureMessage("Starting write mode")
-             reader.Config.setAccessOperationWaitTimeout(2000)
-             reader.Actions.Inventory.stop().let {
-                 Sentry.captureMessage("Inventory stoped")
-             }
-             reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
-             Sentry.captureMessage("Mode write setup")
-             writeWait(tid,epc,"0")
+        Sentry.captureMessage("Starting write mode")
+        reader.Actions.Inventory.stop()
+        Sentry.captureMessage("Inventory stoped")
+        reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
+        Sentry.captureMessage("Mode write setup")
+        reader.Config.setAccessOperationWaitTimeout(2000)
+        writeWait(tid,epc,"0")
 
-     }
+    }
 
 
     fun writeWait(tid: String, epc: String, password: String){
@@ -268,7 +267,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
             writeAccessParams.writeRetries = 1
             writeAccessParams.writeDataLength = data.length / 4
 
-            Sentry.captureMessage("Trying to write $tagData")
+            Sentry.captureMessage("Trying to write ${tagData.tagID}")
             reader!!.Actions.TagAccess.writeWait(
                 tid,
                 writeAccessParams,
@@ -278,7 +277,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 true
             ).apply {
 
-                Sentry.captureMessage("Finish writing ($tid == $tagData)")
+                Sentry.captureMessage("Finish writing ($tid == ${tagData.tagID})")
             }
             Log.e("RESULT: ", tagData.tagID)
             writingTagInterface!!.writingTagStatus(true)
@@ -287,17 +286,20 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
         } catch (e: InvalidUsageException) {
 
             Log.e("InvalidUsageException: ", e.info)
-            Sentry.captureMessage(  "InvalidUsageException : ${e.info} | ${e.vendorMessage} | ${e.message} | ${e.message!!}}")
+            Sentry.captureMessage(  "InvalidUsageException : ${e.info} | ${e.vendorMessage} }")
             writingTagInterface!!.writingTagStatus(false)
 
         } catch (e: OperationFailureException) {
 
             Log.e("OperationFailureException: ", e.vendorMessage)
-            Sentry.captureMessage(  "OperationFailureException : ${e.results} | ${e.statusDescription} | ${e.vendorMessage} | ${e.message!!}}")
+            Sentry.captureMessage(  "OperationFailureException : ${e.results} | ${e.statusDescription} | ${e.vendorMessage}")
             writingTagInterface!!.writingTagStatus(false)
 
         }
 
     }
+
+
+
 
 }

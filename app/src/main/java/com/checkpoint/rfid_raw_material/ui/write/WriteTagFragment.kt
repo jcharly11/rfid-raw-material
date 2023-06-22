@@ -1,6 +1,7 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
 import CustomDialogRemoveProvider
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,17 +20,17 @@ import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentWriteTagBinding
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
+import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
+import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogWriteTag
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogBarcodeReaderStatus
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorEmptyFields
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogProviderInterface
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogWriteTag
-import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
-import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
+import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import io.sentry.Sentry
 import kotlinx.coroutines.*
+
 
 class WriteTagFragment : Fragment(),
     CustomDialogProviderInterface, CustomDialogWriteTagInterface,
@@ -64,7 +65,7 @@ class WriteTagFragment : Fragment(),
 
         dialogBarcodeReaderStatus = DialogBarcodeReaderStatus(this@WriteTagFragment)
         dialogErrorEmptyFields = DialogErrorEmptyFields(this@WriteTagFragment)
-        dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
+        //dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
         dialogRemoveProvider = CustomDialogRemoveProvider(this@WriteTagFragment)
 
 
@@ -167,7 +168,19 @@ class WriteTagFragment : Fragment(),
                             "provider" to idProvider
                         )
                         activityMain!!.resetBarCode()
-                        findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
+                        //findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
+
+
+                        val i = Intent(context, ConfirmWriteActivity::class.java)
+                        i.putExtra("epc", hexValueEpc)
+                        i.putExtra("readNumber", readNumber)
+                        i.putExtra("deviceName", deviceName)
+                        i.putExtra("version", versionValue)
+                        i.putExtra("subversion", subversionValue)
+                        i.putExtra("type", typeValue)
+                        i.putExtra("identifier", pieceValue)
+                        i.putExtra("provider", idProvider)
+                        startActivity(i)
 
                     } else {
 

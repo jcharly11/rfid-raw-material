@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material.utils.dialogs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
@@ -10,7 +11,7 @@ import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class CustomDialogWriteTag(val fragment: Fragment) : Dialog(fragment.requireContext()) {
+class CustomDialogWriteTag(context: Context) : Dialog(context) {
     private lateinit var customDialogWriteTagInterface: CustomDialogWriteTagInterface
 
     init {
@@ -27,7 +28,7 @@ class CustomDialogWriteTag(val fragment: Fragment) : Dialog(fragment.requireCont
         val buttonCancel = findViewById<Button>(R.id.btnDialogCancelWrite)
         val buttonCloseDialog = findViewById<FloatingActionButton>(R.id.btnCloseDialogWrite)
 
-        customDialogWriteTagInterface = fragment as CustomDialogWriteTagInterface
+        customDialogWriteTagInterface = context as CustomDialogWriteTagInterface
         buttonNext.setOnClickListener {
             customDialogWriteTagInterface.finishWrite()
         }

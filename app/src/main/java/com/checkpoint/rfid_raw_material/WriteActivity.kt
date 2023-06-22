@@ -8,6 +8,7 @@ import android.os.Environment
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -97,7 +98,7 @@ class WriteTagActivity : AppCompatActivity(),
 
         dialogLookingForDevice  = DialogLookingForDevice(this)
         dialogErrorDeviceConnected =  DialogErrorDeviceConnected(this)
-         bluetoothHandler = BluetoothHandler(this)
+        bluetoothHandler = BluetoothHandler(this)
         val devices = bluetoothHandler!!.list()
         if (devices != null) {
             if (devices.size > 0){
@@ -176,11 +177,6 @@ class WriteTagActivity : AppCompatActivity(),
         super.onStart()
         dialogLookingForDevice!!.show()
         device.connect()
-        deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),220,"SESSION_S1", true)
-        deviceInstanceRFID!!.setBatteryHandlerInterface(this)
-        deviceInstanceRFID!!.setHandlerInterfacResponse(this)
-        deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
-        deviceInstanceRFID!!.setRfidModeRead()
 
     }
 
@@ -190,16 +186,14 @@ class WriteTagActivity : AppCompatActivity(),
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        tagData!!.iterator().forEach {
-            Log.e("tagID", "${it!!.tagID}")
-            editextTagid!!.setText(it!!.tagID)
 
+        if (tagData!!.isNotEmpty()){
+            this.runOnUiThread {
+
+                editextTagid!!.setText(tagData[0]!!.tagID)
+
+            }
         }
-
-
-        //deviceInstanceRFID!!.erase(tagData?.get(0)?.tagID.toString(),"90801A249B1F10A06C96AFF20001E240")
-        // deviceInstanceRFID!!.readData(tagData?.get(0)?.tagID.toString())
-
     }
 
     override fun handleTriggerPress(pressed: Boolean) {
@@ -231,6 +225,12 @@ class WriteTagActivity : AppCompatActivity(),
         deviceReady = b
 
         if(deviceReady){
+            deviceInstanceRFID =  DeviceInstanceRFID(device.getReaderDevice(),220,"SESSION_S1", true)
+            deviceInstanceRFID!!.setBatteryHandlerInterface(this)
+            deviceInstanceRFID!!.setHandlerInterfacResponse(this)
+            deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
+            deviceInstanceRFID!!.setRfidModeRead()
+
             dialogLookingForDevice!!.dismiss()
         }else{
             dialogErrorDeviceConnected!!.show()
@@ -248,8 +248,6 @@ class WriteTagActivity : AppCompatActivity(),
 
     override fun writingTagStatus(status: Boolean) {
         Log.e("writingTagStatus", "${status}")
-
+        Toast.makeText(this,"write status: ${status}", Toast.LENGTH_LONG).show()
     }
-
-
 }
