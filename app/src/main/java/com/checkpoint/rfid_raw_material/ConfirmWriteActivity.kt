@@ -46,7 +46,7 @@ class ConfirmWriteActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_write)
         var edtNewEPC: TextInputEditText= findViewById(R.id.edtNewTagEPC)
-        var tvMessage: TextView = findViewById(R.id.tvMessageTriggers)
+        tvMessage = findViewById(R.id.tvMessageTriggers)
 
 
         val arguments = intent.extras
