@@ -180,7 +180,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
     fun stopReadedBarCode() {
-        //deviceInstanceBARCODE!!.interruptBarCodeSession()
+        deviceInstanceBARCODE!!.interruptBarCodeSession()
     }
 
     fun startDeviceConnection() {
