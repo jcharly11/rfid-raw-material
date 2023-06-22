@@ -1,6 +1,7 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
 import CustomDialogRemoveProvider
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -65,7 +68,7 @@ class WriteTagFragment : Fragment(),
 
         dialogBarcodeReaderStatus = DialogBarcodeReaderStatus(this@WriteTagFragment)
         dialogErrorEmptyFields = DialogErrorEmptyFields(this@WriteTagFragment)
-        //dialogWriteTag = CustomDialogWriteTag(this@WriteTagFragment)
+        dialogWriteTag = CustomDialogWriteTag(this.requireContext())
         dialogRemoveProvider = CustomDialogRemoveProvider(this@WriteTagFragment)
 
 
@@ -149,38 +152,20 @@ class WriteTagFragment : Fragment(),
                         idProvider > 0
                     ) {
 
-                        val hexValueEpc = viewModel.calculateEPC(
+                        viewModel.calculateEPC(
                             versionValue,
                             subversionValue,
                             typeValue,
                             idProvider.toString(),
                             pieceValue
-                        )
+                        ).let {
+                            activityMain!!.resetBarCode()
+                            val intent = Intent(context, ConfirmWriteActivity::class.java)
+                            intent.putExtra("epc", it)
+                            startForResult.launch(intent)
 
-                        val bundle = bundleOf(
-                            "epc" to hexValueEpc,
-                            "readNumber" to readNumber,
-                            "deviceName" to deviceName,
-                            "version" to versionValue,
-                            "subversion" to subversionValue,
-                            "type" to typeValue,
-                            "identifier" to pieceValue,
-                            "provider" to idProvider
-                        )
-                        activityMain!!.resetBarCode()
-                        //findNavController().navigate(R.id.confirmWriteTagFragment, bundle)
+                        }
 
-
-                        val i = Intent(context, ConfirmWriteActivity::class.java)
-                        i.putExtra("epc", hexValueEpc)
-                        i.putExtra("readNumber", readNumber)
-                        i.putExtra("deviceName", deviceName)
-                        i.putExtra("version", versionValue)
-                        i.putExtra("subversion", subversionValue)
-                        i.putExtra("type", typeValue)
-                        i.putExtra("identifier", pieceValue)
-                        i.putExtra("provider", idProvider)
-                        startActivity(i)
 
                     } else {
 
@@ -214,13 +199,20 @@ class WriteTagFragment : Fragment(),
 
         return binding.root
     }
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
+            binding.tvIdentifier.setText(String())
 
+
+        }
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activityMain!!.batteryView!!.visibility = View.INVISIBLE
         activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
     }
-
 
     override fun saveProvider() {
         val idProvider = dialogProvider.tvIdProvider!!.text.toString()
@@ -256,7 +248,6 @@ class WriteTagFragment : Fragment(),
     override fun closeDialog() {
         dialogProvider.dismiss()
     }
-
 
     override fun closeDialogRemoveProvider() {
         dialogRemoveProvider.dismiss()

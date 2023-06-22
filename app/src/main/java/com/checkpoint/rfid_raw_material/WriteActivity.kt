@@ -246,8 +246,8 @@ class WriteTagActivity : AppCompatActivity(),
         TODO("Not yet implemented")
     }
 
-    override fun writingTagStatus(status: Boolean) {
+    override fun writingTagStatus(status: Boolean, epc: String) {
         Log.e("writingTagStatus", "${status}")
-        Toast.makeText(this,"write status: ${status}", Toast.LENGTH_LONG).show()
+        Toast.makeText(this,"write epc: ${epc}", Toast.LENGTH_LONG).show()
     }
 }

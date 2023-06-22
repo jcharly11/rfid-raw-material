@@ -1,39 +1,56 @@
 package com.checkpoint.rfid_raw_material.ui.write
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
+import com.checkpoint.rfid_raw_material.handheld.kt.Device
+import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 import com.google.android.material.textfield.TextInputEditText
+import com.zebra.rfid.api3.ReaderDevice
+import com.zebra.rfid.api3.Readers
+import com.zebra.rfid.api3.TagData
 
 
-class ConfirmWriteActivity : AppCompatActivity(), DialogWriteTagSuccessInterface {
-    private var activityMain: MainActivity? = null
+class ConfirmWriteActivity : AppCompatActivity(),
+    ResponseHandlerInterface,
+    Readers.RFIDReaderEventHandler,
+    BatteryHandlerInterface,
+    DeviceConnectStatusInterface,
+    WritingTagInterface,
+    DialogWriteTagSuccessInterface {
     private var epc: String? = null
-    private var version: String? = null
-    private var subversion: String? = null
-    private var type: String? = null
-    private var identifier: String? = null
-    private var provider: Int? = null
-    private var readNumber: Int? = 0
     private var deviceName: String? = null
     private var tid: String? = null
-    private var startDevice: Boolean = false
+    private var deviceInstanceRFID: DeviceInstanceRFID? = null
+    private var device: Device? = null
+    private var readyToWrite = false
 
     private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
     private var dialogWriteTag: CustomDialogWriteTag? = null
     private var dialogLoadingWrite: DialogPrepareTrigger? = null
     private var dialogERRORWriting: DialogErrorWritingTag? = null
     private var dialogWriteTagSuccess: DialogWriteTagSuccess? = null
+    private var dialogLookingForDevice: DialogLookingForDevice? = null
+    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
+    private var bluetoothHandler: BluetoothHandler? = null
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_write)
@@ -42,93 +59,113 @@ class ConfirmWriteActivity : AppCompatActivity(), DialogWriteTagSuccessInterface
         val arguments = intent.extras
         if (arguments != null) {
             epc = arguments?.getString("epc")
-            version = arguments?.getString("version")
-            subversion = arguments?.getString("subversion")
-            type = arguments?.getString("type")
-            identifier = arguments?.getString("identifier")
-            provider = arguments?.getInt("provider")
-            readNumber = arguments?.getInt("readNumber")
-            deviceName = arguments?.getString("deviceName")
+
         }
 
-        activityMain = MainActivity()
         dialogErrorMultipleTags= DialogErrorMultipleTags(this)
         dialogWriteTag = CustomDialogWriteTag(this)
         dialogLoadingWrite = DialogPrepareTrigger(this)
         dialogERRORWriting = DialogErrorWritingTag(this)
 
-        //activityMain!!.lyCreateLog!!.visibility = View.GONE
-        activityMain!!.version= version!!
-        activityMain!!.subVersion= subversion!!
-        activityMain!!.type= type!!
-        activityMain!!.identifier= identifier!!
-        activityMain!!.provider= provider!!
 
         edtNewEPC.setText(epc)
         edtNewEPC.isEnabled = false
 
         var btnCancel:Button= findViewById(R.id.btnCancelWrite)
         btnCancel.setOnClickListener {
-            tid=""
-            edtNewEPC.setText("")
-            startDevice= false
-            val bundle = bundleOf(
-                "readNumber" to readNumber
-            )
-
-            val intent = Intent(this, WriteTagFragment::class.java)
-            startActivity(intent,bundle)
+          finish()
         }
-
-
-        /*activityMain!!.showDialogWritingTag.observe(){
-            if(it){
-                dialogLoadingWrite!!.show()
-            }else{
-                dialogLoadingWrite!!.dismiss()
+        bluetoothHandler!!.list()!!.forEach {
+            if (it.name.contains("RFD8500")) {
+                deviceName += it.name
             }
         }
-
-        activityMain!!.showErrorNumberTagsDetected.observe(viewLifecycleOwner){
-            if(it){
-                if(!dialogErrorMultipleTags!!.isShowing)
-                    dialogErrorMultipleTags!!.show()
-            }
-        }
-
-        activityMain!!.showDialogWritingError.observe(viewLifecycleOwner){
-            if (it){
-                dialogERRORWriting!!.show()
-            }
-
-        }
-        activityMain!!.showDialogWritingSuccess.observe(viewLifecycleOwner){
-            if(it){
-                dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment,epc)
-                if(dialogERRORWriting!!.isShowing){
-                    dialogERRORWriting!!.dismiss()
-                }
-                dialogWriteTagSuccess!!.show()
-
-            }
-        }*/
+        device = Device(applicationContext,deviceName!!,this)
 
     }
 
-    override fun successRecording() {
-        dialogWriteTagSuccess!!.dismiss()
-        activityMain!!.restartWritingFlags()
-        val bundle = bundleOf(
-            "readNumber" to readNumber
-        )
 
-        val intent = Intent(this, WriteTagFragment::class.java)
-        startActivity(intent,bundle)
-    }
 
     override fun onStart() {
         super.onStart()
-        activityMain!!.stopReadedBarCode()
-        activityMain!!.startRFIDReadInstance(true,this.epc!!)
+        dialogLookingForDevice!!.show()
+        device!!.connect()
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        device!!.disconnect()
+    }
+
+    override fun successRecording() {
+        setResult(RESULT_OK)
+        finish()
+    }
+
+    override fun handleTagdata(tagData: Array<TagData?>?) {
+        if (tagData!!.isNotEmpty()){
+            tid = tagData[0]!!.tagID
+            readyToWrite = true
+        }
+    }
+
+
+    override fun handleTriggerPress(pressed: Boolean) {
+        if (readyToWrite && pressed){
+                dialogWriteTag!!.show()
+                deviceInstanceRFID!!.writeTagMode(tid!!,epc!!)
+        }
+        else{
+            if(pressed){
+                deviceInstanceRFID!!.perform()
+            }else{
+                deviceInstanceRFID!!.stop()
+            }
+        }
+    }
+
+    override fun handleStartConnect(connected: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun RFIDReaderAppeared(p0: ReaderDevice?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun RFIDReaderDisappeared(p0: ReaderDevice?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun batteryLevel(level: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun isConnected(b: Boolean) {
+        if(b){
+            deviceInstanceRFID =  DeviceInstanceRFID(device!!.getReaderDevice(),220,"SESSION_S1", true)
+            deviceInstanceRFID!!.setBatteryHandlerInterface(this)
+            deviceInstanceRFID!!.setHandlerInterfacResponse(this)
+            deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
+            deviceInstanceRFID!!.setRfidModeRead()
+            dialogLookingForDevice!!.dismiss()
+        }else{
+
+            dialogErrorDeviceConnected!!.show()
+        }
+    }
+
+
+    override fun writingTagStatus(status: Boolean,epcRecorded: String) {
+        readyToWrite = false
+        dialogWriteTag!!.dismiss()
+
+        if(status){
+            dialogWriteTagSuccess = DialogWriteTagSuccess(this,epcRecorded)
+            dialogWriteTagSuccess!!.show()
+        }else{
+
+            dialogERRORWriting!!.show()
+        }
     }
 }

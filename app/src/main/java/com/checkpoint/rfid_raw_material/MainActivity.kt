@@ -51,7 +51,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     ResponseHandlerInterface,
     BatteryHandlerInterface,
     BarcodeHandHeldInterface,
-    WritingTagInterface,
     SelectDeviceDialogInterface,
     LevelPowerListHandlerInterface,
     UnavailableDeviceInterface{
@@ -170,32 +169,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
     }
 
 
-    fun startRFIDReadInstance(writeEnable: Boolean, epc: String) {
-        this.writeEnable = writeEnable
-        this.epc = epc
-        if (deviceInstanceRFID != null) {
-            deviceInstanceRFID!!.clean()
-
-        }
-
-        var mp = localSharedPreferences!!.getMaxFromPreferences()
-        val sess = localSharedPreferences!!.getSessionFromPreferences()
-        val volumeHH= localSharedPreferences!!.getVolumeHH()
-
-        if(this.writeEnable){
-            mp=220
-        }
-
-        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
-        deviceInstanceRFID!!.setBatteryHandlerInterface(this)
-        deviceInstanceRFID!!.setHandlerInterfacResponse(this)
-        deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
-        deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
-        deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
-        deviceInstanceRFID!!.battery()
-        deviceInstanceRFID!!.setRfidModeRead()
-
-    }
 
     fun startBarCodeReadInstance() {
         if (deviceInstanceBARCODE != null) {
@@ -451,24 +424,6 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     }
 
-    override fun writingTagStatus(status: Boolean) {
-        Log.e("writingTagStatus", "${status}")
-        _showDialogWritingTag.postValue(false)
-
-        if(status){
-
-            this.writeEnable = false
-            _showDialogWritingSuccess.postValue(true)
-
-
-        }else{
-
-            _showDialogWritingError.postValue(true)
-        }
-
-
-    }
-
 
 
     @SuppressLint("MissingPermission")
@@ -539,6 +494,27 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
         device = Device(this, deviceName, this)
         device!!.connect()
     }
+
+    fun startRFIDReadInstance() {
+        if (deviceInstanceRFID != null) {
+            deviceInstanceRFID!!.clean()
+
+        }
+
+        var mp = localSharedPreferences!!.getMaxFromPreferences()
+        val sess = localSharedPreferences!!.getSessionFromPreferences()
+        val volumeHH= localSharedPreferences!!.getVolumeHH()
+
+        deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
+        deviceInstanceRFID!!.setBatteryHandlerInterface(this)
+        deviceInstanceRFID!!.setHandlerInterfacResponse(this)
+        deviceInstanceRFID!!.setHandlerLevelTransmisioPowerInterfacResponse(this)
+        deviceInstanceRFID!!.setHanHeldUnavailableInterface(this)
+        deviceInstanceRFID!!.battery()
+        deviceInstanceRFID!!.setRfidModeRead()
+
+    }
+
 
     override fun setDevice(device: String) {
 

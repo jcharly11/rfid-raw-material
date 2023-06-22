@@ -101,17 +101,6 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
             }
 
         }
-        activityMain!!.showDialogWritingSuccess.observe(viewLifecycleOwner){
-            if(it){
-                dialogWriteTagSuccess = DialogWriteTagSuccess(this@ConfirmWriteTagFragment,epc)
-                if(dialogERRORWriting!!.isShowing){
-                    dialogERRORWriting!!.dismiss()
-                }
-                dialogWriteTagSuccess!!.show()
-
-            }
-
-        }
 
         return binding.root
     }
@@ -135,11 +124,5 @@ class ConfirmWriteTagFragment : Fragment(), DialogWriteTagSuccessInterface {
          findNavController().navigate(R.id.writeTagFragment, bundle)
      }
 
-    override fun onStart() {
-        super.onStart()
-        activityMain!!.stopReadedBarCode()
-        activityMain!!.startRFIDReadInstance(true,this.epc!!)
-
-    }
-
+    
 }

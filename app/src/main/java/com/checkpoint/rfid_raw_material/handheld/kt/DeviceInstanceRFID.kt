@@ -280,20 +280,20 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 Sentry.captureMessage("Finish writing ($tid == ${tagData.tagID})")
             }
             Log.e("RESULT: ", tagData.tagID)
-            writingTagInterface!!.writingTagStatus(true)
+            writingTagInterface!!.writingTagStatus(true,tagData.tagID)
 
 
         } catch (e: InvalidUsageException) {
 
             Log.e("InvalidUsageException: ", e.info)
             Sentry.captureMessage(  "InvalidUsageException : ${e.info} | ${e.vendorMessage} }")
-            writingTagInterface!!.writingTagStatus(false)
+            writingTagInterface!!.writingTagStatus(false,"")
 
         } catch (e: OperationFailureException) {
 
             Log.e("OperationFailureException: ", e.vendorMessage)
             Sentry.captureMessage(  "OperationFailureException : ${e.results} | ${e.statusDescription} | ${e.vendorMessage}")
-            writingTagInterface!!.writingTagStatus(false)
+            writingTagInterface!!.writingTagStatus(false,"")
 
         }
 

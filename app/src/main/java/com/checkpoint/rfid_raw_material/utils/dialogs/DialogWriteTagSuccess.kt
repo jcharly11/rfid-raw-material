@@ -7,11 +7,12 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 
-class DialogWriteTagSuccess(private val fragment: Fragment,private val epc: String?): Dialog(fragment.requireContext()) {
+class DialogWriteTagSuccess(context: Context, private var epc: String) : Dialog(context) {
 
     lateinit var dialogWriteTagSuccessInterface: DialogWriteTagSuccessInterface
      init {
@@ -23,10 +24,11 @@ class DialogWriteTagSuccess(private val fragment: Fragment,private val epc: Stri
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.dialog_write_tag_success)
 
-        dialogWriteTagSuccessInterface= fragment as DialogWriteTagSuccessInterface
+        dialogWriteTagSuccessInterface= context as DialogWriteTagSuccessInterface
         val buttonAccept = findViewById<Button>(R.id.btnAcceptWriteTag)
         val tvEpc = findViewById<TextView>(R.id.tvEpcRecorded)
         tvEpc.text = epc
+
         buttonAccept.setOnClickListener {
             dialogWriteTagSuccessInterface.successRecording()
         }
