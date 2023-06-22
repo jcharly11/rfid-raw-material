@@ -60,6 +60,7 @@ class ConfirmWriteActivity : AppCompatActivity(),
         dialogLoadingWrite = DialogPrepareTrigger(this)
         dialogERRORWriting = DialogErrorWritingTag(this)
         dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
+        dialogLookingForDevice= DialogLookingForDevice(this)
 
         edtNewEPC.setText(epc)
         edtNewEPC.isEnabled = false
