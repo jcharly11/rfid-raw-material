@@ -59,7 +59,7 @@ class ConfirmWriteActivity : AppCompatActivity(),
         dialogWriteTag = CustomDialogWriteTag(this)
         dialogLoadingWrite = DialogPrepareTrigger(this)
         dialogERRORWriting = DialogErrorWritingTag(this)
-
+        dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
 
         edtNewEPC.setText(epc)
         edtNewEPC.isEnabled = false
@@ -145,6 +145,7 @@ class ConfirmWriteActivity : AppCompatActivity(),
             deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
             deviceInstanceRFID!!.setRfidModeRead()
             dialogLookingForDevice!!.dismiss()
+
         }else{
 
             dialogErrorDeviceConnected!!.show()
