@@ -489,6 +489,9 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener,
 
     }
 
+     fun deviceDisconnect(){
+        device!!.disconnect()
+    }
     private fun createDeviceInstance(deviceName: String) {
 
         device = Device(this, deviceName, this)

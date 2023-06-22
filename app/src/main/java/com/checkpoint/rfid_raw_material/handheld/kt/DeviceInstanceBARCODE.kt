@@ -85,10 +85,9 @@ class DeviceInstanceBARCODE(
             try {
                 sdkHandler.dcssdkGetActiveScannersList(mScannerInfoList)
                 val scannerId = mScannerInfoList[0].scannerID
-                sdkHandler.dcssdkClose()
-                sdkHandler.dcssdkTerminateCommunicationSession(scannerId).let {
-                    true
-                }
+                sdkHandler.dcssdkTerminateCommunicationSession(scannerId)
+                sdkHandler.dcssdkClose().let { true }
+
             } catch (ex: Exception) {
                 Sentry.captureMessage("${ex.message}")
                 false

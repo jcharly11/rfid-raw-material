@@ -161,6 +161,7 @@ class WriteTagFragment : Fragment(),
                         ).let {
                             activityMain!!.resetBarCode()
                             activityMain!!.stopReadedBarCode()
+                            activityMain!!.deviceDisconnect()
                             val intent = Intent(context, ConfirmWriteActivity::class.java)
                             intent.putExtra("epc", it)
                             startForResult.launch(intent)
