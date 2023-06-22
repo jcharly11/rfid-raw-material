@@ -36,9 +36,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rfid_raw_material"
         tools:targetApi="31">
-        <activity
-            android:name=".ConfirmWriteActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="io.sentry.dsn"

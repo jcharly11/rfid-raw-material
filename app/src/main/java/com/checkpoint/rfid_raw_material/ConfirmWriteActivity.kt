@@ -3,6 +3,7 @@ package com.checkpoint.rfid_raw_material
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -38,12 +39,15 @@ class ConfirmWriteActivity : AppCompatActivity(),
     private var dialogLookingForDevice: DialogLookingForDevice? = null
     private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
     private var bluetoothHandler: BluetoothHandler? = null
+    private var tvMessage: TextView? = null
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_write)
         var edtNewEPC: TextInputEditText= findViewById(R.id.edtNewTagEPC)
+        var tvMessage: TextView = findViewById(R.id.tvMessageTriggers)
+
 
         val arguments = intent.extras
         if (arguments != null) {
@@ -96,6 +100,9 @@ class ConfirmWriteActivity : AppCompatActivity(),
         if (tagData!!.isNotEmpty()){
             tid = tagData[0]!!.tagID
             readyToWrite = true
+            this.runOnUiThread {
+                tvMessage!!.text = "Press the trigger again to perform write "
+            }
         }
     }
 

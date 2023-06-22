@@ -25,9 +25,6 @@
         tools:layout="@layout/fragment_write_tag" >
 
         <action
-            android:id="@+id/action_writeTagFragment_to_confirmWriteTagFragment"
-            app:destination="@id/confirmWriteTagFragment" />
-        <action
             android:id="@+id/action_writeTagFragment_to_newProviderFragment"
             app:destination="@id/newProviderFragment" />
     </fragment>
@@ -47,12 +44,7 @@
             android:id="@+id/action_handHeldConfigFragment_to_optionsWriteFragment"
             app:destination="@id/optionsWriteFragment" />
     </fragment>
-    <fragment
 
-        android:id="@+id/confirmWriteTagFragment"
-        android:name="com.checkpoint.rfid_raw_material.ui.write.ConfirmWriteTagFragment"
-        android:label="fragment_confirm_write_tag"
-        tools:layout="@layout/fragment_confirm_write_tag" />
     <fragment
         android:id="@+id/configurationFragment"
         android:name="com.checkpoint.rfid_raw_material.ui.configuration.ConfigurationFragment"

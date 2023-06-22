@@ -91,13 +91,15 @@
         android:orientation="vertical"
         android:paddingRight="20dp">
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvMessageTriggers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:textSize="21sp"
-            android:text="Press the device trigger to Write selected tag"
+            android:text="Press the device trigger to Read a  tag"
             android:textColor="@color/red_ckp"
+            android:textStyle="bold"
             android:gravity="center">
         </com.google.android.material.textview.MaterialTextView>
     </LinearLayout>
