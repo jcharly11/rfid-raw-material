@@ -2,6 +2,7 @@ package com.checkpoint.rfid_raw_material
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -123,19 +124,19 @@ class ConfirmWriteActivity : AppCompatActivity(),
     }
 
     override fun handleStartConnect(connected: Boolean) {
-        TODO("Not yet implemented")
+        Log.e("handleStartConnect", "${connected}")
     }
 
     override fun RFIDReaderAppeared(p0: ReaderDevice?) {
-        TODO("Not yet implemented")
+        Log.e("RFIDReaderAppeared", "${p0!!.rfidReader.hostName}")
     }
 
     override fun RFIDReaderDisappeared(p0: ReaderDevice?) {
-        TODO("Not yet implemented")
+        Log.e("RFIDReaderDisappeared", "${p0!!.rfidReader.hostName}")
     }
 
     override fun batteryLevel(level: Int) {
-        TODO("Not yet implemented")
+        Log.e("BatteryLevel", "${level}")
     }
 
     override fun isConnected(b: Boolean) {
