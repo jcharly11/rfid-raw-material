@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.ReadActivity
 import com.checkpoint.rfid_raw_material.databinding.FragmentReadInventoryBinding
 import com.checkpoint.rfid_raw_material.enums.TypeInventory
 import com.checkpoint.rfid_raw_material.utils.LogCreator
@@ -30,7 +31,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
     private val binding get() = _binding!!
     private lateinit var dialog: CustomDialogInventory
     private var readNumber: Int? = 0
-    private var activityMain: MainActivity? = null
+    private var activityMain: ReadActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +42,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         viewModel = ViewModelProvider(this)[ReadInventoryViewModel::class.java]
          _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
-        activityMain = requireActivity() as MainActivity
+        activityMain = requireActivity() as ReadActivity
 
 
 
@@ -65,7 +66,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             dialog.show()
         }
 
-        activityMain!!.btnCreateLog!!.setOnClickListener {
+       /* activityMain!!.btnCreateLog!!.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 var listScanned = viewModel.getTagsList(readNumber!!)
                 if (listScanned.size > 0) {
@@ -81,7 +82,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
                     ).show()
                 }
             }
-        }
+        }*/
         CoroutineScope(Dispatchers.Main).launch {
             if(readNumber==0)
                 readNumber = viewModel.getNewReadNumber()
@@ -127,9 +128,9 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             val dataEmpty = viewModel.deleteCapturedData()
             if(dataEmpty){
                 viewModel!!.saveReadNumber(0)
-                activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
-                activityMain!!.batteryView!!.visibility = View.INVISIBLE
-                activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
+               // activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
+               // activityMain!!.batteryView!!.visibility = View.INVISIBLE
+               // activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
                 findNavController().navigate(R.id.optionsWriteFragment)
             }
         }

@@ -12,11 +12,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentConfigurationBinding
-import com.checkpoint.rfid_raw_material.databinding.FragmentWriteTagBinding
 import com.checkpoint.rfid_raw_material.source.model.LanguageModel
-import com.checkpoint.rfid_raw_material.source.model.ProviderModel
-import com.checkpoint.rfid_raw_material.ui.write.WriteTagViewModel
-import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

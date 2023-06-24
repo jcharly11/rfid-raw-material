@@ -36,6 +36,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rfid_raw_material"
         tools:targetApi="31">
+        <activity
+            android:name=".ReadActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="io.sentry.dsn"
@@ -58,9 +61,7 @@
 
         <activity
             android:name=".WriteTagActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -74,12 +75,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ConfirmWriteActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
+        <activity
+            android:name=".BarCodeActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

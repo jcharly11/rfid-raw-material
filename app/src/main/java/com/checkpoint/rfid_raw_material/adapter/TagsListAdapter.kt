@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.ReadActivity
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Provider
@@ -20,12 +21,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: MainActivity,
+class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: ReadActivity,
                       private val listProvider: List<Provider>,
                       private val onClickListener: OnClickListener):
     RecyclerView.Adapter<TagsListAdapter.ViewHolder>(){
 
-    private var activityMain: MainActivity? = mainActivity
+    private var activityMain: ReadActivity? = mainActivity
     var reverse= Reverse(activityMain!!.application)
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -49,7 +50,7 @@ class TagsListAdapter(private val dataSet: List<Tags>,private var mainActivity: 
     }
 
     override fun onBindViewHolder(holder: TagsListAdapter.ViewHolder, position: Int) {
-        activityMain = activityMain as MainActivity
+        activityMain = activityMain as ReadActivity
         Log.e("listProvider","${dataSet[position].epc}")
 
         reverse.hexToBinary(dataSet[position].epc)

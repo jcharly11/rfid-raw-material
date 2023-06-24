@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.ReadActivity
 import com.checkpoint.rfid_raw_material.adapter.TagsListAdapter
 import com.checkpoint.rfid_raw_material.databinding.FragmentItemsReadBinding
 import com.checkpoint.rfid_raw_material.source.db.Provider
@@ -27,7 +28,7 @@ class ItemsReadFragment : Fragment() {
     private lateinit var viewModel: ItemsReadViewModel
     private var _binding: FragmentItemsReadBinding? = null
     private val binding get() = _binding!!
-    private var activityMain: MainActivity? = null
+    private var activityMain: ReadActivity? = null
     private var listProviders: List<Provider> = listOf()
     private var listTags: List<Tags> = listOf()
 
@@ -39,7 +40,7 @@ class ItemsReadFragment : Fragment() {
     ): View? {
         viewModel = ViewModelProvider(this)[ItemsReadViewModel::class.java]
         _binding = FragmentItemsReadBinding.inflate(inflater, container, false)
-        activityMain = requireActivity() as MainActivity
+        activityMain = requireActivity() as ReadActivity
 
 
         val tvProviderEPC = binding.expandableProvider.findViewById<TextView>(R.id.tvProviderEPC)

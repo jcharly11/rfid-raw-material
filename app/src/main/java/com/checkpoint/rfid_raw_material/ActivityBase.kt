@@ -5,6 +5,7 @@ import android.content.Context
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.navigation.ui.AppBarConfiguration
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
@@ -21,16 +22,7 @@ open class ActivityBase(): AppCompatActivity() {
     var context: Context ?= null
     var localSharedPreferences: LocalPreferences?= null
     var repository: DataRepository?= null
-    var dialogErrorDeviceConnected: DialogErrorDeviceConnected?= null
-    var dialogSelectPairDevices: DialogSelectPairDevices? = null
-    var bluetoothHandler: BluetoothHandler?= null
-    var deviceInstanceRFID: DeviceInstanceRFID? = null
-    var deviceInstanceBARCODE: DeviceInstanceBARCODE? = null
-    var btnHandHeldGun: AppCompatImageView? = null
-    var batteryView: CustomBattery? = null
-    var btnCreateLog: AppCompatImageView? = null
-    var lyCreateLog: LinearLayout? = null
-    var deviceName: String = String()
+    lateinit var appBarConfiguration: AppBarConfiguration
 
     internal val requestPermissions12 by lazy {
         permissionsBuilder(

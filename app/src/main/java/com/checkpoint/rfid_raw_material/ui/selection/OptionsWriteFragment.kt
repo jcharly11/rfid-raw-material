@@ -1,6 +1,8 @@
 package com.checkpoint.rfid_raw_material.ui.selection
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,13 +12,14 @@ import android.view.ViewGroup
 
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.checkpoint.rfid_raw_material.MainActivity
-import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.*
 import com.checkpoint.rfid_raw_material.databinding.FragmentOptionsWriteBinding
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
@@ -26,8 +29,7 @@ class OptionsWriteFragment : Fragment(){
     private lateinit var viewModel: OptionsWriteViewModel
     private var _binding: FragmentOptionsWriteBinding? = null
     private val binding get() = _binding!!
-    private var activityMain: MainActivity? = null
-    var doubleBackPressed = false
+     var doubleBackPressed = false
     private var deviceName: String? = null
     private var dialogLookingForDevice: DialogLookingForDevice? = null
     private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
@@ -44,112 +46,51 @@ class OptionsWriteFragment : Fragment(){
 
         viewModel = ViewModelProvider(this)[OptionsWriteViewModel::class.java]
         _binding = FragmentOptionsWriteBinding.inflate(inflater, container, false)
-        activityMain = requireActivity() as MainActivity
-        dialogLookingForDevice  = DialogLookingForDevice(requireContext())
+         dialogLookingForDevice  = DialogLookingForDevice(requireContext())
         dialogErrorDeviceConnected =  DialogErrorDeviceConnected(requireContext())
-
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            exitApp()
-        }
-
-
-
 
 
         binding.btnInventory.setOnClickListener {
-            viewModel.setFragment("inventory")
-
-            val bundle = bundleOf(
-                "deviceName" to deviceName
-            )
-            findNavController().navigate(R.id.pagerFragment, bundle)
+            startForResultWrite.launch(Intent(requireContext(), ReadActivity::class.java))
 
         }
         binding.btnWriteTag.setOnClickListener {
-            viewModel.setFragment("write")
 
-            val bundle = bundleOf(
-                "deviceName" to deviceName
-            )
-            findNavController().navigate(R.id.writeTagFragment, bundle)
-        }
-        binding.pullToRefreshConnection.setOnRefreshListener {
-            dialogLookingForDevice!!.show()
-            activityMain!!.refreshDeviceConnection()
-            binding.pullToRefreshConnection.isRefreshing = false
-            binding.pullToRefreshConnection.isEnabled = false
-        }
-        activityMain!!.deviceConnected.observe(viewLifecycleOwner) {
-            if(it){
-
-                dialogLookingForDevice!!.dismiss()
-                binding.tvDeviceSelected.text = activityMain!!.deviceName
-
-            }
-
-        }
-        activityMain!!.showErrorDeviceConnected.observe(viewLifecycleOwner){
-            if(dialogLookingForDevice!!.isShowing){
-                dialogLookingForDevice!!.dismiss()
-             }
-
-            binding.btnInventory.isEnabled = false
-            binding.btnWriteTag.isEnabled = false
-            dialogErrorDeviceConnected!!.show()
-
+           // activityMain!!.deviceDisconnect()
+            startForResultWrite.launch(Intent(requireContext(), BarCodeActivity::class.java))
 
         }
 
-        activityMain!!.showDialogUnavailableReader.observe(viewLifecycleOwner){
-            if(it){
-                dialogErrorDeviceConnected!!.show()
-            }
-        }
         return binding.root
     }
 
 
+    private val startForResultWrite = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
 
-        private fun exitApp() {
-        if (doubleBackPressed) {
-            System.exit(0)
+            if(dialogLookingForDevice!!.isShowing){
+                dialogLookingForDevice!!.dismiss()
+            }
+
+
         }
-        doubleBackPressed = true
-        Toast.makeText(
-            context,
-            resources.getText(R.string.press_back_again),
-            Toast.LENGTH_SHORT
-        )
-            .show()
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            doubleBackPressed = false
-        }, 2000)
     }
+    private val startForResultRead = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val intent = result.data
 
-    fun connectDevice(){
-        dialogLookingForDevice!!.show()
-        activityMain!!.startDeviceConnection()
+            if(dialogLookingForDevice!!.isShowing){
+                dialogLookingForDevice!!.dismiss()
+            }
+
+
+        }
     }
 
 
-
-    override fun onStart() {
-        super.onStart()
-        (activity as AppCompatActivity).supportActionBar!!.show()
-        connectDevice()
-        enableBarButtons()
-    }
-
-
-
-
-    fun enableBarButtons(){
-        activityMain!!.batteryView!!.visibility = View.INVISIBLE
-        activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
-        activityMain!!.btnCreateLog!!.visibility = View.INVISIBLE
-        activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
-    }
 
 
 

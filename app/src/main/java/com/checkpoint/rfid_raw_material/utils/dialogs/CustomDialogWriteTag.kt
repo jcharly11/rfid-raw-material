@@ -6,7 +6,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
-import androidx.fragment.app.Fragment
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.utils.interfaces.CustomDialogWriteTagInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton

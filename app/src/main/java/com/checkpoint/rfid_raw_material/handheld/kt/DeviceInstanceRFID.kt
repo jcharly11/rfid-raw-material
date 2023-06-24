@@ -239,15 +239,24 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
 
     fun writeTagMode(tid: String,epc: String) {
 
-        Sentry.captureMessage("Starting write mode")
-        reader.Actions.Inventory.stop()
-        Sentry.captureMessage("Inventory stoped")
-        reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
-        Sentry.captureMessage("Mode write setup")
-        reader.Config.setAccessOperationWaitTimeout(2000)
-        writeWait(tid,epc,"0")
+        try {
+
+            reader.Actions.Inventory.stop()
+            reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
+            reader.Config.setAccessOperationWaitTimeout(1000)
+            writeWait(tid,epc,"0")
+
+        } catch (e: InvalidUsageException) {
+
+        Log.e("InvalidUsageException: ", e.info)
+
+    } catch (e: OperationFailureException) {
+
+        Log.e("OperationFailureException: ", e.vendorMessage)
 
     }
+
+}
 
 
     fun writeWait(tid: String, epc: String, password: String){
@@ -257,18 +266,16 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
         Log.e("epc", "$data")
         Log.e("password", "$password")
         try {
-            val tagData: TagData = TagData()
+            val tagData = TagData()
             val tagAccess = TagAccess()
             val writeAccessParams = tagAccess.WriteAccessParams()
             writeAccessParams.accessPassword = password.toLong(16)
             writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
             writeAccessParams.offset = 1
             writeAccessParams.setWriteData(data)
-            writeAccessParams.writeRetries = 1
             writeAccessParams.writeDataLength = data.length / 4
 
-            Sentry.captureMessage("Trying to write ${tagData.tagID}")
-            reader!!.Actions.TagAccess.writeWait(
+             reader!!.Actions.TagAccess.writeWait(
                 tid,
                 writeAccessParams,
                 null,
@@ -277,10 +284,11 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 true
             ).apply {
 
-                Sentry.captureMessage("Finish writing ($tid == ${tagData.tagID})")
+                 Log.e("RESULT: ", tagData.tagID)
+                 writingTagInterface!!.writingTagStatus(true,tagData.tagID)
+                 reader.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.ENABLE
+
             }
-            Log.e("RESULT: ", tagData.tagID)
-            writingTagInterface!!.writingTagStatus(true,tagData.tagID)
 
 
         } catch (e: InvalidUsageException) {

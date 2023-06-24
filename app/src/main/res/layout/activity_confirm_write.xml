@@ -85,7 +85,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="40"
+        android:layout_weight="20"
         android:paddingLeft="20dp"
         android:paddingTop="50dp"
         android:orientation="vertical"
@@ -98,7 +98,7 @@
             android:layout_marginRight="25dp"
             android:textSize="21sp"
             android:text="Press the device trigger to Read a  tag"
-            android:textColor="@color/red_ckp"
+            android:textColor="@color/orange_battery"
             android:textStyle="bold"
             android:gravity="center">
         </com.google.android.material.textview.MaterialTextView>
@@ -106,11 +106,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="20"
+        android:layout_weight="40"
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingTop="50dp"
-        android:paddingRight="20dp">
+        android:paddingRight="20dp"
+        android:gravity="center">
+        <android.widget.Button
+            android:id="@+id/btnWrite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:background="@drawable/button_icon_large"
+            android:drawableStart="@drawable/ic_tag"
+            android:drawableTint="@color/white"
+            android:paddingLeft="20dp"
+            android:paddingRight="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="Write"
+            android:textColor="@color/white"></android.widget.Button>
+
         <android.widget.Button
             android:id="@+id/btnCancelWrite"
             android:layout_width="match_parent"

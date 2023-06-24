@@ -42,10 +42,7 @@ class HandHeldConfigFragment : Fragment() {
             val bundle = bundleOf(
                 "readNumber" to readNumber
             )
-            if(fragment=="inventory")
-                findNavController().navigate(R.id.pagerFragment, bundle)
-            else
-                findNavController().navigate(R.id.writeTagFragment, bundle)
+
         }
 
         var config = viewModel.getConfigFromPreferences()
@@ -77,20 +74,20 @@ class HandHeldConfigFragment : Fragment() {
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
             }
-        })
+        })/*
 
         activityMain!!.batteryLevel.observe(viewLifecycleOwner){
             binding.imgBattery.setPercent(it!!)
             binding.txtPercent.text = it.toString()
 
-        }
+        }*/
 
         binding.txtPower.text = currentPower.toString()
-
+/*
         activityMain!!.maxPowerList.observe(viewLifecycleOwner) {
             binding.seekBarPower.max = it.size
 
-        }
+        }*/
         binding.seekBarPower.progress = currentPower!!
 
 
@@ -145,10 +142,7 @@ class HandHeldConfigFragment : Fragment() {
                     "readNumber" to readNumber,
                     "volumeHH" to volumeHH
                 )
-                 if(fragment=="inventory")
-                    findNavController().navigate(R.id.pagerFragment, bundle)
-                else
-                    findNavController().navigate(R.id.writeTagFragment, bundle)
+
             }
 
         }
