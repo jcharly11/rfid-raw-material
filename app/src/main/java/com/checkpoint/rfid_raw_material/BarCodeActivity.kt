@@ -12,8 +12,12 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityBarCodeBinding
 import com.checkpoint.rfid_raw_material.databinding.ActivityConfirmWriteBinding
@@ -27,10 +31,15 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.UnavailableDevice
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
+import com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment
 import com.checkpoint.rfid_raw_material.utils.Conversor
+import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogProviderInterface
+import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
 import com.zebra.rfid.api3.ReaderDevice
 import com.zebra.rfid.api3.Readers
 import io.sentry.Sentry
@@ -39,27 +48,27 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class BarCodeActivity : AppCompatActivity(),
+class BarCodeActivity : ActivityBase(),
     DeviceConnectStatusInterface,
     Readers.RFIDReaderEventHandler,
-    BatteryHandlerInterface,
     BarcodeHandHeldInterface,
-    UnavailableDeviceInterface
+    UnavailableDeviceInterface,
+    CustomDialogProviderInterface,
+    CustomDialogRemoveProviderInterface
 {
     private var bluetoothHandler: BluetoothHandler? = null
     private lateinit var binding: ActivityBarCodeBinding
     private var deviceName: String? = null
-    private var device: Device? = null
-    private var dialogLookingForDevice: DialogLookingForDevice? = null
+    private var dialogProvider: CustomDialogProvider? = null
+
     var deviceInstanceBARCODE: DeviceInstanceBARCODE? = null
-    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
     private lateinit var dialogRemoveProvider: CustomDialogRemoveProvider
 
 
 
     var idProvider: Int = 0
     var idSupplier = String()
-
+    var repository: DataRepository? = null
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,10 +76,26 @@ class BarCodeActivity : AppCompatActivity(),
         binding = ActivityBarCodeBinding.inflate(layoutInflater)
         dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
         dialogLookingForDevice= DialogLookingForDevice(this)
-        dialogRemoveProvider = CustomDialogRemoveProvider(this)
+        dialogRemoveProvider = CustomDialogRemoveProvider(this,this)
+        dialogProvider = CustomDialogProvider(this, this)
+        localSharedPreferences = LocalPreferences(application)
+
+
 
         setContentView(binding.root)
-        bluetoothHandler = BluetoothHandler(this)
+        setSupportActionBar(binding.appRawMaterials.toolbar)
+
+        btnCreateLog = binding.appRawMaterials.imgCreateLog
+        batteryView = binding.appRawMaterials.batteryView
+        lyCreateLog = binding.appRawMaterials.lyCreateLog
+        btnHandHeldGun = binding.appRawMaterials.imgHandHeldGun
+
+        batteryView!!.visibility = View.GONE
+        btnHandHeldGun!!.visibility = View.GONE
+        lyCreateLog!!.visibility = View.GONE
+
+
+         bluetoothHandler = BluetoothHandler(this)
 
         bluetoothHandler!!.list()!!.forEach {
             if (it.name.contains("RFD8500")) {
@@ -78,11 +103,11 @@ class BarCodeActivity : AppCompatActivity(),
             }
         }
         device = Device(applicationContext,deviceName!!,this)
-        var repository: DataRepository = DataRepository.getInstance(
+        repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(applicationContext)
 
         )
-        repository.getProviders().observe(this) {
+        repository!!.getProviders().observe(this) {
              var listProviders: MutableList<ProviderModel> = mutableListOf()
 
 
@@ -123,6 +148,7 @@ class BarCodeActivity : AppCompatActivity(),
         binding.btnRemoveProvider.setOnClickListener {
             dialogRemoveProvider.show()
         }
+
         binding.btnFinishWrite.setOnClickListener {
             setResult(RESULT_OK)
             finish()
@@ -172,10 +198,18 @@ class BarCodeActivity : AppCompatActivity(),
         }
 
         binding.btnAddProvider.setOnClickListener {
-           // dialogProvider.show()
+           dialogProvider!!.show()
         }
 
 
+    }
+    fun providerDialogShow(){
+        runOnUiThread {
+
+
+            dialogProvider!!.show()
+
+        }
     }
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             result: ActivityResult ->
@@ -207,15 +241,15 @@ class BarCodeActivity : AppCompatActivity(),
     }
 
     override fun isConnected(b: Boolean) {
+        dialogLookingForDevice!!.dismiss()
         if(b){
             deviceInstanceBARCODE = DeviceInstanceBARCODE(device!!.getReaderDevice(), applicationContext)
             deviceInstanceBARCODE!!.setBarCodeHandHeldInterface(this)
-            dialogLookingForDevice!!.dismiss()
 
         }else{
-
             dialogErrorDeviceConnected!!.show()
-        }    }
+        }
+    }
 
     override fun RFIDReaderAppeared(p0: ReaderDevice?) {
         TODO("Not yet implemented")
@@ -225,17 +259,14 @@ class BarCodeActivity : AppCompatActivity(),
         TODO("Not yet implemented")
     }
 
-    override fun batteryLevel(level: Int) {
-        TODO("Not yet implemented")
-    }
 
     override fun deviceCharging() {
         TODO("Not yet implemented")
     }
-    fun calculateEPC(versionValue: String,
-                     subversionValue: String,
-                     typeValue: String,
-                     idProvider: String,pieceValue: String):String {
+    private fun calculateEPC(versionValue: String,
+                             subversionValue: String,
+                             typeValue: String,
+                             idProvider: String, pieceValue: String):String {
         Log.e("calculateEPC supplier","$idProvider")
 
         val conversor = Conversor()
@@ -249,5 +280,57 @@ class BarCodeActivity : AppCompatActivity(),
         val binaryChain = "$version$type$subVersion$piece$supplier"
        return  conversor.groupBytes(binaryChain)
 
+    }
+
+    override fun saveProvider(idProvider: String,idASProvider: String,nameProvider: String) {
+
+        if (idProvider.isNotEmpty() && idASProvider.isNotEmpty() && nameProvider.isNotEmpty()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+
+                    newProvider(idProvider.toInt(), idASProvider, nameProvider)
+                }
+                catch (ex: Exception){
+                    //TODO
+                }
+            }
+            binding.btnRemoveProvider.visibility = View.VISIBLE
+
+            closeDialog()
+        } else
+            Toast.makeText(
+                this,
+                "Validate all fields", Toast.LENGTH_SHORT
+            ).show()
+    }
+
+    suspend fun newProvider(id: Int,idAS:String,nameProvider:String): Provider = withContext(Dispatchers.IO) {
+        repository!!.insertNewProvider(
+            Provider(
+                0,
+                id,
+                idAS,
+                nameProvider
+            )
+        )
+    }
+
+    override fun closeDialog() {
+        dialogProvider!!.dismiss()
+    }
+
+    override fun closeDialogRemoveProvider() {
+        dialogRemoveProvider!!.dismiss()
+    }
+
+    override fun removeProvider() {
+        CoroutineScope(Dispatchers.Main).launch {
+            deleteProvider(idProvider)
+            dialogRemoveProvider.dismiss()
+        }
+    }
+
+    suspend fun deleteProvider(idProvider: Int) = withContext(Dispatchers.IO){
+        repository!!.deleteProvider(idProvider)
     }
 }

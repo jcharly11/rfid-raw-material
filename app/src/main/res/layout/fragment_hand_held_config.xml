@@ -4,15 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.handheld.HandHeldConfigFragment">
+    tools:context=".ui.handheld.HandHeldConfigFragment"
+    android:background="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="50dp">
+        android:paddingRight="20dp" >
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
@@ -28,7 +28,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:layout_weight="15">
+            android:layout_weight="11">
 
             <com.checkpoint.rfid_raw_material.utils.CustomBattery
                 android:id="@+id/imgBattery"
@@ -53,7 +53,8 @@
             android:layout_height="0dp"
             android:layout_weight="70"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:clickable="true">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -73,7 +74,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="10dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:clickable="true"
+                >
 
                 <Switch
                     android:id="@+id/swVolume"
@@ -197,7 +200,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="15"
+            android:layout_weight="18"
             android:gravity="center">
 
             <androidx.appcompat.widget.AppCompatButton

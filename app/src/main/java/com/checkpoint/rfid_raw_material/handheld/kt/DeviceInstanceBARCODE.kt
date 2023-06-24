@@ -7,6 +7,8 @@ import android.os.Message
 import android.util.Log
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BarcodeHandHeldInterface
 import com.zebra.rfid.api3.ENUM_TRIGGER_MODE
+import com.zebra.rfid.api3.InvalidUsageException
+import com.zebra.rfid.api3.OperationFailureException
 import com.zebra.rfid.api3.RFIDReader
 import com.zebra.scannercontrol.*
 import io.sentry.Sentry

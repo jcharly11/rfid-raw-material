@@ -77,10 +77,14 @@
         </activity>
         <activity
             android:name=".ConfirmWriteActivity"
-            android:exported="true"></activity>
+            android:exported="true"
+            android:theme="@style/Theme.Rfid_raw_material.NoActionBar"
+            ></activity>
         <activity
             android:name=".BarCodeActivity"
-            android:exported="true"></activity>
+            android:exported="true"
+            android:theme="@style/Theme.Rfid_raw_material.NoActionBar"
+            ></activity>
     </application>
 
 </manifest>

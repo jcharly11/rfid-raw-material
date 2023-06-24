@@ -13,6 +13,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.checkpoint.rfid_raw_material.ConfirmWriteActivity
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBinding
@@ -22,7 +23,6 @@ class HandHeldConfigFragment : Fragment() {
 
     private lateinit var viewModel: HandHeldConfigViewModel
     private var _binding: FragmentHandHeldConfigBinding? = null
-    private var activityMain: MainActivity? = null
 
     private val binding get() = _binding!!
     private var sessionSelected = 0
@@ -33,16 +33,15 @@ class HandHeldConfigFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val readNumber = arguments?.getInt("readNumber")
-        val fragment = arguments?.getString("fragment")
+        val batteryLevel = arguments?.getInt("batteryLevel")
 
         viewModel = ViewModelProvider(this)[HandHeldConfigViewModel::class.java]
         _binding = FragmentHandHeldConfigBinding.inflate(inflater, container, false)
-        activityMain = requireActivity() as MainActivity
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            val bundle = bundleOf(
-                "readNumber" to readNumber
-            )
+        var activityMain = requireActivity() as ConfirmWriteActivity
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+
+            activityMain.removeFargment()
         }
 
         var config = viewModel.getConfigFromPreferences()
@@ -52,6 +51,10 @@ class HandHeldConfigFragment : Fragment() {
         binding.seekBarPower.max = 270
         binding.seekBarPower.progress =currentPower!!
         binding.txtPower.text = currentPower.toString()
+        binding.imgBattery.setPercent(batteryLevel!!)
+        binding.txtPercent.text = batteryLevel!!.toString()
+
+        binding.btnSetPower
         binding.swVolume.isChecked= volumeHH
         if(volumeHH==true) {
             binding.tvStatusVolume.setText(R.string.volume_text_on)
@@ -77,8 +80,6 @@ class HandHeldConfigFragment : Fragment() {
         })/*
 
         activityMain!!.batteryLevel.observe(viewLifecycleOwner){
-            binding.imgBattery.setPercent(it!!)
-            binding.txtPercent.text = it.toString()
 
         }*/
 
@@ -136,12 +137,11 @@ class HandHeldConfigFragment : Fragment() {
         binding.btnSetPower.setOnClickListener {
             viewModel.saveConfigToPreferences(binding.listRegions.text.toString(),
                 binding.seekBarPower.progress, volumeHH).apply {
-                val bundle = bundleOf(
-                    "needTag" to true,
-                    "session" to sessionSelected,
-                    "readNumber" to readNumber,
-                    "volumeHH" to volumeHH
-                )
+
+                activityMain.removeFargment()
+
+
+
 
             }
 

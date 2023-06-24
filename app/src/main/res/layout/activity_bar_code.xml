@@ -7,7 +7,11 @@
     tools:context=".BarCodeActivity"
     android:orientation="vertical">
 
-    <LinearLayout
+    <include  android:id="@+id/app_raw_materials" layout="@layout/toolbar_raw_materials" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -415,5 +419,5 @@
                     android:textColor="@color/white"></android.widget.Button>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

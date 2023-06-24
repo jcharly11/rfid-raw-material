@@ -41,14 +41,12 @@ class ReadActivity : ActivityBase(),
     BatteryHandlerInterface,
     DeviceConnectStatusInterface {
     private  var  deviceInstanceRFID: DeviceInstanceRFID? = null
-    private var dialogLookingForDevice: DialogLookingForDevice? = null
-    private var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
-    private lateinit var device: Device
     private var deviceReady = false
     private var bluetoothHandler: BluetoothHandler? = null
     private var deviceName =  String()
     val reverse = ReverseStandAlone()
     private lateinit var binding: ActivityReadBinding
+    var repository: DataRepository? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,11 +98,6 @@ class ReadActivity : ActivityBase(),
 
     }
 
-    private fun loadFragment(fragment: Fragment) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragmentContainer, fragment)
-        fragmentTransaction.commit()
-    }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
         val isPause = localSharedPreferences!!.getPauseStatus()
@@ -178,8 +171,9 @@ class ReadActivity : ActivityBase(),
     }
 
     override fun isConnected(b: Boolean) {
+        dialogLookingForDevice!!.dismiss()
+
         if (b) {
-            dialogLookingForDevice!!.dismiss()
              localSharedPreferences!!.getSessionFromPreferences().apply {
                 if (this.isEmpty()){
                     localSharedPreferences!!.saveSessionToPreferences("SESSION_0")

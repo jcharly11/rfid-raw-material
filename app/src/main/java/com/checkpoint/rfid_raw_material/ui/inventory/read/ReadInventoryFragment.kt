@@ -128,10 +128,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             val dataEmpty = viewModel.deleteCapturedData()
             if(dataEmpty){
                 viewModel!!.saveReadNumber(0)
-               // activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
-               // activityMain!!.batteryView!!.visibility = View.INVISIBLE
-               // activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
-                findNavController().navigate(R.id.optionsWriteFragment)
+               activityMain!!.finish()
             }
         }
 

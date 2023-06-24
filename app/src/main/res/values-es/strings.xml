@@ -85,4 +85,5 @@
     <string name="volume">Volumen Hand Held</string>
     <string name="volume_text_on">ENCENDIDO</string>
     <string name="volume_text_off">APAGADO</string>
+
 </resources>

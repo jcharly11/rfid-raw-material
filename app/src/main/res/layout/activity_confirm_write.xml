@@ -1,144 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ConfirmWriteActivity"
-    android:orientation="vertical">
+    tools:context=".ConfirmWriteActivity" >
+    <include  android:id="@+id/app_raw_materials" layout="@layout/toolbar_raw_materials" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="20"
-        android:paddingLeft="20dp"
-        android:paddingTop="50dp"
-        android:paddingRight="20dp">
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:gravity="center_horizontal"
-            android:text="Confirm Write Tag"
-            android:textColor="@color/navy"
-            android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
-
-    </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40"
-        android:paddingLeft="20dp"
-        android:paddingTop="50dp"
-        android:orientation="vertical"
-        android:paddingRight="20dp">
-        <com.google.android.material.textview.MaterialTextView
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:textSize="23sp"
-            android:text="New Tag Code"
-            android:textColor="@color/black">
-        </com.google.android.material.textview.MaterialTextView>
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:paddingRight="20dp">
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:gravity="center_horizontal"
+                android:text="Confirm Write Tag"
+                android:textColor="@color/navy"
+                android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
 
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="25dp">
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:orientation="vertical"
+            android:paddingRight="20dp">
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:textSize="23sp"
+                android:text="New Tag Code"
+                android:textColor="@color/black">
+            </com.google.android.material.textview.MaterialTextView>
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|center_horizontal">
-                <TextView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/ic_tag"
-                    android:backgroundTint="@color/navy"
-                    android:gravity="center_horizontal|center_vertical"></TextView>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="25dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal">
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ic_tag"
+                        android:backgroundTint="@color/navy"
+                        android:gravity="center_horizontal|center_vertical"></TextView>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="9"
+                    android:layout_marginBottom="15dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtNewTagEPC"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="25dp"
+                        android:layout_marginTop="5dp"
+                        android:inputType="textUri"
+                        android:text=""
+                        android:background="@drawable/bg_custom_entry"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:orientation="vertical"
+            android:paddingRight="20dp">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvMessageTriggers"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="9"
-                android:layout_marginBottom="15dp">
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtNewTagEPC"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginTop="5dp"
-                    android:inputType="textUri"
-                    android:text=""
-                    android:background="@drawable/bg_custom_entry"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:textSize="21sp"
+                android:text="Press the device trigger to Read a  tag"
+                android:textColor="@color/orange_battery"
+                android:textStyle="bold"
+                android:gravity="center">
+            </com.google.android.material.textview.MaterialTextView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingTop="50dp"
+            android:paddingRight="20dp"
+            android:gravity="center">
+            <android.widget.Button
+                android:id="@+id/btnWrite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/button_icon_large"
+                android:drawableStart="@drawable/ic_tag"
+                android:drawableTint="@color/white"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"
+                android:layout_marginBottom="20dp"
+                android:text="Write"
+                android:textColor="@color/white"></android.widget.Button>
+
+            <android.widget.Button
+                android:id="@+id/btnCancelWrite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:background="@drawable/button_icon_large"
+                android:drawableStart="@drawable/ic_cancel"
+                android:drawableTint="@color/white"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"
+                android:text="Cancel"
+                android:textColor="@color/white"></android.widget.Button>
 
         </LinearLayout>
 
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="20"
-        android:paddingLeft="20dp"
-        android:paddingTop="50dp"
-        android:orientation="vertical"
-        android:paddingRight="20dp">
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvMessageTriggers"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:textSize="21sp"
-            android:text="Press the device trigger to Read a  tag"
-            android:textColor="@color/orange_battery"
-            android:textStyle="bold"
-            android:gravity="center">
-        </com.google.android.material.textview.MaterialTextView>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingTop="50dp"
-        android:paddingRight="20dp"
-        android:gravity="center">
-        <android.widget.Button
-            android:id="@+id/btnWrite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:background="@drawable/button_icon_large"
-            android:drawableStart="@drawable/ic_tag"
-            android:drawableTint="@color/white"
-            android:paddingLeft="20dp"
-            android:paddingRight="10dp"
-            android:layout_marginBottom="20dp"
-            android:text="Write"
-            android:textColor="@color/white"></android.widget.Button>
 
-        <android.widget.Button
-            android:id="@+id/btnCancelWrite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:background="@drawable/button_icon_large"
-            android:drawableStart="@drawable/ic_cancel"
-            android:drawableTint="@color/white"
-            android:paddingLeft="20dp"
-            android:paddingRight="10dp"
-            android:text="Cancel"
-            android:textColor="@color/white"></android.widget.Button>
-
-    </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>
