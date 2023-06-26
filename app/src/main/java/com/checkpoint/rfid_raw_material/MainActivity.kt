@@ -48,14 +48,21 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
             requestPermissions12.addListener(this)
         }
-        else
+        else{
             requestPermissions11.addListener(this)
 
+        }
 
 
+            runPermissions()
+        }
+
+    fun runPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME))
+            requestPermissions12.send()
+        else
+            requestPermissions11.send()
     }
-
-
 
 
 
