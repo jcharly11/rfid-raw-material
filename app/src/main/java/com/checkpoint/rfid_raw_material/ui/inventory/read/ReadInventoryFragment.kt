@@ -44,13 +44,18 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
          _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
         activityMain = requireActivity() as ReadActivity
 
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
 
 
         binding.btnStart.setOnClickListener {
             dialog =
                 CustomDialogInventory(this@ReadInventoryFragment, TypeInventory.START_INVENTORY)
             dialog.show()
-
+            CoroutineScope(Dispatchers.Main).launch {
+                activityMain!!.newTag("90801A249B1F10A06C96AFF20001E240",readNumber!!,"","","","",0)
+                activityMain!!.newTag("200",readNumber!!,"","","","",0)
+            }
 
         }
 

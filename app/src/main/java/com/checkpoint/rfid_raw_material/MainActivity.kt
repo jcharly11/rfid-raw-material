@@ -20,11 +20,11 @@ import com.google.android.material.navigation.NavigationView
 import io.sentry.Sentry
 
 
-class MainActivity : ActivityBase(), PermissionRequest.Listener{
-     private lateinit var binding: ActivityMainBinding
+class MainActivity : ActivityBase(), PermissionRequest.Listener {
+    private lateinit var binding: ActivityMainBinding
 
 
-        override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
@@ -47,16 +47,18 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener{
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME)) {
             requestPermissions12.addListener(this)
-        }
-        else
+        } else
             requestPermissions11.addListener(this)
 
-
-
+        runPermissions()
     }
 
-
-
+    fun runPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || "S".equals(Build.VERSION.CODENAME))
+            requestPermissions12.send()
+        else
+            requestPermissions11.send()
+    }
 
 
     override fun onSupportNavigateUp(): Boolean {
@@ -77,12 +79,10 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener{
         }
 
         if (res > 0)
-            //TODO ALERT NO PERSISSION
-         else
+        //TODO ALERT NO PERSISSION
+        else
             finish()
     }
-
-
 
 
 }
