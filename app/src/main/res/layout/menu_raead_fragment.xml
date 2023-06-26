@@ -1,0 +1,78 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".ActivityBase">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.Rfid_raw_material.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.Rfid_raw_material.PopupOverlay">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="right"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/lnrHandHelddButton"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="5dp" >
+
+                    <RelativeLayout
+
+                        android:layout_width="7dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginRight="-5dp"
+                        android:layout_marginBottom="0dp"
+                        >
+
+                        <com.checkpoint.rfid_raw_material.utils.CustomBattery
+                            android:id="@+id/batteryView"
+                            android:layout_width="7dp"
+                            android:layout_height="match_parent"
+                            app:bv_percent="80"></com.checkpoint.rfid_raw_material.utils.CustomBattery>
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgHandHeldGun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginRight="16dp"
+                        android:src="@drawable/ic_hand_held_gun"></androidx.appcompat.widget.AppCompatImageView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyCreateLog"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:paddingRight="5dp"
+                    android:gravity="center_horizontal" >
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/imgCreateLog"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_log"
+                        android:tint="@color/white"></androidx.appcompat.widget.AppCompatImageView>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

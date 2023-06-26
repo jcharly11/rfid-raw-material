@@ -33,6 +33,7 @@ open class ActivityBase(): AppCompatActivity() {
 
     lateinit var appBarConfiguration: AppBarConfiguration
 
+
     var dialogLookingForDevice: DialogLookingForDevice? = null
     var dialogErrorDeviceConnected: DialogErrorDeviceConnected? = null
 
@@ -64,6 +65,7 @@ open class ActivityBase(): AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
+
     suspend fun logs(type: String, repository: DataRepository,context: Context,readNumber: Int){
         var listScanned = repository.getTagsList(readNumber!!)
         if (listScanned.size > 0) {
@@ -72,5 +74,4 @@ open class ActivityBase(): AppCompatActivity() {
             logCreator.createLog(type, tagList)
             }
         }
-
 }

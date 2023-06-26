@@ -2,20 +2,19 @@ package com.checkpoint.rfid_raw_material.ui.inventory
 
  import android.os.Bundle
  import android.util.Log
+ import android.view.LayoutInflater
+ import android.view.MenuItem
+ import android.view.View
+ import android.view.ViewGroup
+ import android.widget.Toolbar
+ import androidx.appcompat.app.AppCompatActivity
  import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
-import com.checkpoint.rfid_raw_material.MainActivity
-import com.checkpoint.rfid_raw_material.R
+ import com.checkpoint.rfid_raw_material.R
  import com.checkpoint.rfid_raw_material.ReadActivity
  import com.checkpoint.rfid_raw_material.databinding.FragmentInventoryPagerBinding
-import com.google.android.material.tabs.TabLayoutMediator
-import com.checkpoint.rfid_raw_material.utils.PagerAdapter
-import com.checkpoint.rfid_raw_material.utils.dialogs.DialogConfiguringModeHandHeld
+ import com.checkpoint.rfid_raw_material.utils.PagerAdapter
+ import com.checkpoint.rfid_raw_material.utils.dialogs.DialogConfiguringModeHandHeld
+ import com.google.android.material.tabs.TabLayoutMediator
 
 
 class PagerFragment : Fragment() {
@@ -35,9 +34,10 @@ class PagerFragment : Fragment() {
          _binding = FragmentInventoryPagerBinding.inflate(inflater, container, false)
 
         activityRed = requireActivity() as ReadActivity
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        activityRed!!.btnCreateLog= binding!!.appRawMaterials.imgCreateLog
+        activityRed!!.lyCreateLog= binding!!.appRawMaterials.lyCreateLog
 
-        var readNumber = arguments?.getInt("readNumber")
+          var readNumber = arguments?.getInt("readNumber")
         if(readNumber==null)
             readNumber= 0
 
@@ -49,6 +49,12 @@ class PagerFragment : Fragment() {
         )
 
 
+       // (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        val toolbar = binding.appRawMaterials.toolbar
+        toolbar.setOnMenuItemClickListener {
+            Log.e("xxxxxxxxxx","xxxxxxxxxxxxx")
+            true
+        }
 
         viewPager.adapter = PagerAdapter(this@PagerFragment, readNumber)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
@@ -65,12 +71,6 @@ class PagerFragment : Fragment() {
 
 */
         return binding.root
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-       // activityRed!!.startRFIDReadInstance()
     }
 
 

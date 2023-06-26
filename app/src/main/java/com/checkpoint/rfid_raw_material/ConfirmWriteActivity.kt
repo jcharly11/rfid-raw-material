@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
@@ -20,6 +21,7 @@ import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment
+import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 import com.zebra.rfid.api3.ReaderDevice
@@ -73,7 +75,14 @@ class ConfirmWriteActivity : ActivityBase(),
 
         fragmentHandHeldConfig = HandHeldConfigFragment()
         lyCreateLog!!.setOnClickListener{
-            GlobalScope.launch {
+            CoroutineScope(Dispatchers.Main).launch {
+                var logCreator = LogCreator(applicationContext)
+                CoroutineScope(Dispatchers.Main).launch {
+                    var tagList = repository!!.getTagsListForLogs(localSharedPreferences!!.getReadNumber())
+                    logCreator.createLog("write", tagList!!)
+                }
+            }
+            /*GlobalScope.launch {
                 withContext(Dispatchers.IO) {
                     logs(
                         "write",
@@ -83,7 +92,7 @@ class ConfirmWriteActivity : ActivityBase(),
                     )
 
                 }
-            }
+            }*/
         }
         btnHandHeldGun!!.setOnClickListener {
 

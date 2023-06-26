@@ -36,9 +36,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Rfid_raw_material"
         tools:targetApi="31">
-        <activity
-            android:name=".ReadActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="io.sentry.dsn"
@@ -85,6 +82,12 @@
             android:exported="true"
             android:theme="@style/Theme.Rfid_raw_material.NoActionBar"
             ></activity>
+
+        <activity
+            android:name=".ReadActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Rfid_raw_material.NoActionBar"/>
+
     </application>
 
 </manifest>

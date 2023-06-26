@@ -52,11 +52,10 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             dialog =
                 CustomDialogInventory(this@ReadInventoryFragment, TypeInventory.START_INVENTORY)
             dialog.show()
-            CoroutineScope(Dispatchers.Main).launch {
-                activityMain!!.newTag("90801A249B1F10A06C96AFF20001E240",readNumber!!,"","","","",0)
-                activityMain!!.newTag("200",readNumber!!,"","","","",0)
-            }
-
+           /* CoroutineScope(Dispatchers.Main).launch {
+                activityMain!!.newTag("600",readNumber!!,"","","","",0)
+                activityMain!!.newTag("500",readNumber!!,"","","","",0)
+            }*/
         }
 
         binding.btnPause.setOnClickListener {
@@ -71,7 +70,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             dialog.show()
         }
 
-       /* activityMain!!.btnCreateLog!!.setOnClickListener {
+        activityMain!!.btnCreateLog!!.setOnClickListener {
             CoroutineScope(Dispatchers.Main).launch {
                 var listScanned = viewModel.getTagsList(readNumber!!)
                 if (listScanned.size > 0) {
@@ -87,7 +86,8 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
                     ).show()
                 }
             }
-        }*/
+        }
+
         CoroutineScope(Dispatchers.Main).launch {
             if(readNumber==0)
                 readNumber = viewModel.getNewReadNumber()

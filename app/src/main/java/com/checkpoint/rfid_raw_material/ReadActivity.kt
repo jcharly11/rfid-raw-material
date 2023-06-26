@@ -1,20 +1,12 @@
 package com.checkpoint.rfid_raw_material
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.appcompat.app.AppCompatActivity
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
-import com.checkpoint.rfid_raw_material.databinding.ActivityMainBinding
 import com.checkpoint.rfid_raw_material.databinding.ActivityReadBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
-import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceBARCODE
 import com.checkpoint.rfid_raw_material.handheld.kt.DeviceInstanceRFID
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
 import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.DeviceConnectStatusInterface
@@ -26,7 +18,6 @@ import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.ui.inventory.PagerFragment
 import com.checkpoint.rfid_raw_material.utils.ReverseStandAlone
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
-import com.google.android.material.navigation.NavigationView
 import com.zebra.rfid.api3.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +51,7 @@ class ReadActivity : ActivityBase(),
         )
         dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
         dialogLookingForDevice= DialogLookingForDevice(this)
+
         loadFragment(PagerFragment())
 
     }
