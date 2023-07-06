@@ -36,6 +36,12 @@ class PagerFragment : Fragment() {
         activityRed = requireActivity() as ReadActivity
         activityRed!!.btnCreateLog= binding!!.appRawMaterials.imgCreateLog
         activityRed!!.lyCreateLog= binding!!.appRawMaterials.lyCreateLog
+        activityRed!!.btnHandHeldGun= binding!!.appRawMaterials.imgHandHeldGun
+        activityRed!!.batteryView = binding!!.appRawMaterials.batteryView
+
+        activityRed!!.btnHandHeldGun!!.setOnClickListener {
+            activityRed!!.handHeldConfig()
+        }
 
           var readNumber = arguments?.getInt("readNumber")
         if(readNumber==null)
@@ -49,12 +55,7 @@ class PagerFragment : Fragment() {
         )
 
 
-       // (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        val toolbar = binding.appRawMaterials.toolbar
-        toolbar.setOnMenuItemClickListener {
-            Log.e("xxxxxxxxxx","xxxxxxxxxxxxx")
-            true
-        }
+
 
         viewPager.adapter = PagerAdapter(this@PagerFragment, readNumber)
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

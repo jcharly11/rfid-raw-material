@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityReadBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -15,6 +16,7 @@ import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
 import com.checkpoint.rfid_raw_material.source.db.Tags
+import com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment
 import com.checkpoint.rfid_raw_material.ui.inventory.PagerFragment
 import com.checkpoint.rfid_raw_material.utils.ReverseStandAlone
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
@@ -38,6 +40,9 @@ class ReadActivity : ActivityBase(),
     val reverse = ReverseStandAlone()
     private lateinit var binding: ActivityReadBinding
     var repository: DataRepository? = null
+    private var fragmentHandHeldConfig : HandHeldConfigFragment? = null
+    private var batteryLevel = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +56,28 @@ class ReadActivity : ActivityBase(),
         )
         dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
         dialogLookingForDevice= DialogLookingForDevice(this)
+        fragmentHandHeldConfig = HandHeldConfigFragment()
+
 
         loadFragment(PagerFragment())
 
+    }
+
+    fun handHeldConfig(){
+        deviceInstanceRFID!!.battery()
+        val readNumber= localSharedPreferences!!.getReadNumber()
+
+        fragmentHandHeldConfig!!.arguments = bundleOf(
+            "readNumber" to readNumber,
+            "batteryLevel" to batteryLevel,
+            "activity" to "ReadActivity")
+
+
+        loadFragment(fragmentHandHeldConfig!!)
+    }
+
+    fun removeFargment(){
+        removeFragment(fragmentHandHeldConfig!!)
     }
 
     @SuppressLint("MissingPermission")
@@ -66,15 +90,18 @@ class ReadActivity : ActivityBase(),
         }
         device = Device(applicationContext,deviceName!!,this)
 
+
         dialogLookingForDevice!!.show()
         device!!.connect()
 
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        device!!.disconnect()
 
+
+    override fun onStop() {
+        super.onStop()
+        device!!.disconnect()
     }
+
     fun startRFIDReadInstance() {
 
 
@@ -83,9 +110,10 @@ class ReadActivity : ActivityBase(),
         val volumeHH= localSharedPreferences!!.getVolumeHH()
 
         deviceInstanceRFID = DeviceInstanceRFID(device!!.getReaderDevice(), mp, sess,volumeHH)
+
         deviceInstanceRFID!!.setBatteryHandlerInterface(this)
         deviceInstanceRFID!!.setHandlerInterfacResponse(this)
-        deviceInstanceRFID!!.setRfidModeRead()
+        deviceInstanceRFID!!.setRfidModeReadInventory()
         deviceInstanceRFID!!.battery()
 
     }
@@ -104,14 +132,7 @@ class ReadActivity : ActivityBase(),
                     var type= reverse.getType()
                     var piece= reverse.getPiece()
                     var idProvider= reverse.getProvider(epc)
-                    if(version.isNullOrEmpty()) version=""
-                    if(subVersion.isNullOrEmpty()) subVersion=""
-                    if(type.isNullOrEmpty()) type=""
-                    if(piece.isNullOrEmpty()) piece=""
-                    if(idProvider==null) idProvider=0
-                    Log.e("---X","$epc")
-                    localSharedPreferences!!.getReadNumber()
-                    newTag(epc,  localSharedPreferences!!.getReadNumber(), version , subVersion, type, piece, idProvider)                    }
+                     newTag(epc,  localSharedPreferences!!.getReadNumber(), version , subVersion, type, piece, idProvider)                    }
             }
         }else{
             Log.e("---X","PAUSED")
@@ -137,13 +158,22 @@ class ReadActivity : ActivityBase(),
         )
     }
     override fun handleTriggerPress(pressed: Boolean) {
-        if (pressed) {
-             deviceInstanceRFID!!.perform()
 
-        }else{
-            deviceInstanceRFID!!.stop()
+        val isPause = localSharedPreferences!!.getPauseStatus()
+
+        if(!isPause){
+
+            if (pressed) {
+                deviceInstanceRFID!!.perform()
+
+            }else{
+                deviceInstanceRFID!!.stop()
+
+            }
 
         }
+
+
     }
     override fun handleStartConnect(connected: Boolean) {
     }
@@ -158,6 +188,8 @@ class ReadActivity : ActivityBase(),
 
     override fun batteryLevel(level: Int) {
         Log.e("BatteryLevel current", "${level}")
+        batteryLevel = level
+        batteryView!!.setPercent(level)
 
 
     }

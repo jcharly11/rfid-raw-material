@@ -88,6 +88,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             }
         }
 
+
         CoroutineScope(Dispatchers.Main).launch {
             if(readNumber==0)
                 readNumber = viewModel.getNewReadNumber()

@@ -35,6 +35,7 @@ import com.checkpoint.rfid_raw_material.source.db.Provider
 import com.checkpoint.rfid_raw_material.source.model.ProviderModel
 import com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment
 import com.checkpoint.rfid_raw_material.utils.Conversor
+import com.checkpoint.rfid_raw_material.utils.LogCreator
 import com.checkpoint.rfid_raw_material.utils.dialogs.CustomDialogProvider
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogErrorDeviceConnected
 import com.checkpoint.rfid_raw_material.utils.dialogs.DialogLookingForDevice
@@ -69,6 +70,8 @@ class BarCodeActivity : ActivityBase(),
     var idProvider: Int = 0
     var idSupplier = String()
     var repository: DataRepository? = null
+    private var readNumber: Int? = 0
+
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,8 +95,35 @@ class BarCodeActivity : ActivityBase(),
 
         batteryView!!.visibility = View.GONE
         btnHandHeldGun!!.visibility = View.GONE
-        lyCreateLog!!.visibility = View.GONE
+        lyCreateLog!!.visibility = View.VISIBLE
 
+        readNumber = localSharedPreferences!!.getReadNumber()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            if (readNumber == null || readNumber == 0) {
+                readNumber = repository!!.getReadNumber()
+                localSharedPreferences!!.saveReadNumber(readNumber!!)
+            }
+        }
+
+        lyCreateLog!!.setOnClickListener{
+            CoroutineScope(Dispatchers.Main).launch {
+                var logCreator = LogCreator(applicationContext)
+                CoroutineScope(Dispatchers.Main).launch {
+                    var tagList = repository!!.getTagsListForLogs(localSharedPreferences!!.getReadNumber())
+                    if (tagList.size > 0) {
+                        logCreator.createLog("write", tagList!!)
+                    }else{
+                        Toast.makeText(
+                            context,
+                            "Nothing to read",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+            }
+        }
 
          bluetoothHandler = BluetoothHandler(this)
 
@@ -150,6 +180,7 @@ class BarCodeActivity : ActivityBase(),
         }
 
         binding.btnFinishWrite.setOnClickListener {
+            localSharedPreferences!!.saveReadNumber(0)
             setResult(RESULT_OK)
             finish()
         }
@@ -228,12 +259,27 @@ class BarCodeActivity : ActivityBase(),
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         device!!.disconnect()
+       // deviceInstanceBARCODE!!.disconnect()
     }
+
     override fun setDataBarCode(code: String) {
-        binding.tvIdentifier.setText(code)
+
+        var newBarcode=""
+        code.iterator().forEachRemaining {
+            if(!checkValue(it.toString().lowercase())){
+                newBarcode+=it.toString()
+            }
+        }
+        binding.tvIdentifier.setText(newBarcode)
+    }
+
+    fun checkValue(value:String):Boolean {
+        val letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTWXYZ"
+        val isExist = value in letters
+        return isExist
     }
 
     override fun connected(status: Boolean) {

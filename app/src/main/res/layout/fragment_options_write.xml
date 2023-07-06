@@ -4,91 +4,89 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.selection.OptionsWriteFragment">
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pullToRefreshConnection"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
-            <LinearLayout
+            android:layout_height="0dp"
+            android:layout_weight="30"
+            android:gravity="center_horizontal|center_vertical">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvDeviceSelected"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="30"
-                android:gravity="center_horizontal|center_vertical">
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tvDeviceSelected"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/navy"
-                    android:textSize="18sp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginRight="25dp"
-                    android:gravity="center"/>
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="20"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnInventory"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginBottom="25dp"
-                    android:background="@drawable/button_icon_large"
-                    android:drawableStart="@drawable/ic_inventory"
-                    android:drawableTint="@color/white"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:text="@string/item_menu_inventory"
-                    android:textColor="@color/white" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="20"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnWriteTag"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:layout_marginLeft="25dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginRight="25dp"
-                    android:layout_marginBottom="25dp"
-                    android:background="@drawable/button_icon_large"
-                    android:drawableStart="@drawable/ic_scan"
-                    android:drawableTint="@color/white"
-                    android:paddingLeft="30dp"
-                    android:paddingRight="30dp"
-                    android:text="@string/item_menu_write"
-                    android:textColor="@color/white" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="30">
-
-            </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:textColor="@color/navy"
+                android:textSize="18sp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:gravity="center"/>
         </LinearLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:orientation="vertical"
+            android:gravity="center">
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnInventory"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/button_icon_large"
+                android:drawableStart="@drawable/ic_inventory"
+                android:drawableTint="@color/white"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:text="@string/item_menu_inventory"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnWriteTag"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/button_icon_large"
+                android:drawableStart="@drawable/ic_scan"
+                android:drawableTint="@color/white"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:text="@string/item_menu_write"
+                android:textColor="@color/white" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="30">
+
+        </RelativeLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.0.23"
+        android:textColor="@color/red_ckp"
+        android:layout_gravity="bottom|right"
+        android:padding="10dp" />
 </FrameLayout>

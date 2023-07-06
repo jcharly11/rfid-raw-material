@@ -102,6 +102,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                 }
 
             }
+
             if (rfidStatusEvents.StatusEventData.statusEventType ===
                 STATUS_EVENT_TYPE.BATTERY_EVENT) {
                 val batteryData = rfidStatusEvents.StatusEventData.BatteryData
@@ -172,6 +173,9 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              val singulationControl = reader.Config.Antennas.getSingulationControl(1)
 
              val session= when (session_region) {
+                 "SESSION_0" -> {
+                     SESSION.SESSION_S0
+                 }
                  "SESSION_1" -> {
                      SESSION.SESSION_S1
                  }
@@ -183,16 +187,100 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
                  }
              }
 
+             Log.e("SESSION SELECTED","$session")
              singulationControl.session = session
-             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_AB_FLIP
              singulationControl.Action.slFlag = SL_FLAG.SL_ALL
              reader.Config.Antennas.setSingulationControl(1, singulationControl)
              reader.Actions.PreFilters.deleteAll()
 
          }catch (ex: Exception){
-             unavailableDeviceInterface!!.deviceCharging()
+            // unavailableDeviceInterface!!.deviceCharging()
          }
      }
+     fun setRfidModeReadInventory(){
+        try{
+
+            triggerInfo.StartTrigger.triggerType =
+                START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
+            triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
+            if(eventHandler == null)
+                eventHandler = EventHandler()
+            reader.Events.addEventsListener(eventHandler)
+            reader.Events.setBatteryEvent(true)
+            reader.Events.setHandheldEvent(true)
+            reader.Events.setTagReadEvent(true)
+            reader.Events.setAttachTagDataWithReadEvent(false)
+            reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
+            reader.Config.startTrigger = triggerInfo.StartTrigger
+            reader.Config.stopTrigger = triggerInfo.StopTrigger
+            if(volumeHH)
+                reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+            else
+                reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
+
+
+            val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
+            antennaConfig.transmitPowerIndex = maxPower
+            antennaConfig.setrfModeTableIndex(0)
+            antennaConfig.tari = 0
+            val tagStorageSettings = reader.Config.tagStorageSettings
+            tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+
+            tagStorageSettings.isAccessReportsEnabled
+            reader.Config.tagStorageSettings = tagStorageSettings
+
+            reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
+
+            val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+            val session= when (session_region) {
+                "SESSION_0" -> {
+                    SESSION.SESSION_S0
+                }
+                "SESSION_1" -> {
+                    SESSION.SESSION_S1
+                }
+                "SESSION_2" -> {
+                    SESSION.SESSION_S2
+                }
+                else -> {
+                    SESSION.SESSION_S3
+                }
+            }
+
+            Log.e("SESSION SELECTED","$session")
+            singulationControl.session = session
+            singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+            singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+            reader.Config.Antennas.setSingulationControl(1, singulationControl)
+            reader.Actions.PreFilters.deleteAll()
+
+        }catch (ex: Exception){
+            // unavailableDeviceInterface!!.deviceCharging()
+        }
+    }
+
+    fun changeSession(session_region: String){
+        val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+        val session= when (session_region) {
+            "SESSION_1" -> {
+                SESSION.SESSION_S1
+            }
+            "SESSION_2" -> {
+                SESSION.SESSION_S2
+            }
+            else -> {
+                SESSION.SESSION_S3
+            }
+        }
+
+        singulationControl.session = session
+        singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+        singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+        reader.Config.Antennas.setSingulationControl(1, singulationControl)
+    }
      fun stop(){
          GlobalScope.launch(Dispatchers.Main) {
              val stop = async {
@@ -206,6 +294,7 @@ class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: I
              val perform = async {
                  performTask()
              }
+
          }
 
      }

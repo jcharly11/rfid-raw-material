@@ -6,12 +6,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.INVISIBLE
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.addCallback
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.viewModels
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Observer
 import com.checkpoint.rfid_raw_material.bluetooth.BluetoothHandler
 import com.checkpoint.rfid_raw_material.databinding.ActivityConfirmWriteBinding
 import com.checkpoint.rfid_raw_material.handheld.kt.Device
@@ -20,17 +20,22 @@ import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.checkpoint.rfid_raw_material.preferences.LocalPreferences
 import com.checkpoint.rfid_raw_material.source.DataRepository
 import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
+import com.checkpoint.rfid_raw_material.source.db.Tags
 import com.checkpoint.rfid_raw_material.ui.handheld.HandHeldConfigFragment
-import com.checkpoint.rfid_raw_material.utils.LogCreator
+import com.checkpoint.rfid_raw_material.utils.ReverseStandAlone
 import com.checkpoint.rfid_raw_material.utils.dialogs.*
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.DialogWriteTagSuccessInterface
 import com.zebra.rfid.api3.ReaderDevice
 import com.zebra.rfid.api3.Readers
 import com.zebra.rfid.api3.TagData
 import kotlinx.coroutines.*
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import kotlin.concurrent.thread
 
 
-class ConfirmWriteActivity : ActivityBase(),
+class ConfirmWriteActivity :
+    ActivityBase(),
     ResponseHandlerInterface,
     Readers.RFIDReaderEventHandler,
     BatteryHandlerInterface,
@@ -40,8 +45,8 @@ class ConfirmWriteActivity : ActivityBase(),
     private var deviceName: String? = null
     private var tid: String? = null
     private var deviceInstanceRFID: DeviceInstanceRFID? = null
-     private var contextActivity: Context? = null
-
+    private var contextActivity: Context? = null
+    private var dialogPrepareReading: DialogPrepareReading? = null
     private var dialogErrorMultipleTags: DialogErrorMultipleTags? = null
     private var dialogWriteTag: CustomDialogWriteTag? = null
     private var dialogLoadingWrite: DialogPrepareTrigger? = null
@@ -54,11 +59,16 @@ class ConfirmWriteActivity : ActivityBase(),
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var batteryLevel = 0
     private var fragmentHandHeldConfig : HandHeldConfigFragment? = null
-    var repository: DataRepository? = null
+    private var repository: DataRepository? = null
+    private var tagsDetected = 0
+    private var tagData: Array<TagData?>? = null
+    private var tagsClose: MutableList<String> = arrayListOf()
+
 
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityConfirmWriteBinding.inflate(layoutInflater)
         localSharedPreferences = LocalPreferences(application)
         repository = DataRepository.getInstance(
@@ -74,37 +84,17 @@ class ConfirmWriteActivity : ActivityBase(),
         btnHandHeldGun = binding.appRawMaterials.imgHandHeldGun
 
         fragmentHandHeldConfig = HandHeldConfigFragment()
-        lyCreateLog!!.setOnClickListener{
-            CoroutineScope(Dispatchers.Main).launch {
-                var logCreator = LogCreator(applicationContext)
-                CoroutineScope(Dispatchers.Main).launch {
-                    var tagList = repository!!.getTagsListForLogs(localSharedPreferences!!.getReadNumber())
-                    logCreator.createLog("write", tagList!!)
-                }
-            }
-            /*GlobalScope.launch {
-                withContext(Dispatchers.IO) {
-                    logs(
-                        "write",
-                        repository!!,
-                        applicationContext,
-                        localSharedPreferences!!.getReadNumber()
-                    )
-
-                }
-            }*/
-        }
+        lyCreateLog!!.visibility = INVISIBLE
         btnHandHeldGun!!.setOnClickListener {
-
-
-
 
             deviceInstanceRFID!!.battery()
             val readNumber= localSharedPreferences!!.getReadNumber()
 
             fragmentHandHeldConfig!!.arguments = bundleOf(
                 "readNumber" to readNumber,
-                "batteryLevel" to batteryLevel)
+                "batteryLevel" to batteryLevel,
+                "activity" to "ConfirmWriteActivity")
+
             loadFragment(fragmentHandHeldConfig!!)
 
         }
@@ -112,9 +102,7 @@ class ConfirmWriteActivity : ActivityBase(),
         contextActivity = this
 
         var edtNewEPC = binding.edtNewTagEPC
-        binding.btnWrite.setOnClickListener {
-             write()
-        }
+        binding.btnWrite.visibility = INVISIBLE
          tvMessage = binding.tvMessageTriggers
 
 
@@ -127,7 +115,7 @@ class ConfirmWriteActivity : ActivityBase(),
         dialogErrorMultipleTags= DialogErrorMultipleTags(this)
         dialogWriteTag = CustomDialogWriteTag(this)
         dialogLoadingWrite = DialogPrepareTrigger(this)
-
+        dialogPrepareReading = DialogPrepareReading(this)
         dialogERRORWriting = DialogErrorWritingTag(this)
         dialogErrorDeviceConnected = DialogErrorDeviceConnected(this)
         dialogLookingForDevice= DialogLookingForDevice(this)
@@ -139,6 +127,11 @@ class ConfirmWriteActivity : ActivityBase(),
             device!!.disconnect()
             finish()
         }
+
+         binding.btnWrite.setOnClickListener {
+            write()
+        }
+
 
     }
 
@@ -160,36 +153,39 @@ class ConfirmWriteActivity : ActivityBase(),
     }
 
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         device!!.disconnect()
     }
 
     fun removeFargment(){
+        deviceInstanceRFID!!.changeSession(localSharedPreferences!!.getSessionFromPreferences())
         removeFragment(fragmentHandHeldConfig!!)
+
     }
 
     override fun handleTagdata(tagData: Array<TagData?>?) {
-        if (tagData!!.isNotEmpty()){
-            tid = tagData[0]!!.tagID
-            updateMessage(tid!!)
+        for (data in tagData!!){
+            tagsClose.add(data!!.tagID)
+
         }
     }
 
-    fun updateMessage(tid: String){
-        runOnUiThread {
-            tvMessage!!.setTextColor(Color.parseColor("#59B113"))
-            tvMessage!!.setText("Tag $tid  Ready to write")
-            binding.btnWrite.setText("Finish")
-        }
-    }
-    fun updateMessage2(){
-        runOnUiThread {
-            tvMessage!!.setTextColor(Color.parseColor("#59B113"))
-            tvMessage!!.setText("Twrite process succefull")
-        }
+    fun counterTags(): MutableList<String> {
+
+        Thread.sleep(3000)
+        return tagsClose.toSet().toMutableList()
+
+
     }
 
+    fun cleanDialogs(){
+        uiScope.launch {
+            if(dialogErrorMultipleTags!!.isShowing){
+                dialogErrorMultipleTags!!.dismiss()
+            }
+        }
+    }
     fun write(){
 
         uiScope.launch {
@@ -205,13 +201,62 @@ class ConfirmWriteActivity : ActivityBase(),
 
     }
 
+    fun read(){
+        uiScope.launch {
+            dialogPrepareReading!!.show()
+        }
+        counterTags().apply {
+            dialogPrepareReading!!.dismiss()
+
+            this!!.forEach {
+                Log.e("DATA VALUE","${it}")
+            }
+
+            when(this!!.size){
+
+                0->{
+                    uiScope.launch {
+                        tvMessage!!.setTextColor(Color.parseColor("#FD8D03"))
+                        tvMessage!!.text = "Press the device trigger to Read a tag"
+                    }
+                }
+                1->{
+
+                    tid = tagsClose.get(0)
+                    uiScope.launch {
+                        tvMessage!!.setTextColor(Color.parseColor("#59B113"))
+                        tvMessage!!.text = "Tag $tid  Ready to write"
+                        binding.btnWrite.visibility = View.VISIBLE
+                        binding.btnWrite.text = "Write tag"
+                    }
+                }
+                else->{
+                    uiScope.launch {
+                        dialogErrorMultipleTags!!.show()
+                        tvMessage!!.setTextColor(Color.parseColor("#FD8D03"))
+                        tvMessage!!.text = "Press the device trigger to Read a tag"
+                    }
+
+                }
+            }
+            Log.e("counterTags", "${this.size}")
+
+            tagsClose.clear()
+        }
+    }
+
     override fun handleTriggerPress(pressed: Boolean) {
         if(pressed){
             deviceInstanceRFID!!.perform()
+            cleanDialogs()
 
         }else{
-            deviceInstanceRFID!!.stop()
+            deviceInstanceRFID!!.stop().apply {
+
+               read()
+            }
         }
+
     }
 
     override fun handleStartConnect(connected: Boolean) {
@@ -234,7 +279,9 @@ class ConfirmWriteActivity : ActivityBase(),
 
     override fun isConnected(b: Boolean) {
         if(b){
-            deviceInstanceRFID =  DeviceInstanceRFID(device!!.getReaderDevice(),220,"SESSION_S1", true)
+
+
+            deviceInstanceRFID =  DeviceInstanceRFID(device!!.getReaderDevice(),105,"SESSION_0", true)
             deviceInstanceRFID!!.setBatteryHandlerInterface(this)
             deviceInstanceRFID!!.setHandlerInterfacResponse(this)
             deviceInstanceRFID!!.setHandlerWriteInterfacResponse(this)
@@ -250,23 +297,61 @@ class ConfirmWriteActivity : ActivityBase(),
     }
 
 
+
+
     override fun writingTagStatus(status: Boolean,epcRecorded: String) {
         runOnUiThread {
             dialogLoadingWrite!!.dismiss()
 
             if (status){
 
+                saveWritedTag(epc!!)
                 dialogWriteTagSuccess = DialogWriteTagSuccess(this, epc!!, this)
-                dialogWriteTagSuccess!!.show()
+                uiScope.launch {
+                    dialogWriteTagSuccess!!.show()
+
+                }
 
             }else{
-            dialogERRORWriting!!.show()
+               dialogERRORWriting!!.show()
+
             }
         }
 
     }
 
+    fun saveWritedTag(epc: String){
+        var rever = ReverseStandAlone()
+        rever.hexadecimalToBinaryString(epc)
+        CoroutineScope(Dispatchers.IO).launch {
+            addTag(
+                epc, localSharedPreferences!!.getReadNumber(), rever.getVersion(),
+                rever.getSubVersion(), rever.getType(), rever.getPiece(), rever.getSupplier().toInt()
+            )
+        }
+    }
+
+    suspend fun addTag(epc: String, readNumb: Int,version:String, subVersion:String, type:String,
+                       piece:String, provider:Int): Tags = withContext(Dispatchers.IO) {
+        val nowDate: OffsetDateTime = OffsetDateTime.now()
+        val formatter: DateTimeFormatter = DateTimeFormatter.ISO_INSTANT
+
+        repository!!.insertNewTag(
+            Tags(
+                0,
+                readNumb,
+                version,
+                subVersion,
+                type,
+                piece,
+                provider,
+                epc,
+                formatter.format(nowDate)
+            )
+        )
+    }
     override fun successRecording() {
+        dialogWriteTagSuccess!!.dismiss()
         device!!.disconnect()
         setResult(RESULT_OK)
         finish()

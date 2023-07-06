@@ -1,18 +1,9 @@
 package com.checkpoint.rfid_raw_material.utils
 
-import android.app.Application
-import android.util.Log
-import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
-import com.checkpoint.rfid_raw_material.source.DataRepository
-import com.checkpoint.rfid_raw_material.source.RawMaterialsDatabase
-import io.sentry.Sentry
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+import com.checkpoint.rfid_raw_material.pojos.ConfigLongValues
 class ReverseStandAlone() {
-    val longValues = ConfigLongValues()
+    private val longValues = ConfigLongValues()
     var binaryString = String()
 
 
@@ -81,55 +72,81 @@ class ReverseStandAlone() {
     }
 
     fun getSupplier(): String {
-        return binaryString.subSequence(
-            binaryString.length - longValues.supplierLong, binaryString.length
-        ).toString().toBigInteger(2).toString()
+        return try{
+
+            binaryString.subSequence(
+                binaryString.length - longValues.supplierLong, binaryString.length
+            ).toString().toBigInteger(2).toString()
+        }catch (ex: Exception){
+            String()
+        }
     }
 
     fun getPiece(): String {
-        return binaryString.subSequence(
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong),
-            binaryString.length - longValues.supplierLong
-        ).toString().toBigInteger(2).toString()
+        return try{
+             binaryString.subSequence(
+                binaryString.length - (longValues.supplierLong + longValues.pieceLong),
+                binaryString.length - longValues.supplierLong
+            ).toString().toBigInteger(2).toString()
+
+        }catch (ex: Exception){
+            String()
+        }
+
     }
 
     fun getSubVersion(): String {
-        return binaryString.subSequence(
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong),
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong)
-        ).toString().toBigInteger(2).toString()
+
+        return try{
+             binaryString.subSequence(
+                binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong),
+                binaryString.length - (longValues.supplierLong + longValues.pieceLong)
+            ).toString().toBigInteger(2).toString()
+        }catch (ex: Exception){
+            String()
+        }
 
     }
 
     fun getType(): String {
-        return binaryString.subSequence(
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong),
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong)
-        ).toString().toBigInteger(2).toString()
+
+        return try{
+            binaryString.subSequence(
+                binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong),
+                binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong)
+            ).toString().toBigInteger(2).toString()
+
+        }catch (ex: Exception){
+            String()
+        }
     }
 
     fun getVersion(): String {
-        return binaryString.subSequence(
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong + longValues.versionLong),
-            binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong)
-        ).toString().toBigInteger(2).toString()
+         return try{
+             binaryString.subSequence(
+                 binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong + longValues.versionLong),
+                 binaryString.length - (longValues.supplierLong + longValues.pieceLong + longValues.subVersionLong + longValues.typeLong)
+             ).toString().toBigInteger(2).toString()
 
+        }catch (ex: Exception){
+            String()
+        }
     }
 
 
 
     fun getProvider(epc: String): Int {
-        try {
+        return try {
             hexadecimalToBinaryString(epc)
             var supplier: Int = getSupplier().toInt()
+
             if (supplier.toString().isNullOrEmpty())
                 supplier = 0
 
-            return supplier
-        }
-        catch (ex: Exception) {
-            Sentry.captureMessage("${ex.message}")
-            return 0
+            supplier
+        } catch (ex: Exception) {
+
+            0
         }
     }
 

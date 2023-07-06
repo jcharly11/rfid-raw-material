@@ -14,6 +14,11 @@
 
 
     </fragment>
+    <fragment
+        android:id="@+id/configurationFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.configuration.ConfigurationFragment"
+        android:label="fragment_configuration"
+        tools:layout="@layout/fragment_configuration" />
 
 
 </navigation>

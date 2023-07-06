@@ -44,7 +44,7 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:textSize="23sp"
-                android:text="New Tag Code"
+                android:text="New Tag to Encode"
                 android:textColor="@color/black">
             </com.google.android.material.textview.MaterialTextView>
 
@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:textSize="21sp"
+                android:textSize="19sp"
                 android:text="Press the device trigger to Read a  tag"
                 android:textColor="@color/orange_battery"
                 android:textStyle="bold"
