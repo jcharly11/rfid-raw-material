@@ -91,7 +91,8 @@ class ConfigurationFragment : Fragment() {
                 config.locale = locale
                 resources.updateConfiguration(config, resources.displayMetrics)
                 requireActivity().recreate()
-                findNavController().navigate(R.id.optionsWriteFragment)
+                findNavController().popBackStack()
+                //findNavController().navigate(R.id.optionsWriteFragment)
             }
          }
         else

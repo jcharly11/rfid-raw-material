@@ -49,6 +49,15 @@ class OptionsWriteFragment : Fragment(){
          dialogLookingForDevice  = DialogLookingForDevice(requireContext())
         dialogErrorDeviceConnected =  DialogErrorDeviceConnected(requireContext())
 
+        val configBar=(activity as AppCompatActivity).supportActionBar
+        if(configBar!=null)
+            configBar.show()
+
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            exitApp()
+        }
+
 
         binding.btnInventory.setOnClickListener {
             startForResultWrite.launch(Intent(requireContext(), ReadActivity::class.java))
@@ -90,9 +99,20 @@ class OptionsWriteFragment : Fragment(){
         }
     }
 
+    private fun exitApp() {
+        if (doubleBackPressed) {
+            System.exit(0)
+        }
+        doubleBackPressed = true
+        Toast.makeText(
+            context,
+            resources.getText(R.string.press_back_again),
+            Toast.LENGTH_SHORT
+        )
+            .show()
 
-
-
-
-
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+            doubleBackPressed = false
+        }, 2000)
+    }
 }

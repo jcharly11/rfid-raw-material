@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/optionsWriteFragment">
-<!--    app:startDestination="@+id/licenseLoadFragment">-->
+        app:startDestination="@+id/licenseLoadFragment">
+    <!--    app:startDestination="@+id/optionsWriteFragment">-->
 
     <fragment
         android:id="@+id/optionsWriteFragment"
@@ -19,6 +19,11 @@
         android:name="com.checkpoint.rfid_raw_material.ui.configuration.ConfigurationFragment"
         android:label="fragment_configuration"
         tools:layout="@layout/fragment_configuration" />
+    <fragment
+        android:id="@+id/licenseLoadFragment"
+        android:name="com.checkpoint.rfid_raw_material.ui.license.LicenseLoadFragment"
+        android:label="fragment_license_load"
+        tools:layout="@layout/fragment_license_load" />
 
 
 </navigation>

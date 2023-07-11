@@ -3,6 +3,7 @@ package com.checkpoint.rfid_raw_material
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -39,7 +40,7 @@ class MainActivity : ActivityBase(), PermissionRequest.Listener {
         val navView: NavigationView = binding.navView
 
         appBarConfiguration = AppBarConfiguration(
-            setOf(R.id.optionsWriteFragment), drawerLayout
+            setOf(R.id.optionsWriteFragment ), drawerLayout
         )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
