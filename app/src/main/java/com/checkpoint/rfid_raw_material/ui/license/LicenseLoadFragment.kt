@@ -48,7 +48,7 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
         validateLicense()
 
         binding.imgCopy.setOnClickListener {
-            viewModel.copyToClpBoard(binding.tvIdDevice.toString())
+            viewModel.copyToClpBoard(binding.tvIdDevice.text.toString())
         }
         binding.btnSetLicense.setOnClickListener {
             if(!binding.tvLicense.text.isNullOrEmpty()) {
