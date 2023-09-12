@@ -1,14 +1,16 @@
 import android.app.Dialog
+import android.content.Context
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.checkpoint.rfid_raw_material.BarCodeActivity
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogProviderInterface
 import com.checkpoint.rfid_raw_material.utils.dialogs.interfaces.CustomDialogRemoveProviderInterface
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class CustomDialogRemoveProvider(private val fragment: Fragment): Dialog(fragment.requireContext()) {
+class CustomDialogRemoveProvider(private var barCodeActivity: BarCodeActivity,context: Context): Dialog(context) {
     private lateinit var dialogRemoveProviderInterface: CustomDialogRemoveProviderInterface
 
     init {
@@ -23,7 +25,7 @@ class CustomDialogRemoveProvider(private val fragment: Fragment): Dialog(fragmen
         val btnCloseDialogProvider = findViewById<FloatingActionButton>(R.id.btnCloseRemoveProvider)
         val btnCancelDialogProvider = findViewById<Button>(R.id.btnCancelRemoveProvider)
 
-        dialogRemoveProviderInterface = fragment as CustomDialogRemoveProviderInterface
+        dialogRemoveProviderInterface = barCodeActivity as CustomDialogRemoveProviderInterface
 
         btnCloseDialogProvider.setOnClickListener{
             dialogRemoveProviderInterface.closeDialogRemoveProvider()

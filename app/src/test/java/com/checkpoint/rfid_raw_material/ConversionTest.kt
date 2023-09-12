@@ -22,8 +22,7 @@ class ConversionTest {
         var binaryChain=conversion.stringBinaryPadding(arrayOf(version,type,subVersion,piece,supplier))
         var hexValueEpc = conversion.groupBytes(binaryChain)
         println(hexValueEpc)
-
-
+        println(hexValueEpc.encodeToByteArray().size*4)
 
         assertEquals("90801A249B1F10A06C96AFF20001E240",hexValueEpc)
     }

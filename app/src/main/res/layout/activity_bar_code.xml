@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".BarCodeActivity"
+    android:orientation="vertical">
+
+    <include  android:id="@+id/app_raw_materials" layout="@layout/toolbar_raw_materials" />
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingTop="50dp"
+        android:paddingRight="20dp">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:gravity="center_horizontal"
+            android:text="@string/item_menu_write"
+            android:textColor="?android:textColorSecondary"
+            android:textSize="30dp"></com.google.android.material.textview.MaterialTextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="18sp"
+                    android:text="@string/provider_list"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="5dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7"
+                        android:background="@drawable/bg_custom_entry"
+                        android:paddingLeft="8dp">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/white">
+                            <TextView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:background="@drawable/ic_provider"
+                                android:backgroundTint="@color/blue_tint"
+                                android:gravity="center_horizontal|center_vertical"></TextView>
+                        </LinearLayout>
+
+                        <Spinner
+                            android:id="@+id/spProviderList"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="8.5"
+                            android:layout_marginTop="3dp"
+                            android:layout_marginBottom="0.5dp"
+                            android:layout_marginRight="6dp"
+                            app:boxStrokeColor="@color/gray"
+                            app:endIconTint="@color/black"
+                            android:spinnerMode="dialog">
+                        </Spinner>
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:paddingLeft="2dp"
+                        android:gravity="center_vertical">
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/btnAddProvider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_add"
+                            app:backgroundTint="@color/navy"
+                            app:fabCustomSize="35dp"
+                            app:maxImageSize="30dp"
+                            app:tint="@color/white"
+                            android:layout_gravity="center_vertical"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.5"
+                        android:paddingLeft="2dp"
+                        android:gravity="center_vertical">
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/btnRemoveProvider"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_trash"
+                            app:backgroundTint="@color/red_ckp"
+                            app:fabCustomSize="35dp"
+                            app:maxImageSize="25dp"
+                            app:tint="@color/white"
+                            android:layout_gravity="center_vertical"></com.google.android.material.floatingactionbutton.FloatingActionButton>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="18sp"
+                    android:text="@string/identifier_item"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/bg_custom_entry"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="5dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/white">
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_barcode"
+                            android:backgroundTint="@color/blue_tint"
+                            android:gravity="center_horizontal|center_vertical"></TextView>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="9"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/white">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tvIdentifier"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="15dp"
+                            android:inputType="number"
+                            android:background="@color/white"
+                            android:textSize="15sp"/>
+
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="18sp"
+                    android:text="@string/version"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/bg_custom_entry"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="5dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/white">
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_version"
+                            android:backgroundTint="@color/blue_tint"
+                            android:gravity="center_horizontal|center_vertical"></TextView>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="9"
+                        android:background="@color/white">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tvVersion"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="15dp"
+                            android:inputType="number"
+                            android:text="18"
+                            android:background="@color/white"
+                            android:textSize="15sp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="20sp"
+                    android:text="@string/type"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/bg_custom_entry"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="5dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/white">
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_type"
+                            android:backgroundTint="@color/blue_tint"
+                            android:gravity="center_horizontal|center_vertical"></TextView>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="9"
+                        android:background="@color/white">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tvType"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="15dp"
+                            android:inputType="number"
+                            android:text="4"
+                            android:background="@color/white"
+                            android:textSize="15sp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:textSize="18sp"
+                    android:text="@string/subversion"
+                    android:textStyle="bold">
+                </com.google.android.material.textview.MaterialTextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/bg_custom_entry"
+                    android:paddingLeft="8dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:paddingRight="5dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/white">
+                        <TextView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:background="@drawable/ic_subversion"
+                            android:backgroundTint="@color/blue_tint"
+                            android:gravity="center_horizontal|center_vertical"></TextView>
+                    </LinearLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="9"
+                        android:background="@color/white">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tvSubversion"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginRight="15dp"
+                            android:inputType="number"
+                            android:text="0"
+                            android:background="@color/white"
+                            android:textSize="15sp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:gravity="center_horizontal|center_vertical"
+                android:orientation="vertical">
+
+                <android.widget.Button
+                    android:id="@+id/btnWriteTag"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:background="@drawable/button_icon_large"
+                    android:drawableStart="@drawable/ic_tag_check"
+                    android:drawableTint="@color/white"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="40dp"
+                    android:text="@string/write"
+                    android:textColor="@color/white"></android.widget.Button>
+
+                <android.widget.Button
+                    android:id="@+id/btnFinishWrite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:background="@drawable/button_icon_large"
+                    android:drawableStart="@drawable/ic_cancel"
+                    android:drawableTint="@color/white"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="40dp"
+                    android:layout_marginTop="40dp"
+                    android:text="@string/finish_write"
+                    android:textColor="@color/white"></android.widget.Button>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

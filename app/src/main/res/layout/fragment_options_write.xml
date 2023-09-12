@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.selection.OptionsWriteFragment">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -79,7 +78,15 @@
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="30"/>
-    </LinearLayout>
+            android:layout_weight="30">
 
+        </RelativeLayout>
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.0.25"
+        android:textColor="@color/red_ckp"
+        android:layout_gravity="bottom|right"
+        android:padding="10dp" />
 </FrameLayout>

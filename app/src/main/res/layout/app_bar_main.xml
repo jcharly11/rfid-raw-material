@@ -26,16 +26,20 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
+                    android:id="@+id/lnrHandHelddButton"
                     android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:paddingLeft="5dp">
+                    android:paddingLeft="5dp"
+                    android:visibility="gone">
 
                     <RelativeLayout
+
                         android:layout_width="7dp"
                         android:layout_height="match_parent"
                         android:layout_marginTop="30dp"
                         android:layout_marginRight="-5dp"
-                        android:layout_marginBottom="0dp">
+                        android:layout_marginBottom="0dp"
+                       >
 
                         <com.checkpoint.rfid_raw_material.utils.CustomBattery
                             android:id="@+id/batteryView"

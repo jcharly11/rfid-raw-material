@@ -40,7 +40,4 @@ class ItemsReadViewModel(application: Application) : AndroidViewModel(applicatio
 
 
 
-
-
-
 }

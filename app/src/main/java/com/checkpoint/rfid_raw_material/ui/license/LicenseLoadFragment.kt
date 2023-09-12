@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.AppBarConfiguration
 import com.checkpoint.rfid_raw_material.R
 import com.checkpoint.rfid_raw_material.databinding.FragmentHandHeldConfigBinding
 import com.checkpoint.rfid_raw_material.databinding.FragmentLicenseLoadBinding
@@ -25,7 +26,6 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
     private lateinit var viewModel: LicenseLoadViewModel
     private var _binding: FragmentLicenseLoadBinding? = null
     private lateinit var customDialogLicense: CustomDialogLicense
-    private lateinit var dialog: CustomDialogLicense
 
     private val binding get() = _binding!!
 
@@ -48,15 +48,15 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
         validateLicense()
 
         binding.imgCopy.setOnClickListener {
-            viewModel.copyToClpBoard(binding.tvIdDevice.toString())
+            viewModel.copyToClpBoard(binding.tvIdDevice.text.toString())
         }
         binding.btnSetLicense.setOnClickListener {
             if(!binding.tvLicense.text.isNullOrEmpty()) {
                 validateLicense()
             }
             else {
-                dialog = CustomDialogLicense(this@LicenseLoadFragment, TypeWarning.BLANK_FIELD)
-                dialog.show()
+                customDialogLicense = CustomDialogLicense(this@LicenseLoadFragment, TypeWarning.BLANK_FIELD)
+                customDialogLicense.show()
             }
         }
         viewModel.idDevice.observe(viewLifecycleOwner) {
@@ -70,7 +70,6 @@ class LicenseLoadFragment : Fragment(), CustomDialogLicenseInterface {
     override fun onStart() {
         super.onStart()
         (activity as AppCompatActivity).supportActionBar!!.hide()
-
     }
 
     fun validateLicense() {

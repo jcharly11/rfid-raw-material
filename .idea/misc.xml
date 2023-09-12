@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/activity_confirm_write.xml" value="0.18" />
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/activity_read.xml" value="0.1" />
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/app_bar_main.xml" value="0.1" />
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/fragment_inventory_pager.xml" value="0.27992633517495397" />
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/fragment_read_inventory.xml" value="0.1" />
+        <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/GitHub/raw_materials_refactorV2/rfid-raw-material/app/src/main/res/layout/toolbar_raw_materials.xml" value="0.1" />
         <entry key="..\:/Users/cbernal/Desktop/Android Kotlin/rfid_raw_material/app/src/main/res/layout/fragment_inventory_list.xml" value="0.19947916666666668" />
         <entry key="..\:/Users/hgallardo/AppData/Local/Android/Sdk/platforms/android-33/data/res/layout/simple_spinner_dropdown_item.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_cancel.xml" value="0.1" />
@@ -16,15 +22,17 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_trash.xml" value="0.1435" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/drawable/ic_warning.xml" value="0.1435" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_bar_code.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_confirm_write.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_write_tag.xml" value="0.21" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/activity_write_tag2.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/app_bar_main.xml" value="0.2" />
-        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/content_inventory.xml" value="0.11354166666666667" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/content_inventory.xml" value="0.14" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/content_main.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog2.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog3.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog_inventory.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog_license.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog_loader.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/custom_dialog_provider.xml" value="0.2" />
@@ -33,7 +41,7 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_barcode_reader_status.xml" value="0.15" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_configuring_mode_handheld.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_device_connected.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_empty_fields.xml" value="0.1" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_empty_fields.xml" value="0.22" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_multiple_tags.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_error_writing_tags.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_license_loader.xml" value="0.33" />
@@ -41,6 +49,7 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_prepare_trigger.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_select_pair_devices.xml" value="0.15" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_wait_for_handheld.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_wait_reading_tags.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_write_tag_confirmation.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/dialog_write_tag_success.xml" value="0.18" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/fragment_configuration.xml" value="0.2" />
@@ -64,11 +73,13 @@
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/item_row_devices.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/items_provider.xml" value="0.2" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/nav_header_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/layout/toolbar_raw_materials.xml" value="0.1" />
         <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/menu/activity_main_drawer.xml" value="0.5" />
+        <entry key="..\:/Users/hgallardo/Desktop/rfid-raw-material/app/src/main/res/menu/main.xml" value="0.1" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

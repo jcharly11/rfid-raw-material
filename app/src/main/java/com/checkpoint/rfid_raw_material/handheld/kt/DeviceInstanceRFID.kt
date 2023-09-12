@@ -2,26 +2,24 @@ package com.checkpoint.rfid_raw_material.handheld.kt
 
 
 import android.util.Log
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.BatteryHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.LevelPowerListHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.ResponseHandlerInterface
-import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.WritingTagInterface
+import com.checkpoint.rfid_raw_material.handheld.kt.interfaces.*
 import com.zebra.rfid.api3.*
 import io.sentry.Sentry
 import kotlinx.coroutines.*
 
 
- class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
-                           private  val session_region: String){
+class  DeviceInstanceRFID(private val reader: RFIDReader,private val maxPower: Int,
+                           private  val session_region: String,
+                           private val volumeHH:Boolean){
 
 
      private var eventHandler: EventHandler? = null
      private val triggerInfo = TriggerInfo()
-
      private var responseHandlerInterface: ResponseHandlerInterface? = null
      private var batteryHandlerInterface: BatteryHandlerInterface? = null
      private var writingTagInterface: WritingTagInterface? = null
      private var levelPowerListHandlerInterface: LevelPowerListHandlerInterface? = null
+    private var unavailableDeviceInterface: UnavailableDeviceInterface? = null
 
 
     private suspend fun performTask(){
@@ -104,6 +102,7 @@ import kotlinx.coroutines.*
                 }
 
             }
+
             if (rfidStatusEvents.StatusEventData.statusEventType ===
                 STATUS_EVENT_TYPE.BATTERY_EVENT) {
                 val batteryData = rfidStatusEvents.StatusEventData.BatteryData
@@ -128,6 +127,9 @@ import kotlinx.coroutines.*
          this.writingTagInterface = writingTagInterface
 
      }
+    fun setHanHeldUnavailableInterface(unavailableDeviceInterface: UnavailableDeviceInterface){
+        this.unavailableDeviceInterface = unavailableDeviceInterface
+    }
 
 
      fun setHandlerLevelTransmisioPowerInterfacResponse(levelPowerListHandlerInterface: LevelPowerListHandlerInterface){
@@ -135,45 +137,150 @@ import kotlinx.coroutines.*
      }
 
      fun setRfidModeRead(){
-         triggerInfo.StartTrigger.triggerType =
-             START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
-         triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
-         eventHandler = EventHandler()
-         reader.Events.addEventsListener(eventHandler)
-         reader.Events.setBatteryEvent(true)
-         reader.Events.setHandheldEvent(true)
-         reader.Events.setTagReadEvent(true)
-         reader.Events.setAttachTagDataWithReadEvent(false)
-         reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
-         reader.Config.startTrigger = triggerInfo.StartTrigger
-         reader.Config.stopTrigger = triggerInfo.StopTrigger
-         val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
-         antennaConfig.transmitPowerIndex = maxPower
-         antennaConfig.setrfModeTableIndex(0)
-         antennaConfig.tari = 0
-         reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
+         try{
 
-         val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+             triggerInfo.StartTrigger.triggerType =
+                 START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
+             triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
+             if(eventHandler == null)
+                 eventHandler = EventHandler()
+             reader.Events.addEventsListener(eventHandler)
+             reader.Events.setBatteryEvent(true)
+             reader.Events.setHandheldEvent(true)
+             reader.Events.setTagReadEvent(true)
+             reader.Events.setAttachTagDataWithReadEvent(false)
+             reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
+             reader.Config.startTrigger = triggerInfo.StartTrigger
+             reader.Config.stopTrigger = triggerInfo.StopTrigger
+             if(volumeHH)
+                 reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+             else
+                 reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
 
-         val sessionx= when{
 
-             session_region == "SESSION_S0" ->{
-                 SESSION.SESSION_S0
+             val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
+             antennaConfig.transmitPowerIndex = maxPower
+             antennaConfig.setrfModeTableIndex(0)
+             antennaConfig.tari = 0
+             val tagStorageSettings = reader.Config.tagStorageSettings
+             tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+
+             tagStorageSettings.isAccessReportsEnabled
+             reader.Config.tagStorageSettings = tagStorageSettings
+
+             reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
+
+             val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+             val session= when (session_region) {
+                 "SESSION_0" -> {
+                     SESSION.SESSION_S0
+                 }
+                 "SESSION_1" -> {
+                     SESSION.SESSION_S1
+                 }
+                 "SESSION_2" -> {
+                     SESSION.SESSION_S2
+                 }
+                 else -> {
+                     SESSION.SESSION_S3
+                 }
              }
-             else -> {
-                 SESSION.SESSION_S1
-             }
+
+             Log.e("SESSION SELECTED","$session")
+             singulationControl.session = session
+             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_AB_FLIP
+             singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+             reader.Config.Antennas.setSingulationControl(1, singulationControl)
+             reader.Actions.PreFilters.deleteAll()
+
+         }catch (ex: Exception){
+            // unavailableDeviceInterface!!.deviceCharging()
          }
-
-
-         singulationControl.session = sessionx
-
-             singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
-         singulationControl.Action.slFlag = SL_FLAG.SL_ALL
-         reader.Config.Antennas.setSingulationControl(1, singulationControl)
-         reader.Actions.PreFilters.deleteAll()
-
      }
+     fun setRfidModeReadInventory(){
+        try{
+
+            triggerInfo.StartTrigger.triggerType =
+                START_TRIGGER_TYPE.START_TRIGGER_TYPE_IMMEDIATE
+            triggerInfo.StopTrigger.triggerType = STOP_TRIGGER_TYPE.STOP_TRIGGER_TYPE_IMMEDIATE
+            if(eventHandler == null)
+                eventHandler = EventHandler()
+            reader.Events.addEventsListener(eventHandler)
+            reader.Events.setBatteryEvent(true)
+            reader.Events.setHandheldEvent(true)
+            reader.Events.setTagReadEvent(true)
+            reader.Events.setAttachTagDataWithReadEvent(false)
+            reader.Config.setTriggerMode(ENUM_TRIGGER_MODE.RFID_MODE, false)
+            reader.Config.startTrigger = triggerInfo.StartTrigger
+            reader.Config.stopTrigger = triggerInfo.StopTrigger
+            if(volumeHH)
+                reader.Config.beeperVolume = BEEPER_VOLUME.HIGH_BEEP
+            else
+                reader.Config.beeperVolume = BEEPER_VOLUME.QUIET_BEEP
+
+
+            val antennaConfig = reader.Config.Antennas.getAntennaRfConfig(1)
+            antennaConfig.transmitPowerIndex = maxPower
+            antennaConfig.setrfModeTableIndex(0)
+            antennaConfig.tari = 0
+            val tagStorageSettings = reader.Config.tagStorageSettings
+            tagStorageSettings.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+
+            tagStorageSettings.isAccessReportsEnabled
+            reader.Config.tagStorageSettings = tagStorageSettings
+
+            reader.Config.Antennas.setAntennaRfConfig(1, antennaConfig)
+
+            val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+            val session= when (session_region) {
+                "SESSION_0" -> {
+                    SESSION.SESSION_S0
+                }
+                "SESSION_1" -> {
+                    SESSION.SESSION_S1
+                }
+                "SESSION_2" -> {
+                    SESSION.SESSION_S2
+                }
+                else -> {
+                    SESSION.SESSION_S3
+                }
+            }
+
+            Log.e("SESSION SELECTED","$session")
+            singulationControl.session = session
+            singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+            singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+            reader.Config.Antennas.setSingulationControl(1, singulationControl)
+            reader.Actions.PreFilters.deleteAll()
+
+        }catch (ex: Exception){
+            // unavailableDeviceInterface!!.deviceCharging()
+        }
+    }
+
+    fun changeSession(session_region: String){
+        val singulationControl = reader.Config.Antennas.getSingulationControl(1)
+
+        val session= when (session_region) {
+            "SESSION_1" -> {
+                SESSION.SESSION_S1
+            }
+            "SESSION_2" -> {
+                SESSION.SESSION_S2
+            }
+            else -> {
+                SESSION.SESSION_S3
+            }
+        }
+
+        singulationControl.session = session
+        singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+        singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+        reader.Config.Antennas.setSingulationControl(1, singulationControl)
+    }
      fun stop(){
          GlobalScope.launch(Dispatchers.Main) {
              val stop = async {
@@ -187,6 +294,7 @@ import kotlinx.coroutines.*
              val perform = async {
                  performTask()
              }
+
          }
 
      }
@@ -212,76 +320,83 @@ import kotlinx.coroutines.*
      }
 
      fun transmitPowerLevels(){
-         levelPowerListHandlerInterface!!.transmitPowerLevelValues(reader.ReaderCapabilities.transmitPowerLevelValues)
+            if(reader!= null){
+                levelPowerListHandlerInterface!!.transmitPowerLevelValues(reader.ReaderCapabilities.transmitPowerLevelValues)
+
+            }
      }
-     fun writeTagMode(epc: String, tid: String) {
-         try {
-             Log.e("writeMode","stated")
-             reader.Config.setAccessOperationWaitTimeout(1000)
-             reader.Actions.Inventory.stop()
-             reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
 
-             write(tid,epc,"0")
-         } catch (e: InvalidUsageException) {
-             e.printStackTrace()
-         } catch (e: OperationFailureException) {
-             e.printStackTrace()
-         }
-     }
-     fun write( tid: String, epc: String,  password: String){
+    fun writeTagMode(tid: String,epc: String) {
 
-         Log.e("tid ", "$tid")
-         Log.e("epc", "$epc")
-         Log.e("password", "$password")
-        writeTag(tid, password, MEMORY_BANK.MEMORY_BANK_EPC, epc, 2)
+        try {
 
-     }
-     @Synchronized
-     private fun writeTag(
-         sourceEPC: String,
-         Password: String,
-         memory_bank: MEMORY_BANK,
-         targetData: String,
-         offset: Int
-     ) {
+            reader.Actions.Inventory.stop()
+            reader!!.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.DISABLE
+            reader.Config.setAccessOperationWaitTimeout(1000)
+            writeWait(tid,epc,"0")
 
-         try {
-             val tagData: TagData = TagData()
-             val tagAccess = TagAccess()
-             val writeAccessParams = tagAccess.WriteAccessParams()
-             writeAccessParams.accessPassword = Password.toLong(16)
-             writeAccessParams.memoryBank = memory_bank
-             writeAccessParams.offset = offset
-             writeAccessParams.setWriteData(targetData)
-             writeAccessParams.writeRetries = 3
-             writeAccessParams.writeDataLength = targetData.length / 4
-             val useTIDfilter = memory_bank === MEMORY_BANK.MEMORY_BANK_EPC
+        } catch (e: InvalidUsageException) {
+
+        Log.e("InvalidUsageException: ", e.info)
+
+    } catch (e: OperationFailureException) {
+
+        Log.e("OperationFailureException: ", e.vendorMessage)
+
+    }
+
+}
+
+
+    fun writeWait(tid: String, epc: String, password: String){
+
+        val data = "4000$epc"
+        Log.e("tid ", "$tid")
+        Log.e("epc", "$data")
+        Log.e("password", "$password")
+        try {
+            val tagData = TagData()
+            val tagAccess = TagAccess()
+            val writeAccessParams = tagAccess.WriteAccessParams()
+            writeAccessParams.accessPassword = password.toLong(16)
+            writeAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_EPC
+            writeAccessParams.offset = 1
+            writeAccessParams.setWriteData(data)
+            writeAccessParams.writeDataLength = data.length / 4
+
              reader!!.Actions.TagAccess.writeWait(
-                 sourceEPC,
-                 writeAccessParams,
-                 null,
-                 tagData,
-                 true,
-                 useTIDfilter
-             )
+                tid,
+                writeAccessParams,
+                null,
+                tagData,
+                true,
+                true
+            ).apply {
 
-             writingTagInterface!!.writingTagStatus(true)
+                 Log.e("RESULT: ", tagData.tagID)
+                 writingTagInterface!!.writingTagStatus(true,tagData.tagID)
+                 reader.Config.dpoState = DYNAMIC_POWER_OPTIMIZATION.ENABLE
 
-         } catch (e: InvalidUsageException) {
-             e.printStackTrace()
-             writingTagInterface!!.writingTagStatus(false)
-             Sentry.captureMessage("${e.message.toString()}")
+            }
 
-         } catch (e: OperationFailureException) {
-             e.printStackTrace()
-             writingTagInterface!!.writingTagStatus(false)
 
-             Sentry.captureMessage("${e.message.toString()}")
-             Log.e("EXCEPTION", e.vendorMessage.toString())
-             Log.e("RESULTS", e.results.toString())
-             Log.e("RESULTS", e.statusDescription.toString())
-         }
+        } catch (e: InvalidUsageException) {
 
-     }
+            Log.e("InvalidUsageException: ", e.info)
+            Sentry.captureMessage(  "InvalidUsageException : ${e.info} | ${e.vendorMessage} }")
+            writingTagInterface!!.writingTagStatus(false,"")
 
- }
+        } catch (e: OperationFailureException) {
+
+            Log.e("OperationFailureException: ", e.vendorMessage)
+            Sentry.captureMessage(  "OperationFailureException : ${e.results} | ${e.statusDescription} | ${e.vendorMessage}")
+            writingTagInterface!!.writingTagStatus(false,"")
+
+        }
+
+    }
+
+
+
+
+}

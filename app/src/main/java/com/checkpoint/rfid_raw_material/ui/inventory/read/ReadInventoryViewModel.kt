@@ -20,6 +20,8 @@ class ReadInventoryViewModel(application: Application) :AndroidViewModel(applica
         repository = DataRepository.getInstance(
             RawMaterialsDatabase.getDatabase(application.baseContext)
         )
+        localSharedPreferences.setPauseStatus(true)
+
     }
 
     fun getTagsListLive(readNumber:Int): LiveData<List<Tags>>{

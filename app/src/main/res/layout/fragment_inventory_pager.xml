@@ -3,8 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.inventory.InventoryPagerFragment"
+    tools:context=".ReadActivity"
     android:orientation="vertical">
+    <include  android:id="@+id/app_raw_materials" layout="@layout/toolbar_raw_materials" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

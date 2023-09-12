@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.checkpoint.rfid_raw_material.MainActivity
 import com.checkpoint.rfid_raw_material.R
+import com.checkpoint.rfid_raw_material.ReadActivity
 import com.checkpoint.rfid_raw_material.databinding.FragmentReadInventoryBinding
 import com.checkpoint.rfid_raw_material.enums.TypeInventory
 import com.checkpoint.rfid_raw_material.utils.LogCreator
@@ -30,7 +31,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
     private val binding get() = _binding!!
     private lateinit var dialog: CustomDialogInventory
     private var readNumber: Int? = 0
-    private var activityMain: MainActivity? = null
+    private var activityMain: ReadActivity? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,20 +42,20 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         viewModel = ViewModelProvider(this)[ReadInventoryViewModel::class.java]
          _binding = FragmentReadInventoryBinding.inflate(inflater, container, false)
-        activityMain = requireActivity() as MainActivity
+        activityMain = requireActivity() as ReadActivity
 
+        activityMain!!.btnCreateLog!!.visibility = View.VISIBLE
+        activityMain!!.lyCreateLog!!.visibility = View.VISIBLE
 
 
         binding.btnStart.setOnClickListener {
             dialog =
                 CustomDialogInventory(this@ReadInventoryFragment, TypeInventory.START_INVENTORY)
             dialog.show()
-            CoroutineScope(Dispatchers.Main).launch {
-                activityMain!!.newTag("90801A249B1F10A06C96AFF20001E240",readNumber!!)
-                activityMain!!.newTag("200",readNumber!!)
-            }
-
-
+           /* CoroutineScope(Dispatchers.Main).launch {
+                activityMain!!.newTag("600",readNumber!!,"","","","",0)
+                activityMain!!.newTag("500",readNumber!!,"","","","",0)
+            }*/
         }
 
         binding.btnPause.setOnClickListener {
@@ -86,6 +87,8 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
                 }
             }
         }
+
+
         CoroutineScope(Dispatchers.Main).launch {
             if(readNumber==0)
                 readNumber = viewModel.getNewReadNumber()
@@ -131,10 +134,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
             val dataEmpty = viewModel.deleteCapturedData()
             if(dataEmpty){
                 viewModel!!.saveReadNumber(0)
-                activityMain!!.lyCreateLog!!.visibility = View.INVISIBLE
-                activityMain!!.batteryView!!.visibility = View.INVISIBLE
-                activityMain!!.btnHandHeldGun!!.visibility = View.INVISIBLE
-                findNavController().navigate(R.id.optionsWriteFragment)
+               activityMain!!.finish()
             }
         }
 
@@ -142,6 +142,7 @@ class ReadInventoryFragment : Fragment(), CustomDialogInventoryInterface {
 
     override fun closeDialog() {
         dialog.dismiss()
+
     }
 
 
